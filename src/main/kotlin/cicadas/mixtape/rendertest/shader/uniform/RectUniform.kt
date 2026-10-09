@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest
+package cicadas.mixtape.rendertest.shader.uniform
 
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.buffers.GpuBufferSlice

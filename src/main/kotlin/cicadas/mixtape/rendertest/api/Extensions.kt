@@ -1,6 +1,6 @@
 package cicadas.mixtape.rendertest.api
 
-import cicadas.mixtape.rendertest.Formats
+import cicadas.mixtape.rendertest.shader.Formats
 import cicadas.mixtape.rendertest.mixins.accessors.BufferBuilderAccessor
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.systems.CommandEncoder
@@ -30,12 +30,10 @@ fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): Ve
     return this
 }
 
-fun BufferBuilder.addVertex(px: Float, py: Float, cx: Float, cy: Float, width: Float, height: Float, color: Int) {
-    addVertex(px, py, 0f)
-        .setColor(color)
-        .setVec2(Formats.COORD, cx, cy)
-        .setVec2(Formats.SIZE, width, height)
-}
+fun BufferBuilder.addVertex(px: Float, py: Float, cx: Float, cy: Float, width: Float, height: Float, color: Int) = addVertex(px, py, 0f)
+    .setColor(color)
+    .setVec2(Formats.COORD, cx, cy)
+    .setVec2(Formats.SIZE, width, height)
 
 fun DynamicUniforms.defaultUniforms() = writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
 
