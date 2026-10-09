@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "render-test",
+  "version": "${version}",
+  "name": "render-test",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/rendertest/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "cicadas.mixtape.rendertest.RenderTest"
+      }
+    ]
+  },
+  "mixins": [
+    "render-test.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": ">=${fabric_api_version}",
+    "fabric-language-kotlin": ">=${kotlin_language_version}"
+  }
+}
