@@ -1,17 +1,31 @@
 package cicadas.mixtape.rendertest.fonts
 
-import cicadas.mixtape.rendertest.utility.FontUtility
+import cicadas.mixtape.rendertest.api.JSON
+import cicadas.mixtape.rendertest.api.mc
 import com.mojang.blaze3d.vertex.BufferBuilder
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import java.awt.Color
 
-class MsdfFont(
+class MsdfFont private constructor(
     val texture: AbstractTexture,
     val atlas: MsdfData.AtlasData,
     val metrics: MsdfData.MetricsData,
     val glyphs: Map<Int, MsdfGlyph>
 ) {
+    val thickness = 0.05f
+
+    companion object {
+        fun build(json: Identifier, png: Identifier): MsdfFont {
+            val stream = mc.resourceManager.open(json)
+            val texture = mc.textureManager.getTexture(png)
+            val data = JSON.decodeFromString<MsdfData>(stream.readAllBytes().decodeToString())
+            val glyphs = data.glyphs.associate { it.unicode to MsdfGlyph(it, data.atlas.width, data.atlas.height) }
+            return MsdfFont(texture, data.atlas, data.metrics, glyphs)
+        }
+    }
+
     fun applyGlyphs(builder: BufferBuilder, text: Component, size: Float, x: Float, y: Float, color: Color): BufferBuilder {
         var offsetX = x
         var offsetY = y
@@ -19,7 +33,7 @@ class MsdfFont(
         text.visualOrderText.accept { _, style, code ->
             if (code == '\n'.code) {
                 offsetX = x
-                offsetY += FontUtility.getHeight(size) + 1f
+                offsetY += getHeight(size) + (size * 0.1f)
                 return@accept true
             }
 
@@ -27,13 +41,12 @@ class MsdfFont(
             val current = if (style.isEmpty) {
                 color
             } else {
-                val rgb = style.color?.value ?: color.rgb
-                Color((rgb shr 16) and 0xFF, (rgb shr 8) and 0xFF, rgb and 0xFF)
+                Color(style.color?.value ?: color.rgb)
             }
 
             if (glyph == null) return@accept true
 
-            offsetX += glyph.apply(builder, size, offsetX, offsetY, current) + FontUtility.getThickness(size)
+            offsetX += glyph.apply(builder, size, offsetX, offsetY, current) + getThickness(size)
 
             true
         }
@@ -41,23 +54,23 @@ class MsdfFont(
         return builder
     }
 
+    fun getFont(size: Float) = Font(this, size)
+
     fun getWidth(text: Component, size: Float): Float {
         var width = 0f
 
         text.visualOrderText.accept { _, _, code ->
             val glyph = glyphs[code] ?: return@accept true
-            width += (glyph.advance * size) + FontUtility.getThickness(size)
+            width += (glyph.advance * size) + getThickness(size)
             true
         }
 
         return width
     }
 
-    fun getWidth(text: String, size: Float): Float {
-        return getWidth(Component.literal(text), size)
-    }
-
     fun getHeight(size: Float): Float {
         return (metrics.lineHeight + metrics.descender - 0.2f) * size
     }
+
+    private fun getThickness(size: Float) = thickness * 0.5f * size
 }

@@ -6,6 +6,7 @@ import cicadas.mixtape.rendertest.shader.uniform.RectUniform
 import cicadas.mixtape.rendertest.api.addVertex
 import cicadas.mixtape.rendertest.api.defaultRenderPass
 import cicadas.mixtape.rendertest.api.mc
+import cicadas.mixtape.rendertest.fonts.Font
 import cicadas.mixtape.rendertest.shader.uniform.FontUniform
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
@@ -60,15 +61,17 @@ object Renderer2D {
         data.close()
     }
 
-    fun drawFont(text: Component, x: Float, y: Float, size: Float, color: Color) {
-        val font = FontUtility.FONT
-        val builder = font.applyGlyphs(RenderUtility.defaultBegin(), text, size, x, y,  color)
+    fun drawFont(font: Font, text: Component, x: Float, y: Float, color: Color) {
+        val msdf = font.msdf
+        val size = font.size
+
+        val builder = msdf.applyGlyphs(RenderUtility.defaultBegin(), text, size, x, y,  color)
         val data = builder.buildOrThrow()
         val buffer = CustomBuffer.create(data)
-        val fontData = FontUniform.update(font.atlas.distanceRange, FontUtility.THICKNESS)
+        val fontData = FontUniform.update(msdf.atlas.distanceRange, msdf.thickness)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.MSDF_PIPELINE) {
-            it.bindTexture("sampler0", font.texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+            it.bindTexture("sampler0", msdf.texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
             it.setUniform("FontData", fontData)
             it.setVertexBuffer(0, buffer.vertex())
             it.setIndexBuffer(buffer.index(), buffer.type())
