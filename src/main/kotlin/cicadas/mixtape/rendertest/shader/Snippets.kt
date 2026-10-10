@@ -22,4 +22,14 @@ object Snippets {
         .withDepthWrite(false)
         .withCull(false)
         .buildSnippet()
+
+    @JvmField
+    val MSDF_SNIPPET = RenderPipeline.builder()
+        .withUniform("FontData", UniformType.UNIFORM_BUFFER)
+        .withVertexFormat(Formats.RECT, VertexFormat.Mode.QUADS)
+        .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+        .withBlend(BlendFunction.TRANSLUCENT)
+        .withDepthWrite(false)
+        .withCull(false)
+        .buildSnippet()
 }

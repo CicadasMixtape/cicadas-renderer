@@ -1,0 +1,48 @@
+package cicadas.mixtape.rendertest.fonts
+
+import cicadas.mixtape.rendertest.api.addVertex
+import com.mojang.blaze3d.vertex.BufferBuilder
+import java.awt.Color
+
+class MsdfGlyph(
+    data: MsdfData.GlyphData,
+    atlasWidth: Float,
+    atlasHeight: Float
+) {
+    var minU = 0f
+    var maxU = 0f
+    var minV = 0f
+    var maxV = 0f
+    var width = 0f
+    var height = 0f
+    var topPosition = 0f
+    val advance = data.advance
+
+    init {
+        data.atlasBounds?.also {
+            minU = it.left / atlasWidth
+            maxU = it.right / atlasWidth
+            minV = 1f - it.top / atlasHeight
+            maxV = 1f - it.bottom / atlasHeight
+        }
+
+        data.planeBounds?.also {
+            width = it.right - it.left
+            height = it.top - it.bottom
+            topPosition = it.top
+        }
+    }
+
+    fun apply(builder: BufferBuilder, size: Float, x: Float, y: Float, color: Color): Float {
+        val width = width * size
+        val height = height * size
+        val y = y - topPosition * size
+
+        builder.addVertex(x,         y,          minU, minV, 0f, 0f, color.rgb)
+        builder.addVertex(x,         y + height, minU, maxV, 0f, 0f, color.rgb)
+        builder.addVertex(x + width, y + height, maxU, maxV, 0f, 0f, color.rgb)
+        builder.addVertex(x + width, y,          maxU, minV, 0f, 0f, color.rgb)
+
+        return advance * size
+    }
+}

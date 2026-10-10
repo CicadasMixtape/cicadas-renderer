@@ -16,4 +16,6 @@ object RenderTest : ModInitializer {
     }
 
     fun id(string: String) = Identifier.fromNamespaceAndPath("rendertest", string)
+
+    fun stream(string: String) = javaClass.classLoader.getResourceAsStream("assets/rendertest/$string") ?: throw RuntimeException("$string not found.")
 }
