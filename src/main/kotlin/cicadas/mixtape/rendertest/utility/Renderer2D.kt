@@ -29,9 +29,7 @@ object Renderer2D {
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.RECT_PIPELINE) {
             it.setUniform("RectData", rect)
-            it.setVertexBuffer(0, buffer.vertex())
-            it.setIndexBuffer(buffer.index(), buffer.type())
-            it.drawIndexed(0, 0, buffer.count(), 1)
+            buffer.drawIndexed(it)
         }
 
         data.close()
@@ -53,9 +51,7 @@ object Renderer2D {
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.TEXTURE_PIPELINE) {
             it.bindTexture("sampler0", texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
             it.setUniform("RectData", rectData)
-            it.setVertexBuffer(0, buffer.vertex())
-            it.setIndexBuffer(buffer.index(), buffer.type())
-            it.drawIndexed(0, 0, buffer.count(), 1)
+            buffer.drawIndexed(it)
         }
 
         data.close()
@@ -73,9 +69,7 @@ object Renderer2D {
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.MSDF_PIPELINE) {
             it.bindTexture("sampler0", msdf.texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
             it.setUniform("FontData", fontData)
-            it.setVertexBuffer(0, buffer.vertex())
-            it.setIndexBuffer(buffer.index(), buffer.type())
-            it.drawIndexed(0, 0, buffer.count(), 1)
+            buffer.drawIndexed(it)
         }
 
         data.close()

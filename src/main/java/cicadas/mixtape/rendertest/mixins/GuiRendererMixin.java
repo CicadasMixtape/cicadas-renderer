@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GuiRendererMixin {
     @Inject(method = "render", at = @At("TAIL"))
     public void render(GpuBufferSlice gpuBufferSlice, CallbackInfo ci) {
-        RenderManager.INSTANCE.onRender();
+        RenderManager.INSTANCE.onRender2D();
     }
 }

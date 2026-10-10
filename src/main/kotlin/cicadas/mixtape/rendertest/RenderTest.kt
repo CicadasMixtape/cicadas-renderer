@@ -3,6 +3,7 @@ package cicadas.mixtape.rendertest
 import cicadas.mixtape.rendertest.api.init
 import cicadas.mixtape.rendertest.fonts.Fonts
 import cicadas.mixtape.rendertest.shader.Formats
+import cicadas.mixtape.rendertest.shader.Layers
 import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.shader.Snippets
 import net.fabricmc.api.ModInitializer
@@ -16,6 +17,7 @@ object RenderTest : ModInitializer {
         Formats.init()
         Snippets.init()
         Pipelines.init()
+        Layers.init()
         RenderManager.init()
 
         // Нужно чтобы при первой прогрузке мира не загружать шрифты

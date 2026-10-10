@@ -2,6 +2,7 @@ package cicadas.mixtape.rendertest.shader
 
 import cicadas.mixtape.rendertest.RenderTest
 import com.mojang.blaze3d.pipeline.RenderPipeline
+import com.mojang.blaze3d.platform.DepthTestFunction
 import net.minecraft.client.renderer.RenderPipelines
 
 object Pipelines {
@@ -11,6 +12,24 @@ object Pipelines {
             .withLocation("pipeline/rect")
             .withFragmentShader(RenderTest.id("core/rect"))
             .withVertexShader(RenderTest.id("core/rect"))
+            .build()
+    )
+
+    @JvmField
+    val QUAD_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.MATRICES_SNIPPET, RenderPipelines.DEBUG_FILLED_SNIPPET)
+            .withLocation("pipeline/quad")
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withCull(false)
+            .build()
+    )
+
+    @JvmField
+    val LINES_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.MATRICES_SNIPPET, RenderPipelines.LINES_SNIPPET)
+            .withLocation("pipeline/lines")
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withCull(false)
             .build()
     )
 
