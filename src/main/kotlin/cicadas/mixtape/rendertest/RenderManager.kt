@@ -38,10 +38,10 @@ object RenderManager {
             val text = testText()
 
             val font1 = Fonts.BOLD.getFont(20f)
-            Renderer2D.drawFont(font1, text, 400f, 25f + font1.getHeight(), Color.WHITE)
+            Renderer2D.drawText(font1, text, 400f, 25f + font1.getHeight(), Color.WHITE)
 
             val font2 = Fonts.ROUNDED_BOLD.getFont(20f)
-            Renderer2D.drawFont(font2, text, 500f, 25f + font2.getHeight(), Color.WHITE)
+            Renderer2D.drawText(font2, text, 500f, 25f + font2.getHeight(), Color.WHITE)
         }
     }
 
@@ -58,7 +58,7 @@ object RenderManager {
     }
 
     fun testText(): Component {
-        val test = Component.literal("Test\n").withStyle(ChatFormatting.WHITE)
+        val test = Component.literal("White\n").withStyle(ChatFormatting.WHITE)
         val red = Component.literal("Red\n").withStyle(ChatFormatting.RED)
         val green = Component.literal("Green\n").withStyle(ChatFormatting.GREEN)
         val blue = Component.literal("Blue").withStyle(ChatFormatting.BLUE)

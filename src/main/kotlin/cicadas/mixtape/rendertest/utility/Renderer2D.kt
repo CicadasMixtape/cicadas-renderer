@@ -59,7 +59,7 @@ object Renderer2D {
         data.close()
     }
 
-    fun drawFont(font: Font, text: Component, x: Float, y: Float, color: Color) {
+    fun drawText(font: Font, text: Component, x: Float, y: Float, color: Color) {
         val msdf = font.msdf
         val size = font.size
 
