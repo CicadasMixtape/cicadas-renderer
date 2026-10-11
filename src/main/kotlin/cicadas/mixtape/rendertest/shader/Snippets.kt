@@ -29,6 +29,11 @@ object Snippets {
         .buildSnippet()
 
     @JvmField
+    val SQUIRCLE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
+        .withUniform("SquircleData", UniformType.UNIFORM_BUFFER)
+        .buildSnippet()
+
+    @JvmField
     val MSDF_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, DEFAULT_SNIPPET)
         .withSampler("sampler0")
         .withUniform("FontData", UniformType.UNIFORM_BUFFER)

@@ -28,17 +28,27 @@ object RenderManager {
         }
 
         RenderUtility.projection {
-            Renderer2D.drawRoundedRect(25f, 25f, 100f, 100f, 20f, COLOR)
-            Renderer2D.drawRoundedTexture(RenderTest.id("textures/kot.png"), 150f, 25f, 100f, 100f, 20f, Color.WHITE)
-            Renderer2D.drawRoundedBlur(275f, 25f, 100f, 100f, 20f, Color.WHITE)
+            var x = 25f
+            Renderer2D.drawRoundedRect(x, 25f, 100f, 100f, 20f, COLOR)
+
+            x += 125f
+            Renderer2D.drawSquircle(x, 25f, 100f, 100f, 20f, 5f, COLOR)
+
+            x += 125f
+            Renderer2D.drawRoundedTexture(RenderTest.id("textures/kot.png"), x, 25f, 100f, 100f, 20f, Color.WHITE)
+
+            x += 125f
+            Renderer2D.drawRoundedBlur(x, 25f, 100f, 100f, 20f, Color.WHITE)
 
             val text = testText()
-
             val font1 = Fonts.BOLD.getFont(20f)
-            Renderer2D.drawText(font1, text, 400f, 25f + font1.getHeight(), Color.WHITE)
-
             val font2 = Fonts.ROUNDED_BOLD.getFont(20f)
-            Renderer2D.drawText(font2, text, 500f, 25f + font2.getHeight(), Color.WHITE)
+
+            x = 25f
+            Renderer2D.drawText(font1, text, x, 150f + font1.getHeight(), Color.WHITE)
+
+            x += 125f
+            Renderer2D.drawText(font2, text, x, 150f + font2.getHeight(), Color.WHITE)
         }
     }
 

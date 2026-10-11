@@ -44,6 +44,15 @@ object Pipelines {
     )
 
     @JvmField
+    val SQUIRCLE_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.SQUIRCLE_SNIPPET)
+            .withLocation(RenderTest.id("pipeline/squircle"))
+            .withFragmentShader(RenderTest.id("core/squircle"))
+            .withVertexShader(RenderTest.id("core/rect"))
+            .build()
+    )
+
+    @JvmField
     val TEXTURE_PIPELINE = RenderPipelines.register(
         RenderPipeline.builder(Snippets.TEXTURE_SNIPPET)
             .withLocation(RenderTest.id("pipeline/rect"))
