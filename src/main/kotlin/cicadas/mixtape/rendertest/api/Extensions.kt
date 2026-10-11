@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.DynamicUniforms
 import net.minecraft.core.BlockPos
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.joml.Matrix4f
@@ -84,6 +85,15 @@ val AABB.withCamera: AABB get() {
     val camera = mc.gameRenderer.mainCamera.position()
     val min = Vec3(minX - camera.x, minY - camera.y, minZ - camera.z)
     val max = Vec3(maxX - camera.x, maxY - camera.y, maxZ - camera.z)
+    return AABB(min, max)
+}
+
+val Entity.lerpedAABB: AABB get() {
+    val pos = oldPosition().lerp(position(), mc.deltaTracker.getGameTimeDeltaPartialTick(false).toDouble())
+    val width = bbWidth / 2.0
+    val height = bbHeight.toDouble()
+    val min = pos.add(-width, 0.0, -width)
+    val max = pos.add(width, height, width)
     return AABB(min, max)
 }
 

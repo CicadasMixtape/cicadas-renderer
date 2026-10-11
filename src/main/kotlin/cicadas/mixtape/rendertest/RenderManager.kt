@@ -1,5 +1,6 @@
 package cicadas.mixtape.rendertest
 
+import cicadas.mixtape.rendertest.api.lerpedAABB
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.nullCheck
 import cicadas.mixtape.rendertest.api.state
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.screens.LevelLoadingScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.EntityHitResult
 import java.awt.Color
 
 object RenderManager {
@@ -45,12 +47,14 @@ object RenderManager {
 
     fun onRender3D(stack: PoseStack) {
         val result = mc.hitResult ?: return
-
-        if (result is BlockHitResult && !result.blockPos.state.isAir) {
-            val aabb = AABB(result.blockPos)
-            Renderer3D.drawBox(aabb, stack.last().pose(), COLOR.withAlpha(100))
-            Renderer3D.drawOutline(aabb, stack.last().pose(), 3f, COLOR)
+        val aabb = when(result) {
+            is BlockHitResult -> if (result.blockPos.state.isAir) return else AABB(result.blockPos)
+            is EntityHitResult -> result.entity.lerpedAABB
+            else -> return
         }
+
+        Renderer3D.drawBox(aabb, stack.last().pose(), COLOR.withAlpha(100))
+        Renderer3D.drawOutline(aabb, stack.last().pose(), 3f, COLOR)
     }
 
     fun testText(): Component {
