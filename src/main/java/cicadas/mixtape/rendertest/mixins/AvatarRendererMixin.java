@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(AvatarRenderer.class)
 public abstract class AvatarRendererMixin {
     @ModifyExpressionValue(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/rendertype/RenderTypes;entityTranslucent(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;"))
-    public RenderType renderHand(RenderType original, @Local(argsOnly = true) Identifier id) {
+    public RenderType renderHand(RenderType type, @Local(argsOnly = true) Identifier id) {
         return Layers.hands(id);
     }
 }
