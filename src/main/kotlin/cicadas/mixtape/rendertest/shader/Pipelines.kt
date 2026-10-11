@@ -52,4 +52,34 @@ object Pipelines {
             .withSampler("sampler0")
             .build()
     )
+
+    @JvmField
+    val KAWASE_UP_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.KAWASE_SNIPPET)
+            .withLocation("pipeline/kawase_up")
+            .withFragmentShader(RenderTest.id("core/kawase_up"))
+            .withVertexShader(RenderTest.id("core/kawase"))
+            .withSampler("sampler0")
+            .build()
+    )
+
+    @JvmField
+    val KAWASE_DOWN_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.KAWASE_SNIPPET)
+            .withLocation("pipeline/kawase_down")
+            .withFragmentShader(RenderTest.id("core/kawase_down"))
+            .withVertexShader(RenderTest.id("core/kawase"))
+            .withSampler("sampler0")
+            .build()
+    )
+
+    @JvmField
+    val BLUR_RECT_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.MATRICES_SNIPPET, Snippets.RECT_SNIPPET)
+            .withLocation("pipeline/blur_rect")
+            .withFragmentShader(RenderTest.id("core/blur_rect"))
+            .withVertexShader(RenderTest.id("core/rect"))
+            .withSampler("sampler0")
+            .build()
+    )
 }

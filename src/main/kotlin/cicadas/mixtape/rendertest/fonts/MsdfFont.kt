@@ -17,10 +17,11 @@ class MsdfFont private constructor(
     val thickness = 0.05f
 
     companion object {
-        fun build(json: Identifier, png: Identifier): MsdfFont {
-            val stream = mc.resourceManager.open(json)
-            val texture = mc.textureManager.getTexture(png)
-            val data = JSON.decodeFromString<MsdfData>(stream.readAllBytes().decodeToString())
+        fun build(id: Identifier): MsdfFont {
+            val id = id.withPrefix("fonts/")
+            val json = mc.resourceManager.open(id.withSuffix(".json"))
+            val texture = mc.textureManager.getTexture(id.withSuffix(".png"))
+            val data = JSON.decodeFromString<MsdfData>(json.readAllBytes().decodeToString())
             val glyphs = data.glyphs.associate { it.unicode to MsdfGlyph(it, data.atlas.width, data.atlas.height) }
             return MsdfFont(texture, data.atlas, data.metrics, glyphs)
         }

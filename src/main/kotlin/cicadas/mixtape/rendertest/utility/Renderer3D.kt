@@ -1,6 +1,7 @@
 package cicadas.mixtape.rendertest.utility
 
 import cicadas.mixtape.rendertest.api.addLine
+import cicadas.mixtape.rendertest.api.addVertex
 import cicadas.mixtape.rendertest.api.withCamera
 import cicadas.mixtape.rendertest.shader.Layers
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -15,35 +16,35 @@ object Renderer3D {
         val aabb = aabb.withCamera
         val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.minY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.minY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.maxY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.maxY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.minY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.minY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.minZ).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.minY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.minY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.maxY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.maxY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.minY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.minY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.minZ).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.minY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.minY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.maxY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.maxY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.minY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.minY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.minZ).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.minY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.minY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.maxY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.maxY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.minY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.minY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.minY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.minY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.minY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.minY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.minY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.minY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.minY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.minY, aabb.maxZ).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.maxY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.maxY.toFloat(), aabb.minZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.maxX.toFloat(), aabb.maxY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
-        builder.addVertex(matrix4f, aabb.minX.toFloat(), aabb.maxY.toFloat(), aabb.maxZ.toFloat()).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.minZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
+        builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
 
         Layers.QUADS.draw(builder.buildOrThrow())
     }

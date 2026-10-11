@@ -2,16 +2,13 @@
 
 #moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <rendertest:corners.glsl>
+#moj_import <rendertest:rect_data.glsl>
 
 in vec4 vertexColor;
 in vec2 vertexCoord;
 in vec2 vertexSize;
 
 uniform sampler2D sampler0;
-
-layout(std140) uniform RectData {
-    float radius;
-};
 
 out vec4 fragColor;
 

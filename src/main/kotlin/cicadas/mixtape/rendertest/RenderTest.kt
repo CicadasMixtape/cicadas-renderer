@@ -14,15 +14,14 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 
 object RenderTest : ModInitializer {
     override fun onInitialize() {
-        Formats.init()
-        Snippets.init()
-        Pipelines.init()
-        Layers.init()
         RenderManager.init()
 
-        // Нужно чтобы при первой прогрузке мира не загружать шрифты
         // Типо оптимизация
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(id("reloader"),  ResourceManagerReloadListener {
+            Formats.init()
+            Snippets.init()
+            Pipelines.init()
+            Layers.init()
             Fonts.init()
         })
     }

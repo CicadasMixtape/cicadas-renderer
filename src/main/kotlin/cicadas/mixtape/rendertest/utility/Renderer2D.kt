@@ -6,6 +6,8 @@ import cicadas.mixtape.rendertest.shader.uniform.RectUniform
 import cicadas.mixtape.rendertest.api.addVertex
 import cicadas.mixtape.rendertest.api.defaultRenderPass
 import cicadas.mixtape.rendertest.api.mc
+import cicadas.mixtape.rendertest.api.screenSize
+import cicadas.mixtape.rendertest.blur.BlurPass
 import cicadas.mixtape.rendertest.fonts.Font
 import cicadas.mixtape.rendertest.shader.uniform.FontUniform
 import com.mojang.blaze3d.systems.RenderSystem
@@ -25,10 +27,10 @@ object Renderer2D {
 
         val data = builder.buildOrThrow()
         val buffer = CustomBuffer.create(data)
-        val rect = RectUniform.update(radius)
+        val rectData = RectUniform.update(radius, mc.mainRenderTarget.screenSize)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.RECT_PIPELINE) {
-            it.setUniform("RectData", rect)
+            it.setUniform("RectData", rectData)
             buffer.drawIndexed(it)
         }
 
@@ -46,10 +48,10 @@ object Renderer2D {
 
         val data = builder.buildOrThrow()
         val buffer = CustomBuffer.create(data)
-        val rectData = RectUniform.update(radius)
+        val rectData = RectUniform.update(radius, mc.mainRenderTarget.screenSize)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.TEXTURE_PIPELINE) {
-            it.bindTexture("sampler0", texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+            it.bindTexture("sampler0", texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
             it.setUniform("RectData", rectData)
             buffer.drawIndexed(it)
         }
@@ -67,8 +69,29 @@ object Renderer2D {
         val fontData = FontUniform.update(msdf.atlas.distanceRange, msdf.thickness)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.MSDF_PIPELINE) {
-            it.bindTexture("sampler0", msdf.texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+            it.bindTexture("sampler0", msdf.texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
             it.setUniform("FontData", fontData)
+            buffer.drawIndexed(it)
+        }
+
+        data.close()
+    }
+
+    fun drawRoundedBlur(x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
+        val builder = RenderUtility.defaultBegin()
+
+        builder.addVertex(x,         y + height, 0f, 1f, width, height, color.rgb)
+        builder.addVertex(x + width, y + height, 1f, 1f, width, height, color.rgb)
+        builder.addVertex(x + width, y,          1f, 0f, width, height, -1)
+        builder.addVertex(x,         y,          0f, 0f, width, height, -1)
+
+        val data = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(data)
+        val rectData = RectUniform.update(radius, mc.mainRenderTarget.screenSize)
+
+        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.BLUR_RECT_PIPELINE) {
+            it.bindTexture("sampler0", BlurPass.texture(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+            it.setUniform("RectData", rectData)
             buffer.drawIndexed(it)
         }
 
