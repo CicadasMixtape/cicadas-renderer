@@ -46,7 +46,7 @@ object Renderer3D {
         builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
         builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
 
-        Layers.QUADS.draw(builder.buildOrThrow())
+        Layers.quads().draw(builder.buildOrThrow())
     }
 
     fun drawOutline(aabb: AABB, matrix4f: Matrix4f, width: Float, color: Color) {
@@ -65,6 +65,6 @@ object Renderer3D {
             builder.addLine(matrix4f, aabb.minX, y, aabb.maxZ, aabb.minX, y, aabb.minZ, width, color.rgb)
         }
 
-        Layers.LINES.draw(builder.buildOrThrow())
+        Layers.lines().draw(builder.buildOrThrow())
     }
 }

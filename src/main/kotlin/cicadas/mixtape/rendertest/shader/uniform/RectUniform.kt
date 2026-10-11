@@ -5,13 +5,11 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
-import org.joml.Vector2f
 import org.lwjgl.system.MemoryStack
 
 object RectUniform {
     private val SIZE = Std140SizeCalculator()
         .putFloat()
-        .putVec2()
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
@@ -20,11 +18,10 @@ object RectUniform {
         SIZE.toLong()
     )
 
-    fun update(radius: Float, vector2f: Vector2f): GpuBufferSlice {
+    fun update(radius: Float): GpuBufferSlice {
         MemoryStack.stackPush().use {
             val data = Std140Builder.onStack(it, SIZE)
                 .putFloat(radius)
-                .putVec2(vector2f)
                 .get()
 
             RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), data)

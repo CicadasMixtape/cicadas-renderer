@@ -4,9 +4,9 @@
 #moj_import <rendertest:corners.glsl>
 #moj_import <rendertest:rect_data.glsl>
 
-in vec4 vertexColor;
-in vec2 vertexCoord;
 in vec2 vertexSize;
+in vec2 vertexCoord;
+in vec4 vertexColor;
 
 out vec4 fragColor;
 

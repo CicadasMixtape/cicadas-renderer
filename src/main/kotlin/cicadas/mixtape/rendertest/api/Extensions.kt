@@ -28,6 +28,8 @@ fun Any.init() = this
 
 fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
 
+fun Color.toVector4f() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha / 255f)
+
 fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): VertexConsumer {
     val ptr = (this as BufferBuilderAccessor)._beginElement(element)
 
@@ -39,7 +41,10 @@ fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): Ve
     return this
 }
 
-fun VertexConsumer.addVertex(px: Float, py: Float, cx: Float, cy: Float, width: Float, height: Float, color: Int) = addVertex(px, py, 0f).setColor(color).setVec2(Formats.COORD, cx, cy).setVec2(Formats.SIZE, width, height)
+fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, u: Float, v: Float, color: Int) = addVertex(x, y, 0f)
+    .setColor(color)
+    .setVec2(Formats.SIZE, width, height)
+    .setVec2(Formats.COORD, u, v)
 
 fun VertexConsumer.addVertex(matrix4f: Matrix4f, x: Double, y: Double, z: Double) = addVertex(matrix4f, x.toFloat(), y.toFloat(), z.toFloat())
 
@@ -57,8 +62,8 @@ fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Double, y1: Double, z1: Doubl
     y /= len
     z /= len
 
-    addVertex(matrix4f, x1.toFloat(), y1.toFloat(), z1.toFloat()).setNormal(x, y, z).setLineWidth(width).setColor(color)
-    addVertex(matrix4f, x2.toFloat(), y2.toFloat(), z2.toFloat()).setNormal(x, y, z).setLineWidth(width).setColor(color)
+    addVertex(matrix4f, x1, y1, z1).setNormal(x, y, z).setLineWidth(width).setColor(color)
+    addVertex(matrix4f, x2, y2, z2).setNormal(x, y, z).setLineWidth(width).setColor(color)
 }
 
 fun DynamicUniforms.defaultUniforms() = writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())

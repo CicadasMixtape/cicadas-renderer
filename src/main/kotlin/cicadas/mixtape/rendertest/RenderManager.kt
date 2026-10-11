@@ -5,7 +5,6 @@ import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.nullCheck
 import cicadas.mixtape.rendertest.api.state
 import cicadas.mixtape.rendertest.api.withAlpha
-import cicadas.mixtape.rendertest.blur.BlurPass
 import cicadas.mixtape.rendertest.fonts.Fonts
 import cicadas.mixtape.rendertest.utility.RenderUtility
 import cicadas.mixtape.rendertest.utility.Renderer2D
@@ -28,8 +27,6 @@ object RenderManager {
             return
         }
 
-        BlurPass.update()
-
         RenderUtility.projection {
             Renderer2D.drawRoundedRect(25f, 25f, 100f, 100f, 20f, COLOR)
             Renderer2D.drawRoundedTexture(RenderTest.id("textures/kot.png"), 150f, 25f, 100f, 100f, 20f, Color.WHITE)
@@ -47,6 +44,7 @@ object RenderManager {
 
     fun onRender3D(stack: PoseStack) {
         val result = mc.hitResult ?: return
+
         val aabb = when(result) {
             is BlockHitResult -> if (result.blockPos.state.isAir) return else AABB(result.blockPos)
             is EntityHitResult -> result.entity.lerpedAABB

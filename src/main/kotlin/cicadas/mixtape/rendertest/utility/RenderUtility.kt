@@ -1,7 +1,6 @@
 package cicadas.mixtape.rendertest.utility
 
 import cicadas.mixtape.rendertest.api.window
-import cicadas.mixtape.rendertest.shader.Formats
 import com.mojang.blaze3d.ProjectionType
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.Tesselator
@@ -22,5 +21,5 @@ object RenderUtility {
         RenderSystem.setProjectionMatrix(buffer, type)
     }
 
-    fun defaultBegin() = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, Formats.RECT)
+    fun defaultBegin(format: VertexFormat) = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, format)
 }

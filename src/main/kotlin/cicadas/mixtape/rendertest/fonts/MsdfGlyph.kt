@@ -1,6 +1,5 @@
 package cicadas.mixtape.rendertest.fonts
 
-import cicadas.mixtape.rendertest.api.addVertex
 import com.mojang.blaze3d.vertex.BufferBuilder
 import java.awt.Color
 
@@ -38,10 +37,10 @@ class MsdfGlyph(
         val height = height * size
         val y = y - topPosition * size
 
-        builder.addVertex(x,         y,          minU, minV, 0f, 0f, color.rgb)
-        builder.addVertex(x,         y + height, minU, maxV, 0f, 0f, color.rgb)
-        builder.addVertex(x + width, y + height, maxU, maxV, 0f, 0f, color.rgb)
-        builder.addVertex(x + width, y,          maxU, minV, 0f, 0f, color.rgb)
+        builder.addVertex(x,         y,          0f).setUv(minU, minV).setColor(color.rgb)
+        builder.addVertex(x,         y + height, 0f).setUv(minU, maxV).setColor(color.rgb)
+        builder.addVertex(x + width, y + height, 0f).setUv(maxU, maxV).setColor(color.rgb)
+        builder.addVertex(x + width, y,          0f).setUv(maxU, minV).setColor(color.rgb)
 
         return advance * size
     }

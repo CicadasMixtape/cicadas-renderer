@@ -1,6 +1,7 @@
 package cicadas.mixtape.rendertest.mixins;
 
 import cicadas.mixtape.rendertest.RenderManager;
+import cicadas.mixtape.rendertest.blur.BlurPass;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -30,6 +31,11 @@ public abstract class GameRendererMixin {
     @Shadow @Final private CachedPerspectiveProjectionMatrixBuffer hud3dProjectionMatrixBuffer;
     @Shadow protected abstract float getFov(Camera camera, float f, boolean bl);
     @Shadow public abstract Matrix4f getProjectionMatrix(float f);
+
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(FZLorg/joml/Matrix4f;)V", shift = At.Shift.BEFORE))
+    public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
+        BlurPass.INSTANCE.update();
+    }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {

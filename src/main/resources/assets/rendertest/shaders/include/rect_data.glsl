@@ -2,5 +2,4 @@
 
 layout(std140) uniform RectData {
     float radius;
-    vec2 screenSize;
 };

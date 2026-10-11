@@ -2,9 +2,8 @@
 
 #moj_import <minecraft:dynamictransforms.glsl>
 
-in vec4 vertexColor;
 in vec2 vertexCoord;
-in vec2 vertexSize;
+in vec4 vertexColor;
 
 uniform sampler2D sampler0;
 
