@@ -9,8 +9,10 @@
     "AvatarRendererMixin",
     "GameRendererMixin",
     "GuiRendererMixin",
+    "ItemInHandRendererMixin",
     "RenderTypeMixin",
-    "accessors.BufferBuilderAccessor"
+    "accessors.BufferBuilderAccessor",
+    "accessors.ItemStackRenderStateAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

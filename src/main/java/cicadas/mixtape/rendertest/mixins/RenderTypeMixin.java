@@ -31,14 +31,14 @@ public abstract class RenderTypeMixin {
     @Inject(method = "draw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;createRenderPass(Ljava/util/function/Supplier;Lcom/mojang/blaze3d/textures/GpuTextureView;Ljava/util/OptionalInt;Lcom/mojang/blaze3d/textures/GpuTextureView;Ljava/util/OptionalDouble;)Lcom/mojang/blaze3d/systems/RenderPass;", shift = At.Shift.BEFORE))
     public void draw(MeshData meshData, CallbackInfo ci) {
         screenData = ScreenUniform.INSTANCE.update(ExtensionsKt.getScreenSize(Minecraft.getInstance().getMainRenderTarget()));
-        colorData = ColorUniform.INSTANCE.update(ExtensionsKt.toVector4f(new Color(200, 255, 200)));
+        colorData = ColorUniform.INSTANCE.update(ExtensionsKt.toVector4f(new Color(255, 75, 75)));
     }
 
     @WrapOperation(method = "draw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;setPipeline(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)V"))
     public void draw2(RenderPass pass, RenderPipeline pipeline, Operation<Void> original) {
         original.call(pass, pipeline);
 
-        if (pipeline == Pipelines.HAND_PIPELINE) {
+        if (pipeline == Pipelines.HAND_PIPELINE || pipeline == Pipelines.ITEM_PIPELINE) {
             pass.bindTexture("sampler1", BlurPass.INSTANCE.texture(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
             pass.setUniform("ScreenData", screenData);
             pass.setUniform("ColorData", colorData);

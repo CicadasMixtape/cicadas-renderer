@@ -34,21 +34,21 @@ object Pipelines {
     )
 
     @JvmField
-    val BLUR_RECT_PIPELINE = RenderPipelines.register(
-        RenderPipeline.builder(Snippets.TEXTURE_SNIPPET)
-            .withLocation(RenderTest.id("pipeline/blur_rect"))
-            .withFragmentShader(RenderTest.id("core/blur_rect"))
-            .withVertexShader(RenderTest.id("core/rect"))
-            .withUniform("ScreenData", UniformType.UNIFORM_BUFFER)
-            .build()
-    )
-
-    @JvmField
     val SQUIRCLE_PIPELINE = RenderPipelines.register(
         RenderPipeline.builder(Snippets.SQUIRCLE_SNIPPET)
             .withLocation(RenderTest.id("pipeline/squircle"))
             .withFragmentShader(RenderTest.id("core/squircle"))
             .withVertexShader(RenderTest.id("core/rect"))
+            .build()
+    )
+
+    @JvmField
+    val BLUR_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.TEXTURE_SNIPPET)
+            .withLocation(RenderTest.id("pipeline/blur"))
+            .withFragmentShader(RenderTest.id("core/blur"))
+            .withVertexShader(RenderTest.id("core/rect"))
+            .withUniform("ScreenData", UniformType.UNIFORM_BUFFER)
             .build()
     )
 
@@ -90,10 +90,21 @@ object Pipelines {
 
     @JvmField
     val HAND_PIPELINE = RenderPipelines.register(
-        RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, Snippets.HAND_SNIPPET)
+        RenderPipeline.builder(Snippets.HAND_SNIPPET)
             .withLocation(RenderTest.id("pipeline/hand"))
             .withFragmentShader(RenderTest.id("core/hand"))
             .withVertexShader(RenderTest.id("core/hand"))
+            .withCull(false)
+            .build()
+    )
+
+    @JvmField
+    val ITEM_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.HAND_SNIPPET)
+            .withLocation(RenderTest.id("pipeline/item"))
+            .withFragmentShader(RenderTest.id("core/item"))
+            .withVertexShader(RenderTest.id("core/item"))
+            .withCull(true)
             .build()
     )
 }

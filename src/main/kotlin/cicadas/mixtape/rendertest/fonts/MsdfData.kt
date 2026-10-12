@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MsdfData(
+data class MsdfData(
     @SerialName("atlas") val atlas: AtlasData,
     @SerialName("metrics") val metrics: MetricsData,
     @SerialName("glyphs") val glyphs: ArrayList<GlyphData>,

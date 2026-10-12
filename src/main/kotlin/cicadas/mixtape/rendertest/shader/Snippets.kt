@@ -24,13 +24,13 @@ object Snippets {
         .buildSnippet()
 
     @JvmField
-    val TEXTURE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
-        .withSampler("sampler0")
+    val SQUIRCLE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
+        .withUniform("SquircleData", UniformType.UNIFORM_BUFFER)
         .buildSnippet()
 
     @JvmField
-    val SQUIRCLE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
-        .withUniform("SquircleData", UniformType.UNIFORM_BUFFER)
+    val TEXTURE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
+        .withSampler("sampler0")
         .buildSnippet()
 
     @JvmField
@@ -56,6 +56,5 @@ object Snippets {
         .withUniform("ColorData", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS)
         .withBlend(BlendFunction.TRANSLUCENT)
-        .withCull(false)
         .buildSnippet()
 }

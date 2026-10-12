@@ -2,8 +2,12 @@ package cicadas.mixtape.rendertest.api
 
 import cicadas.mixtape.rendertest.shader.Formats
 import cicadas.mixtape.rendertest.mixins.accessors.BufferBuilderAccessor
+import com.github.weisj.jsvg.SVGDocument
+import com.github.weisj.jsvg.view.FloatSize
+import com.github.weisj.jsvg.view.ViewBox
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.pipeline.RenderTarget
+import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
@@ -20,6 +24,8 @@ import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.system.MemoryUtil
 import java.awt.Color
+import java.awt.RenderingHints
+import java.awt.image.BufferedImage
 import java.util.OptionalDouble
 import java.util.OptionalInt
 import kotlin.math.sqrt
@@ -103,3 +109,27 @@ val Entity.lerpedAABB: AABB get() {
 }
 
 val BlockPos.state get() = level.getBlockState(this)
+
+fun SVGDocument.toBuffered(size: FloatSize): BufferedImage {
+    val size = FloatSize(size.width * 2f, size.height * 2f)
+    val image = BufferedImage(size.width.toInt(), size.height.toInt(), BufferedImage.TYPE_INT_ARGB)
+    val graphics = image.createGraphics()
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
+    render(null, graphics, ViewBox(0f, 0f, size.width, size.height))
+    graphics.dispose()
+    return image
+}
+
+fun BufferedImage.toNative(): NativeImage {
+    val nativeImage = NativeImage(width, height, false)
+
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            val color = getRGB(x, y)
+            nativeImage.setPixel(x, y, color)
+        }
+    }
+
+    return nativeImage
+}

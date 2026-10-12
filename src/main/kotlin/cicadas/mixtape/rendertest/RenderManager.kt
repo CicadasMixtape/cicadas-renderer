@@ -6,9 +6,11 @@ import cicadas.mixtape.rendertest.api.nullCheck
 import cicadas.mixtape.rendertest.api.state
 import cicadas.mixtape.rendertest.api.withAlpha
 import cicadas.mixtape.rendertest.fonts.Fonts
+import cicadas.mixtape.rendertest.svg.SVGManager
 import cicadas.mixtape.rendertest.utility.RenderUtility
 import cicadas.mixtape.rendertest.utility.Renderer2D
 import cicadas.mixtape.rendertest.utility.Renderer3D
+import com.github.weisj.jsvg.view.FloatSize
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.LevelLoadingScreen
@@ -39,6 +41,12 @@ object RenderManager {
 
             x += 125f
             Renderer2D.drawRoundedBlur(x, 25f, 100f, 100f, 20f, Color.WHITE)
+
+            val size = FloatSize(100f, 100f)
+            val svg = SVGManager.getTexture(RenderTest.id("vector/cloud.svg"), size)
+
+            x += 125f
+            Renderer2D.drawRoundedTexture(svg, x, 25f, size.width, size.height, 0f, Color.WHITE)
 
             val text = testText()
             val font1 = Fonts.BOLD.getFont(20f)

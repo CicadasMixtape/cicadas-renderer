@@ -1,11 +1,8 @@
 #version 330
 
-#moj_import <minecraft:fog.glsl>
 #moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <rendertest:screen_data.glsl>
 
-in float sphericalVertexDistance;
-in float cylindricalVertexDistance;
 in vec2 vertexCoord;
 in vec4 vertexColor;
 
@@ -19,8 +16,17 @@ layout(std140) uniform ColorData {
 out vec4 fragColor;
 
 void main() {
-    vec4 color = vec4(texture(sampler1, gl_FragCoord.xy / screenSize).rgb, texture(sampler0, vertexCoord).a);
+    vec4 color = vec4(1.0);
+    vec4 color0 = texture(sampler0, vertexCoord);
+    vec4 color1 = texture(sampler1, gl_FragCoord.xy / screenSize);
+
+    if (color0.a < 0.1) {
+        discard;
+    }
+
+    color *= color1;
     color *= tint;
     color *= vertexColor;
-    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+
+    fragColor = color;
 }

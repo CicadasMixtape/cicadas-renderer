@@ -3,7 +3,7 @@ package cicadas.mixtape.rendertest.utility
 import cicadas.mixtape.rendertest.api.addLine
 import cicadas.mixtape.rendertest.api.addVertex
 import cicadas.mixtape.rendertest.api.withCamera
-import cicadas.mixtape.rendertest.shader.Layers
+import cicadas.mixtape.rendertest.shader.Types
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
@@ -46,7 +46,7 @@ object Renderer3D {
         builder.addVertex(matrix4f, aabb.maxX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
         builder.addVertex(matrix4f, aabb.minX, aabb.maxY, aabb.maxZ).setColor(color.rgb)
 
-        Layers.quads().draw(builder.buildOrThrow())
+        Types.quads().draw(builder.buildOrThrow())
     }
 
     fun drawOutline(aabb: AABB, matrix4f: Matrix4f, width: Float, color: Color) {
@@ -65,6 +65,6 @@ object Renderer3D {
             builder.addLine(matrix4f, aabb.minX, y, aabb.maxZ, aabb.minX, y, aabb.minZ, width, color.rgb)
         }
 
-        Layers.lines().draw(builder.buildOrThrow())
+        Types.lines().draw(builder.buildOrThrow())
     }
 }

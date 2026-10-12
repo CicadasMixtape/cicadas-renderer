@@ -35,6 +35,8 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_language_version")}")
+
+    implementation(include("com.github.weisj:jsvg:${project.property("jsvg_version")}")!!)
 }
 
 tasks.processResources {

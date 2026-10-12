@@ -16,6 +16,7 @@ import cicadas.mixtape.rendertest.shader.uniform.SquircleUniform
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import java.awt.Color
@@ -54,7 +55,7 @@ object Renderer2D {
         val rectData = RectUniform.update(radius)
         val screenData = ScreenUniform.update(mc.mainRenderTarget.screenSize)
 
-        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.BLUR_RECT_PIPELINE) {
+        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.BLUR_PIPELINE) {
             it.bindTexture("sampler0", BlurPass.texture(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
             it.setUniform("RectData", rectData)
             it.setUniform("ScreenData", screenData)
@@ -86,8 +87,7 @@ object Renderer2D {
         data.close()
     }
 
-    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val texture = mc.textureManager.getTexture(id)
+    fun drawRoundedTexture(texture: AbstractTexture, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
         val builder = RenderUtility.defaultBegin(Formats.RECT)
 
         builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
@@ -106,6 +106,10 @@ object Renderer2D {
         }
 
         data.close()
+    }
+
+    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
+        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, color)
     }
 
     fun drawText(font: Font, text: Component, x: Float, y: Float, color: Color) {
