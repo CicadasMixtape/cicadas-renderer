@@ -17,19 +17,8 @@ object SVGManager {
     }
 
     fun getTexture(id: Identifier, size: FloatSize): SVGTexture {
-        val texture = textures[id]
-
-        return if (texture != null) {
-            if (texture.size != size) {
-                texture.close()
-                textures.remove(id)
-                createTexture(id, size)
-            }
-
-            texture
-        } else {
-            createTexture(id, size)
-        }
+        val id = id.withSuffix("_${size.width}-${size.height}")
+        return textures[id] ?: createTexture(id, size)
     }
 
     private fun createTexture(id: Identifier, size: FloatSize): SVGTexture {

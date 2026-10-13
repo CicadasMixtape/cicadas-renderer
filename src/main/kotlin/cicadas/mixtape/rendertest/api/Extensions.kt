@@ -11,7 +11,9 @@ import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexConsumer
+import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.DynamicUniforms
 import net.minecraft.core.BlockPos
@@ -35,6 +37,8 @@ fun Any.init() = this
 fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
 
 fun Color.toVector4f() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha / 255f)
+
+fun Tesselator.begin(format: VertexFormat) = begin(VertexFormat.Mode.QUADS, format)
 
 fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): VertexConsumer {
     val ptr = (this as BufferBuilderAccessor)._beginElement(element)

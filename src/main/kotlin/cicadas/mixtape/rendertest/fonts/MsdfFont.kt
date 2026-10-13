@@ -1,8 +1,11 @@
 package cicadas.mixtape.rendertest.fonts
 
 import cicadas.mixtape.rendertest.api.JSON
+import cicadas.mixtape.rendertest.api.begin
 import cicadas.mixtape.rendertest.api.mc
 import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.blaze3d.vertex.Tesselator
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -27,7 +30,8 @@ class MsdfFont private constructor(
         }
     }
 
-    fun applyGlyphs(builder: BufferBuilder, text: Component, size: Float, x: Float, y: Float, color: Color): BufferBuilder {
+    fun applyGlyphs(text: Component, size: Float, x: Float, y: Float, color: Color): BufferBuilder {
+        val builder = Tesselator.getInstance().begin(DefaultVertexFormat.POSITION_TEX_COLOR)
         var offsetX = x
         var offsetY = y
 

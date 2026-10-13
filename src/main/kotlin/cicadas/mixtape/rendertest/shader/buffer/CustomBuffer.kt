@@ -13,13 +13,13 @@ class CustomBuffer private constructor(
     private val count: Int
 ) {
     companion object {
-        fun create(data: MeshData): CustomBuffer {
-            val state = data.drawState()
+        fun create(mesh: MeshData): CustomBuffer {
+            val state = mesh.drawState()
             val format = state.format
             val auto = RenderSystem.getSequentialBuffer(state.mode)
 
             return CustomBuffer(
-                format.uploadImmediateVertexBuffer(data.vertexBuffer()),
+                format.uploadImmediateVertexBuffer(mesh.vertexBuffer()),
                 auto.getBuffer(state.indexCount),
                 auto.type(),
                 state.indexCount

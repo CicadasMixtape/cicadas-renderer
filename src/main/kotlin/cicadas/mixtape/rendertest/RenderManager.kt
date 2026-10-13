@@ -31,32 +31,45 @@ object RenderManager {
 
         RenderUtility.projection {
             var x = 25f
-            Renderer2D.drawRoundedRect(x, 25f, 100f, 100f, 20f, COLOR)
+            var y = 25f
+            Renderer2D.drawRoundedRect(x, y, 100f, 100f, 20f, COLOR)
 
             x += 125f
-            Renderer2D.drawSquircle(x, 25f, 100f, 100f, 20f, 5f, COLOR)
+            Renderer2D.drawSquircle(x, y, 100f, 100f, 20f, 5f, COLOR)
 
             x += 125f
-            Renderer2D.drawRoundedTexture(RenderTest.id("textures/kot.png"), x, 25f, 100f, 100f, 20f, Color.WHITE)
+            Renderer2D.drawRoundedTexture(RenderTest.id("textures/kot.png"), x, y, 100f, 100f, 20f, Color.WHITE)
 
             x += 125f
-            Renderer2D.drawRoundedBlur(x, 25f, 100f, 100f, 20f, Color.WHITE)
+            Renderer2D.drawRoundedBlur(x, y, 100f, 100f, 20f, Color.WHITE)
 
-            val size = FloatSize(100f, 100f)
-            val svg = SVGManager.getTexture(RenderTest.id("vector/cloud.svg"), size)
-
+            val size1 = FloatSize(100f, 100f)
+            val svg1 = SVGManager.getTexture(RenderTest.id("vector/cloud.svg"), size1)
             x += 125f
-            Renderer2D.drawRoundedTexture(svg, x, 25f, size.width, size.height, 0f, Color.WHITE)
+            Renderer2D.drawRoundedTexture(svg1, x, y, size1.width, size1.height, 0f, Color.WHITE)
+
+            val size2 = FloatSize(50f, 50f)
+            val svg2 = SVGManager.getTexture(RenderTest.id("vector/cloud.svg"), size2)
+            x += 25f
+            y += 100f
+            Renderer2D.drawRoundedTexture(svg2, x, y, size2.width, size2.height, 0f, Color.WHITE)
+
+            val size3 = FloatSize(25f, 25f)
+            val svg3 = SVGManager.getTexture(RenderTest.id("vector/cloud.svg"), size3)
+            x += 12.5f
+            y += 62.5f
+            Renderer2D.drawRoundedTexture(svg3, x, y, size3.width, size3.height, 0f, Color.WHITE)
 
             val text = testText()
             val font1 = Fonts.BOLD.getFont(20f)
             val font2 = Fonts.ROUNDED_BOLD.getFont(20f)
 
             x = 25f
-            Renderer2D.drawText(font1, text, x, 150f + font1.getHeight(), Color.WHITE)
+            y = 150f
+            Renderer2D.drawText(font1, text, x, y + font1.getHeight(), Color.WHITE)
 
             x += 125f
-            Renderer2D.drawText(font2, text, x, 150f + font2.getHeight(), Color.WHITE)
+            Renderer2D.drawText(font2, text, x, y + font2.getHeight(), Color.WHITE)
         }
     }
 

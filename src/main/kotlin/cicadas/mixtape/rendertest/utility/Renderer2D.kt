@@ -4,6 +4,7 @@ import cicadas.mixtape.rendertest.shader.buffer.CustomBuffer
 import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.shader.uniform.RectUniform
 import cicadas.mixtape.rendertest.api.addVertex
+import cicadas.mixtape.rendertest.api.begin
 import cicadas.mixtape.rendertest.api.defaultRenderPass
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.screenSize
@@ -15,7 +16,7 @@ import cicadas.mixtape.rendertest.shader.uniform.ScreenUniform
 import cicadas.mixtape.rendertest.shader.uniform.SquircleUniform
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.blaze3d.vertex.Tesselator
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -23,15 +24,15 @@ import java.awt.Color
 
 object Renderer2D {
     fun drawRoundedRect(x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val builder = RenderUtility.defaultBegin(Formats.RECT)
+        val builder = Tesselator.getInstance().begin(Formats.RECT)
 
         builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
         builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
         builder.addVertex(x + width, y,          width, height, 1f, 0f, -1)
         builder.addVertex(x,         y,          width, height, 0f, 0f, -1)
 
-        val data = builder.buildOrThrow()
-        val buffer = CustomBuffer.create(data)
+        val mesh = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(mesh)
         val rectData = RectUniform.update(radius)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.RECT_PIPELINE) {
@@ -39,19 +40,19 @@ object Renderer2D {
             buffer.drawIndexed(it)
         }
 
-        data.close()
+        mesh.close()
     }
 
     fun drawRoundedBlur(x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val builder = RenderUtility.defaultBegin(Formats.RECT)
+        val builder = Tesselator.getInstance().begin(Formats.RECT)
 
         builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
         builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
         builder.addVertex(x + width, y,          width, height, 1f, 0f, -1)
         builder.addVertex(x,         y,          width, height, 0f, 0f, -1)
 
-        val data = builder.buildOrThrow()
-        val buffer = CustomBuffer.create(data)
+        val mesh = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(mesh)
         val rectData = RectUniform.update(radius)
         val screenData = ScreenUniform.update(mc.mainRenderTarget.screenSize)
 
@@ -62,19 +63,19 @@ object Renderer2D {
             buffer.drawIndexed(it)
         }
 
-        data.close()
+        mesh.close()
     }
 
     fun drawSquircle(x: Float, y: Float, width: Float, height: Float, radius: Float, squirt: Float, color: Color) {
-        val builder = RenderUtility.defaultBegin(Formats.RECT)
+        val builder = Tesselator.getInstance().begin(Formats.RECT)
 
         builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
         builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
         builder.addVertex(x + width, y,          width, height, 1f, 0f, -1)
         builder.addVertex(x,         y,          width, height, 0f, 0f, -1)
 
-        val data = builder.buildOrThrow()
-        val buffer = CustomBuffer.create(data)
+        val mesh = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(mesh)
         val rectData = RectUniform.update(radius)
         val squircleData = SquircleUniform.update(squirt)
 
@@ -84,19 +85,23 @@ object Renderer2D {
             buffer.drawIndexed(it)
         }
 
-        data.close()
+        mesh.close()
+    }
+
+    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
+        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, color)
     }
 
     fun drawRoundedTexture(texture: AbstractTexture, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val builder = RenderUtility.defaultBegin(Formats.RECT)
+        val builder = Tesselator.getInstance().begin(Formats.RECT)
 
         builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
         builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
         builder.addVertex(x + width, y,          width, height, 1f, 0f, color.rgb)
         builder.addVertex(x,         y,          width, height, 0f, 0f, color.rgb)
 
-        val data = builder.buildOrThrow()
-        val buffer = CustomBuffer.create(data)
+        val mesh = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(mesh)
         val rectData = RectUniform.update(radius)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.TEXTURE_PIPELINE) {
@@ -105,20 +110,16 @@ object Renderer2D {
             buffer.drawIndexed(it)
         }
 
-        data.close()
-    }
-
-    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, color)
+        mesh.close()
     }
 
     fun drawText(font: Font, text: Component, x: Float, y: Float, color: Color) {
         val msdf = font.msdf
         val size = font.size
 
-        val builder = msdf.applyGlyphs(RenderUtility.defaultBegin(DefaultVertexFormat.POSITION_TEX_COLOR), text, size, x, y,  color)
-        val data = builder.buildOrThrow()
-        val buffer = CustomBuffer.create(data)
+        val builder = msdf.applyGlyphs(text, size, x, y,  color)
+        val mesh = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(mesh)
         val fontData = FontUniform.update(msdf.atlas.distanceRange, msdf.thickness)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.MSDF_PIPELINE) {
@@ -127,6 +128,6 @@ object Renderer2D {
             buffer.drawIndexed(it)
         }
 
-        data.close()
+        mesh.close()
     }
 }
