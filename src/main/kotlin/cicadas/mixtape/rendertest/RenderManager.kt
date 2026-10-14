@@ -1,9 +1,10 @@
 package cicadas.mixtape.rendertest
 
 import cicadas.mixtape.rendertest.api.lerpedAABB
+import cicadas.mixtape.rendertest.api.level
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.nullCheck
-import cicadas.mixtape.rendertest.api.state
+import cicadas.mixtape.rendertest.api.blockState
 import cicadas.mixtape.rendertest.api.withAlpha
 import cicadas.mixtape.rendertest.fonts.Fonts
 import cicadas.mixtape.rendertest.svg.SVGManager
@@ -11,11 +12,9 @@ import cicadas.mixtape.rendertest.utility.RenderUtility
 import cicadas.mixtape.rendertest.utility.Renderer2D
 import cicadas.mixtape.rendertest.utility.Renderer3D
 import com.github.weisj.jsvg.view.FloatSize
-import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.LevelLoadingScreen
 import net.minecraft.network.chat.Component
-import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import java.awt.Color
@@ -32,6 +31,7 @@ object RenderManager {
         RenderUtility.projection {
             var x = 25f
             var y = 25f
+
             Renderer2D.drawRoundedRect(x, y, 100f, 100f, 20f, COLOR)
 
             x += 125f
@@ -73,17 +73,29 @@ object RenderManager {
         }
     }
 
-    fun onRender3D(stack: PoseStack) {
+    fun onRender3D() {
         val result = mc.hitResult ?: return
 
-        val aabb = when(result) {
-            is BlockHitResult -> if (result.blockPos.state.isAir) return else AABB(result.blockPos)
-            is EntityHitResult -> result.entity.lerpedAABB
-            else -> return
-        }
+        when (result) {
+            is BlockHitResult -> {
+                val pos = result.blockPos
+                val state = pos.blockState
+                val shape = state.getShape(level, pos)
 
-        Renderer3D.drawBox(aabb, stack.last().pose(), COLOR.withAlpha(100))
-        Renderer3D.drawOutline(aabb, stack.last().pose(), 3f, COLOR)
+                if (state.isAir) {
+                    return
+                }
+
+                Renderer3D.addVoxelBox(Renderer3D.VoxelBox(pos, shape, COLOR.withAlpha(100)))
+                Renderer3D.addVoxelOutline(Renderer3D.VoxelOutline(pos, shape, COLOR, 3f))
+            }
+
+            is EntityHitResult -> {
+                val aabb = result.entity.lerpedAABB
+                Renderer3D.addDefaultBox(Renderer3D.DefaultBox(aabb, COLOR.withAlpha(100)))
+                Renderer3D.addDefaultOutline(Renderer3D.DefaultOutline(aabb, COLOR, 3f))
+            }
+        }
     }
 
     fun testText(): Component {

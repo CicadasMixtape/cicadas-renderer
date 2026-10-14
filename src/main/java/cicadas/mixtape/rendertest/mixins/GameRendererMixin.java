@@ -2,6 +2,7 @@ package cicadas.mixtape.rendertest.mixins;
 
 import cicadas.mixtape.rendertest.RenderManager;
 import cicadas.mixtape.rendertest.blur.BlurPass;
+import cicadas.mixtape.rendertest.utility.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,7 +39,7 @@ public abstract class GameRendererMixin {
     }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
-    public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
+    public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
         var partial = deltaTracker.getGameTimeDeltaPartialTick(true);
         var projection = getProjectionMatrix(getFov(mainCamera, partial, true));
         var target = minecraft.getMainRenderTarget();
@@ -46,8 +47,15 @@ public abstract class GameRendererMixin {
         stack.mulPose(matrix4f);
 
         RenderSystem.setProjectionMatrix(levelProjectionMatrixBuffer.getBuffer(projection), ProjectionType.PERSPECTIVE);
-        RenderManager.INSTANCE.onRender3D(stack);
+        RenderManager.INSTANCE.onRender3D();
+        Renderer3D.INSTANCE.drawDefaults(stack.last().pose());
+        Renderer3D.INSTANCE.drawVoxels(stack.last().pose());
         RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(target.width, target.height, getFov(mainCamera, partial, false)), ProjectionType.PERSPECTIVE);
+    }
+
+    @Inject(method = "renderLevel", at = @At("TAIL"))
+    public void renderLevel3(DeltaTracker deltaTracker, CallbackInfo ci) {
+        Renderer3D.INSTANCE.clearAll();
     }
 
     @Unique

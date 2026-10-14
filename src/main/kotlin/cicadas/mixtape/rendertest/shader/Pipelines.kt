@@ -21,6 +21,7 @@ object Pipelines {
         RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
             .withLocation(RenderTest.id("pipeline/lines"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withCull(false)
             .build()
     )
 

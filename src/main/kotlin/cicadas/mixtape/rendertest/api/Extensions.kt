@@ -30,15 +30,20 @@ import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.util.OptionalDouble
 import java.util.OptionalInt
-import kotlin.math.sqrt
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 fun Any.init() = this
+
+fun Duration.toFloat(unit: DurationUnit) = toInt(unit).toFloat()
 
 fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
 
 fun Color.toVector4f() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha / 255f)
 
-fun Tesselator.begin(format: VertexFormat) = begin(VertexFormat.Mode.QUADS, format)
+fun Tesselator.beginQuads(format: VertexFormat) = begin(VertexFormat.Mode.QUADS, format)
+
+fun Tesselator.beginLines(format: VertexFormat) = begin(VertexFormat.Mode.LINES, format)
 
 fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): VertexConsumer {
     val ptr = (this as BufferBuilderAccessor)._beginElement(element)
@@ -51,29 +56,13 @@ fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): Ve
     return this
 }
 
-fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, u: Float, v: Float, color: Int) = addVertex(x, y, 0f)
-    .setColor(color)
-    .setVec2(Formats.SIZE, width, height)
-    .setVec2(Formats.COORD, u, v)
+fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, u: Float, v: Float) = addVertex(x, y, 0f).setVec2(Formats.SIZE, width, height).setVec2(Formats.COORD, u, v)
 
-fun VertexConsumer.addVertex(matrix4f: Matrix4f, x: Double, y: Double, z: Double) = addVertex(matrix4f, x.toFloat(), y.toFloat(), z.toFloat())
-
-fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Double, y1: Double, z1: Double, x2: Double, y2: Double, z2: Double, width: Float, color: Int) {
-    var x = (x2 - x1).toFloat()
-    var y = (y2 - y1).toFloat()
-    var z = (z2 - z1).toFloat()
-    val len = sqrt(x * x + y * y + z * z)
-
-    if (len == 0f) {
-        return
-    }
-
-    x /= len
-    y /= len
-    z /= len
-
-    addVertex(matrix4f, x1, y1, z1).setNormal(x, y, z).setLineWidth(width).setColor(color)
-    addVertex(matrix4f, x2, y2, z2).setNormal(x, y, z).setLineWidth(width).setColor(color)
+fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float, color: Int, lineWidth: Float): VertexConsumer {
+    val normal = Vector3f(x2 - x1, y2 - y1, z1 - z2).normalize()
+    addVertex(matrix4f, x1, y1, z1).setNormal(normal.x, normal.y, normal.z).setColor(color).setLineWidth(lineWidth)
+    addVertex(matrix4f, x2, y2, z2).setNormal(normal.x, normal.y, normal.z).setColor(color).setLineWidth(lineWidth)
+    return this
 }
 
 fun DynamicUniforms.defaultUniforms() = writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
@@ -112,7 +101,7 @@ val Entity.lerpedAABB: AABB get() {
     return AABB(min, max)
 }
 
-val BlockPos.state get() = level.getBlockState(this)
+val BlockPos.blockState get() = level.getBlockState(this)
 
 fun SVGDocument.toBuffered(size: FloatSize): BufferedImage {
     val size = FloatSize(size.width * 2f, size.height * 2f)

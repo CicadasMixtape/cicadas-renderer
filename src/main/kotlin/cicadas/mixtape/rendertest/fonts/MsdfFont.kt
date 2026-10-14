@@ -1,7 +1,7 @@
 package cicadas.mixtape.rendertest.fonts
 
 import cicadas.mixtape.rendertest.api.JSON
-import cicadas.mixtape.rendertest.api.begin
+import cicadas.mixtape.rendertest.api.beginQuads
 import cicadas.mixtape.rendertest.api.mc
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -31,7 +31,7 @@ class MsdfFont private constructor(
     }
 
     fun applyGlyphs(text: Component, size: Float, x: Float, y: Float, color: Color): BufferBuilder {
-        val builder = Tesselator.getInstance().begin(DefaultVertexFormat.POSITION_TEX_COLOR)
+        val builder = Tesselator.getInstance().beginQuads(DefaultVertexFormat.POSITION_TEX_COLOR)
         var offsetX = x
         var offsetY = y
 

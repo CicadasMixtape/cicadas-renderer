@@ -4,7 +4,7 @@ import cicadas.mixtape.rendertest.shader.buffer.CustomBuffer
 import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.shader.uniform.RectUniform
 import cicadas.mixtape.rendertest.api.addVertex
-import cicadas.mixtape.rendertest.api.begin
+import cicadas.mixtape.rendertest.api.beginQuads
 import cicadas.mixtape.rendertest.api.defaultRenderPass
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.screenSize
@@ -24,12 +24,12 @@ import java.awt.Color
 
 object Renderer2D {
     fun drawRoundedRect(x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val builder = Tesselator.getInstance().begin(Formats.RECT)
+        val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, -1)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, -1)
+        builder.addVertex(x,         y + height, width, height, 0f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y + height, width, height, 1f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y,          width, height, 1f, 0f).setColor(-1)
+        builder.addVertex(x,         y,          width, height, 0f, 0f).setColor(-1)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
@@ -44,12 +44,12 @@ object Renderer2D {
     }
 
     fun drawRoundedBlur(x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val builder = Tesselator.getInstance().begin(Formats.RECT)
+        val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, -1)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, -1)
+        builder.addVertex(x,         y + height, width, height, 0f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y + height, width, height, 1f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y,          width, height, 1f, 0f).setColor(-1)
+        builder.addVertex(x,         y,          width, height, 0f, 0f).setColor(-1)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
@@ -67,12 +67,12 @@ object Renderer2D {
     }
 
     fun drawSquircle(x: Float, y: Float, width: Float, height: Float, radius: Float, squirt: Float, color: Color) {
-        val builder = Tesselator.getInstance().begin(Formats.RECT)
+        val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, -1)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, -1)
+        builder.addVertex(x,         y + height, width, height, 0f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y + height, width, height, 1f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y,          width, height, 1f, 0f).setColor(-1)
+        builder.addVertex(x,         y,          width, height, 0f, 0f).setColor(-1)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
@@ -93,12 +93,12 @@ object Renderer2D {
     }
 
     fun drawRoundedTexture(texture: AbstractTexture, x: Float, y: Float, width: Float, height: Float, radius: Float, color: Color) {
-        val builder = Tesselator.getInstance().begin(Formats.RECT)
+        val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, color.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, color.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, color.rgb)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, color.rgb)
+        builder.addVertex(x,         y + height, width, height, 0f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y + height, width, height, 1f, 1f).setColor(color.rgb)
+        builder.addVertex(x + width, y,          width, height, 1f, 0f).setColor(color.rgb)
+        builder.addVertex(x,         y,          width, height, 0f, 0f).setColor(color.rgb)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
