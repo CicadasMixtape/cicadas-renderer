@@ -49,8 +49,8 @@ object Snippets {
 
     @JvmField
     val HAND_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
-        .withSampler("sampler0")
-        .withSampler("sampler1")
+        .withSampler("Sampler0")
+        .withSampler("Sampler3")
         .withUniform("ScreenData", UniformType.UNIFORM_BUFFER)
         .withUniform("ColorData", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS)

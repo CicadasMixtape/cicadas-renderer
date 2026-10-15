@@ -3,6 +3,7 @@ package cicadas.mixtape.rendertest.mixins;
 import cicadas.mixtape.rendertest.RenderManager;
 import cicadas.mixtape.rendertest.api.ExtensionsKt;
 import cicadas.mixtape.rendertest.blur.BlurPass;
+import cicadas.mixtape.rendertest.shader.Hands;
 import cicadas.mixtape.rendertest.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
@@ -42,10 +43,16 @@ public abstract class GameRendererMixin {
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(FZLorg/joml/Matrix4f;)V", shift = At.Shift.BEFORE))
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
         BlurPass.INSTANCE.update();
+        Hands.INSTANCE.setToggled(true);
+    }
+
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(FZLorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
+    public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci) {
+        Hands.INSTANCE.setToggled(false);
     }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
-    public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
+    public void renderLevel3(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
         var partialTicks = ExtensionsKt.getPartialTicks(deltaTracker);
         var projection = getProjectionMatrix(getFov(mainCamera, partialTicks, true));
         var stack = bob(new PoseStack());

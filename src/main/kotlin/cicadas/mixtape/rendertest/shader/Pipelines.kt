@@ -98,14 +98,4 @@ object Pipelines {
             .withCull(false)
             .build()
     )
-
-    @JvmField
-    val ITEM_PIPELINE = RenderPipelines.register(
-        RenderPipeline.builder(Snippets.HAND_SNIPPET)
-            .withLocation(RenderTest.id("pipeline/item"))
-            .withFragmentShader(RenderTest.id("core/hand"))
-            .withVertexShader(RenderTest.id("core/hand"))
-            .withCull(true)
-            .build()
-    )
 }

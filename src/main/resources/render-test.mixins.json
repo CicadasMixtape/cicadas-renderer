@@ -6,13 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "AvatarRendererMixin",
-    "BlockModelWrapperMixin",
     "GameRendererMixin",
     "LevelRendererMixin",
-    "PlayerHeadSpecialRendererMixin",
     "RenderTypeMixin",
-    "ShieldSpecialRendererMixin",
     "accessors.BufferBuilderAccessor"
   ],
   "injectors": {
