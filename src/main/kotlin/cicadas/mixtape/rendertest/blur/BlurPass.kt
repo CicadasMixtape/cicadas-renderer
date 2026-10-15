@@ -17,11 +17,9 @@ object BlurPass {
     fun texture() = targets.first().colorTextureView
 
     fun update() {
-        val mainTarget = mc.mainRenderTarget
-
         targets.forEachIndexed { i, target ->
-            val width = maxOf(1, mainTarget.width shr (i + 1))
-            val height = maxOf(1, mainTarget.height shr (i + 1))
+            val width = maxOf(1, mc.mainRenderTarget.width shr (i + 1))
+            val height = maxOf(1, mc.mainRenderTarget.height shr (i + 1))
 
             if (target.width != width || target.height != height) {
                 target.resize(width, height)
@@ -31,11 +29,15 @@ object BlurPass {
         val sampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR)
 
         for (i in targets.indices) {
-            createPass(Pipelines.KAWASE_DOWN_PIPELINE, if (i == 0) mainTarget else targets[i - 1], targets[i], sampler)
+            val src = if (i == 0) mc.mainRenderTarget else targets[i - 1]
+            val dst = targets[i]
+            createPass(Pipelines.KAWASE_DOWN_PIPELINE, src, dst, sampler)
         }
 
         for (i in targets.lastIndex downTo 1) {
-            createPass(Pipelines.KAWASE_UP_PIPELINE, targets[i], targets[i - 1], sampler)
+            val src = targets[i]
+            val dst = targets[i - 1]
+            createPass(Pipelines.KAWASE_UP_PIPELINE, src, dst, sampler)
         }
     }
 

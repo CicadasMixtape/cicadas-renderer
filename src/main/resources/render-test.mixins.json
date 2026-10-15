@@ -9,7 +9,7 @@
     "AvatarRendererMixin",
     "BlockModelWrapperMixin",
     "GameRendererMixin",
-    "GuiRendererMixin",
+    "LevelRendererMixin",
     "PlayerHeadSpecialRendererMixin",
     "RenderTypeMixin",
     "ShieldSpecialRendererMixin",

@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.utility
+package cicadas.mixtape.rendertest.utility.math
 
 import kotlin.time.Duration
 import kotlin.time.DurationUnit

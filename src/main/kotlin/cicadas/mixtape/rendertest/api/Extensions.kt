@@ -15,6 +15,7 @@ import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.renderer.DynamicUniforms
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
@@ -45,6 +46,16 @@ fun Tesselator.beginQuads(format: VertexFormat) = begin(VertexFormat.Mode.QUADS,
 
 fun Tesselator.beginLines(format: VertexFormat) = begin(VertexFormat.Mode.LINES, format)
 
+fun VertexConsumer.setFloat(element: VertexFormatElement, a: Float): VertexConsumer {
+    val ptr = (this as BufferBuilderAccessor)._beginElement(element)
+
+    if (ptr != -1L) {
+        MemoryUtil.memPutFloat(ptr, a)
+    }
+
+    return this
+}
+
 fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): VertexConsumer {
     val ptr = (this as BufferBuilderAccessor)._beginElement(element)
 
@@ -56,7 +67,10 @@ fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): Ve
     return this
 }
 
-fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, u: Float, v: Float) = addVertex(x, y, 0f).setVec2(Formats.SIZE, width, height).setVec2(Formats.COORD, u, v)
+fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, u: Float, v: Float, radius: Float) = addVertex(x, y, 0f)
+    .setVec2(Formats.SIZE, width, height)
+    .setVec2(Formats.COORD, u, v)
+    .setFloat(Formats.RADIUS, radius)
 
 fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float, color: Int, lineWidth: Float): VertexConsumer {
     val normal = Vector3f(x2 - x1, y2 - y1, z1 - z2).normalize()
@@ -85,15 +99,17 @@ fun CommandEncoder.defaultRenderPass(pipeline: RenderPipeline, unit: (RenderPass
 
 val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
 
+val DeltaTracker.partialTicks get() = getGameTimeDeltaPartialTick(false)
+
 val AABB.withCamera: AABB get() {
     val camera = mc.gameRenderer.mainCamera.position()
-    val min = Vec3(minX - camera.x, minY - camera.y, minZ - camera.z)
-    val max = Vec3(maxX - camera.x, maxY - camera.y, maxZ - camera.z)
+    val min = Vec3(minX, minY, minZ).subtract(camera)
+    val max = Vec3(maxX, maxY, maxZ).subtract(camera)
     return AABB(min, max)
 }
 
 val Entity.lerpedAABB: AABB get() {
-    val pos = oldPosition().lerp(position(), mc.deltaTracker.getGameTimeDeltaPartialTick(false).toDouble())
+    val pos = oldPosition().lerp(position(), mc.deltaTracker.partialTicks.toDouble())
     val width = bbWidth / 2.0
     val height = bbHeight.toDouble()
     val min = pos.add(-width, 0.0, -width)
@@ -102,6 +118,8 @@ val Entity.lerpedAABB: AABB get() {
 }
 
 val BlockPos.blockState get() = level.getBlockState(this)
+
+val BlockPos.aabb get() = AABB(this)
 
 fun SVGDocument.toBuffered(size: FloatSize): BufferedImage {
     val size = FloatSize(size.width * 2f, size.height * 2f)

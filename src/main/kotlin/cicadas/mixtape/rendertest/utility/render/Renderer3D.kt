@@ -1,39 +1,66 @@
-package cicadas.mixtape.rendertest.utility
+package cicadas.mixtape.rendertest.utility.render
 
+import cicadas.mixtape.rendertest.api.aabb
 import cicadas.mixtape.rendertest.api.addLine
 import cicadas.mixtape.rendertest.api.beginLines
 import cicadas.mixtape.rendertest.api.beginQuads
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.withCamera
+import cicadas.mixtape.rendertest.interfaces.ILevelRenderer
+import cicadas.mixtape.rendertest.objects.DefaultBox
+import cicadas.mixtape.rendertest.objects.DefaultOutline
+import cicadas.mixtape.rendertest.objects.VoxelBox
+import cicadas.mixtape.rendertest.objects.VoxelOutline
 import cicadas.mixtape.rendertest.shader.Types
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
-import net.minecraft.core.BlockPos
-import net.minecraft.world.phys.AABB
-import net.minecraft.world.phys.shapes.VoxelShape
 import org.joml.Matrix4f
-import java.awt.Color
 
 object Renderer3D {
     private val defaultBoxes = arrayListOf<DefaultBox>()
     private val defaultOutlines = arrayListOf<DefaultOutline>()
     private val voxelBoxes = arrayListOf<VoxelBox>()
     private val voxelOutlines = arrayListOf<VoxelOutline>()
+    private val frustum get() = (mc.levelRenderer as ILevelRenderer).`rendertest$getFrustum`()
 
     fun addDefaultBox(box: DefaultBox) {
+        if (frustum?.isVisible(box.aabb) == false) {
+            return
+        }
+
         defaultBoxes.add(box)
     }
 
     fun addDefaultOutline(outline: DefaultOutline) {
+        if (frustum?.isVisible(outline.aabb) == false) {
+            return
+        }
+
         defaultOutlines.add(outline)
     }
 
     fun addVoxelBox(box: VoxelBox) {
+        if (frustum?.isVisible(box.pos.aabb) == false) {
+            return
+        }
+
+        if (box.shape.isEmpty) {
+            return
+        }
+
         voxelBoxes.add(box)
     }
 
     fun addVoxelOutline(outline: VoxelOutline) {
+        if (frustum?.isVisible(outline.pos.aabb) == false) {
+            return
+        }
+
+        if (outline.shape.isEmpty) {
+            return
+        }
+
         voxelOutlines.add(outline)
     }
 
@@ -219,28 +246,4 @@ object Renderer3D {
         voxelBoxes.clear()
         voxelOutlines.clear()
     }
-
-    data class DefaultBox(
-        val aabb: AABB,
-        val color: Color
-    )
-
-    data class DefaultOutline(
-        val aabb: AABB,
-        val color: Color,
-        val lineWidth: Float = 1f
-    )
-
-    data class VoxelBox(
-        val pos: BlockPos,
-        val shape: VoxelShape,
-        val color: Color
-    )
-
-    data class VoxelOutline(
-        val pos: BlockPos,
-        val shape: VoxelShape,
-        val color: Color,
-        val lineWidth: Float = 1f
-    )
 }

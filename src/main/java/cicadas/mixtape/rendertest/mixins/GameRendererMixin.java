@@ -1,8 +1,9 @@
 package cicadas.mixtape.rendertest.mixins;
 
 import cicadas.mixtape.rendertest.RenderManager;
+import cicadas.mixtape.rendertest.api.ExtensionsKt;
 import cicadas.mixtape.rendertest.blur.BlurPass;
-import cicadas.mixtape.rendertest.utility.Renderer3D;
+import cicadas.mixtape.rendertest.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -33,6 +34,11 @@ public abstract class GameRendererMixin {
     @Shadow protected abstract float getFov(Camera camera, float f, boolean bl);
     @Shadow public abstract Matrix4f getProjectionMatrix(float f);
 
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
+    public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+        RenderManager.INSTANCE.onRender2D();
+    }
+
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(FZLorg/joml/Matrix4f;)V", shift = At.Shift.BEFORE))
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
         BlurPass.INSTANCE.update();
@@ -40,9 +46,8 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
     public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
-        var partial = deltaTracker.getGameTimeDeltaPartialTick(true);
-        var projection = getProjectionMatrix(getFov(mainCamera, partial, true));
-        var target = minecraft.getMainRenderTarget();
+        var partialTicks = ExtensionsKt.getPartialTicks(deltaTracker);
+        var projection = getProjectionMatrix(getFov(mainCamera, partialTicks, true));
         var stack = bob(new PoseStack());
         stack.mulPose(matrix4f);
 
@@ -50,7 +55,7 @@ public abstract class GameRendererMixin {
         RenderManager.INSTANCE.onRender3D();
         Renderer3D.INSTANCE.drawDefaults(stack.last().pose());
         Renderer3D.INSTANCE.drawVoxels(stack.last().pose());
-        RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(target.width, target.height, getFov(mainCamera, partial, false)), ProjectionType.PERSPECTIVE);
+        RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(minecraft.getMainRenderTarget().width, minecraft.getMainRenderTarget().height, getFov(mainCamera, partialTicks, false)), ProjectionType.PERSPECTIVE);
     }
 
     @Inject(method = "renderLevel", at = @At("TAIL"))

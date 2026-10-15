@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.utility
+package cicadas.mixtape.rendertest.utility.render
 
 import cicadas.mixtape.rendertest.api.window
 import com.mojang.blaze3d.ProjectionType

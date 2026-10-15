@@ -18,7 +18,6 @@ object Snippets {
 
     @JvmField
     val RECT_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, DEFAULT_SNIPPET)
-        .withUniform("RectData", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(Formats.RECT, VertexFormat.Mode.QUADS)
         .withBlend(BlendFunction.TRANSLUCENT)
         .buildSnippet()
