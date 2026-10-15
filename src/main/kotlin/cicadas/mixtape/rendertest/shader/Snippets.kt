@@ -48,7 +48,7 @@ object Snippets {
         .buildSnippet()
 
     @JvmField
-    val HAND_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+    val ENTITY_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
         .withSampler("Sampler0")
         .withSampler("Sampler3")
         .withUniform("ScreenData", UniformType.UNIFORM_BUFFER)

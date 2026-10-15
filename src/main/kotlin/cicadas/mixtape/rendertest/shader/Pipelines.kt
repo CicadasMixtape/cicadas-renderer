@@ -90,11 +90,11 @@ object Pipelines {
     )
 
     @JvmField
-    val HAND_PIPELINE = RenderPipelines.register(
-        RenderPipeline.builder(Snippets.HAND_SNIPPET)
-            .withLocation(RenderTest.id("pipeline/hand"))
-            .withFragmentShader(RenderTest.id("core/hand"))
-            .withVertexShader(RenderTest.id("core/hand"))
+    val ENTITY_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.ENTITY_SNIPPET)
+            .withLocation(RenderTest.id("pipeline/entity"))
+            .withFragmentShader(RenderTest.id("core/entity"))
+            .withVertexShader(RenderTest.id("core/entity"))
             .withCull(false)
             .build()
     )

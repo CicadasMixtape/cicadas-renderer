@@ -27,6 +27,7 @@ import java.awt.*;
 
 @Mixin(RenderType.class)
 public abstract class RenderTypeMixin {
+    @Unique private RenderPipeline currentPipeline;
     @Unique private GpuBufferSlice screenData;
     @Unique private GpuBufferSlice colorData;
 
@@ -37,14 +38,16 @@ public abstract class RenderTypeMixin {
     }
 
     @ModifyArg(method = "draw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;setPipeline(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)V"))
-    public RenderPipeline draw2(RenderPipeline pipeline, @Local RenderPass pass) {
-        if (Hands.INSTANCE.getToggled() && pipeline.getVertexFormat() == DefaultVertexFormat.NEW_ENTITY) {
+    public RenderPipeline draw2(RenderPipeline pipeline) {
+        return currentPipeline = Hands.INSTANCE.getToggled() && pipeline.getVertexFormat() == DefaultVertexFormat.NEW_ENTITY ? Pipelines.ENTITY_PIPELINE : pipeline;
+    }
+
+    @Inject(method = "draw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;setPipeline(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)V", shift = At.Shift.AFTER))
+    public void draw3(MeshData meshData, CallbackInfo ci, @Local RenderPass pass) {
+        if (currentPipeline == Pipelines.ENTITY_PIPELINE) {
             pass.bindTexture("Sampler3", BlurPass.INSTANCE.texture(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
             pass.setUniform("ScreenData", screenData);
             pass.setUniform("ColorData", colorData);
-            return Pipelines.HAND_PIPELINE;
         }
-
-        return pipeline;
     }
 }

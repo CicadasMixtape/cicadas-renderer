@@ -21,6 +21,7 @@ import com.github.weisj.jsvg.view.FloatSize
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.screens.LevelLoadingScreen
 import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import java.awt.Color
@@ -85,7 +86,13 @@ object RenderManager {
             }
 
             is EntityHitResult -> {
-                val aabb = result.entity.lerpedAABB
+                val entity = result.entity
+
+                if (entity is EndCrystal) {
+                    return
+                }
+
+                val aabb = entity.lerpedAABB
                 Renderer3D.addDefaultBox(DefaultBox(aabb, COLOR.withAlpha(100)))
                 Renderer3D.addDefaultOutline(DefaultOutline(aabb, COLOR, 3f))
             }
