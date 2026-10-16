@@ -45,7 +45,7 @@ public abstract class RenderTypeMixin {
     @Inject(method = "draw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;setPipeline(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)V", shift = At.Shift.AFTER))
     public void draw3(MeshData meshData, CallbackInfo ci, @Local RenderPass pass) {
         if (currentPipeline == Pipelines.ENTITY_PIPELINE) {
-            pass.bindTexture("Sampler3", BlurPass.INSTANCE.texture(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+            pass.bindTexture("Sampler3", BlurPass.INSTANCE.target().getColorTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
             pass.setUniform("ScreenData", screenData);
             pass.setUniform("ColorData", colorData);
         }

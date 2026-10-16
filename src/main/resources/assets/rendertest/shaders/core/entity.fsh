@@ -26,7 +26,6 @@ void main() {
 
     color *= color1;
     color *= tint;
-    color *= vertexColor;
 
     fragColor = color;
 }

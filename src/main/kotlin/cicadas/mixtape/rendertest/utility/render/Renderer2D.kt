@@ -75,7 +75,7 @@ object Renderer2D {
         val screenData = ScreenUniform.update(mc.mainRenderTarget.screenSize)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.BLUR_PIPELINE) {
-            it.bindTexture("sampler0", BlurPass.texture(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+            it.bindTexture("sampler0", BlurPass.target().colorTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
             it.setUniform("ScreenData", screenData)
             buffer.drawIndexed(it)
         }

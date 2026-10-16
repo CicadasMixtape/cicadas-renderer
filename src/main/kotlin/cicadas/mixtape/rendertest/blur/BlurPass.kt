@@ -14,7 +14,7 @@ import java.util.OptionalInt
 object BlurPass {
     private val targets = List(4) { BlurTarget() }
 
-    fun texture() = targets.first().colorTextureView
+    fun target() = targets.first()
 
     fun update() {
         targets.forEachIndexed { i, target ->
