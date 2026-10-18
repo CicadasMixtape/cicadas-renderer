@@ -6,7 +6,7 @@ import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.nullCheck
 import cicadas.mixtape.rendertest.api.blockState
 import cicadas.mixtape.rendertest.api.withAlpha
-import cicadas.mixtape.rendertest.fonts.Fonts
+import cicadas.mixtape.rendertest.font.Fonts
 import cicadas.mixtape.rendertest.objects.DefaultBox
 import cicadas.mixtape.rendertest.objects.DefaultOutline
 import cicadas.mixtape.rendertest.objects.Gradient

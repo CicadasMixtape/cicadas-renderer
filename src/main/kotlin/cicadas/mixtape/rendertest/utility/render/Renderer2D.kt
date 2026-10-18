@@ -4,14 +4,14 @@ import cicadas.mixtape.rendertest.shader.buffer.CustomBuffer
 import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.api.addVertex
 import cicadas.mixtape.rendertest.api.beginQuads
-import cicadas.mixtape.rendertest.api.defaultRenderPass
+import cicadas.mixtape.rendertest.api.createRenderPass
 import cicadas.mixtape.rendertest.api.mainTarget
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.screenSize
 import cicadas.mixtape.rendertest.api.setLinear
 import cicadas.mixtape.rendertest.api.setNearest
-import cicadas.mixtape.rendertest.passes.KawasePass
-import cicadas.mixtape.rendertest.fonts.Font
+import cicadas.mixtape.rendertest.pass.KawasePass
+import cicadas.mixtape.rendertest.font.Font
 import cicadas.mixtape.rendertest.objects.Gradient
 import cicadas.mixtape.rendertest.objects.Radius
 import cicadas.mixtape.rendertest.shader.Formats
@@ -37,7 +37,7 @@ object Renderer2D {
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
 
-        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.RECT_PIPELINE) {
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.RECT_PIPELINE) {
             buffer.drawIndexed(it)
         }
 
@@ -56,7 +56,7 @@ object Renderer2D {
         val buffer = CustomBuffer.create(mesh)
         val squircleUniform = SquircleUniform.update(squirt)
 
-        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.SQUIRCLE_PIPELINE) {
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.SQUIRCLE_PIPELINE) {
             it.setUniform("Squircle", squircleUniform)
             buffer.drawIndexed(it)
         }
@@ -76,7 +76,7 @@ object Renderer2D {
         val buffer = CustomBuffer.create(mesh)
         val screenUniform = ScreenUniform.update(mainTarget.screenSize)
 
-        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.BLUR_PIPELINE) {
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.BLUR_PIPELINE) {
             it.setLinear("Sampler0", KawasePass.target().colorTextureView)
             it.setUniform("Screen", screenUniform)
             buffer.drawIndexed(it)
@@ -100,7 +100,7 @@ object Renderer2D {
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
 
-        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.TEXTURE_PIPELINE) {
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.TEXTURE_PIPELINE) {
             it.setNearest("Sampler0", texture.textureView)
             buffer.drawIndexed(it)
         }
@@ -117,7 +117,7 @@ object Renderer2D {
         val buffer = CustomBuffer.create(mesh)
         val fontUniform = MsdfUniform.update(msdf.atlas.distanceRange, msdf.thickness)
 
-        RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.MSDF_PIPELINE) {
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.MSDF_PIPELINE) {
             it.setNearest("Sampler0", msdf.texture.textureView)
             it.setUniform("Msdf", fontUniform)
             buffer.drawIndexed(it)

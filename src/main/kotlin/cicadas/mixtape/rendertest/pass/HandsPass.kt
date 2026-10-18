@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.passes
+package cicadas.mixtape.rendertest.pass
 
 import cicadas.mixtape.rendertest.api.clearColorAndDepth
 import cicadas.mixtape.rendertest.api.createRenderPass
@@ -9,7 +9,7 @@ import cicadas.mixtape.rendertest.api.withAlpha
 import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.shader.uniform.HandsUniform
 import cicadas.mixtape.rendertest.shader.uniform.ScreenUniform
-import cicadas.mixtape.rendertest.targets.HandsTarget
+import cicadas.mixtape.rendertest.target.HandsTarget
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
 import java.awt.Color

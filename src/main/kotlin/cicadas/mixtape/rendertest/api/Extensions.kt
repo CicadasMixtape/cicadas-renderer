@@ -5,6 +5,7 @@ import cicadas.mixtape.rendertest.mixins.accessors.BufferBuilderAccessor
 import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.view.FloatSize
 import com.github.weisj.jsvg.view.ViewBox
+import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.platform.NativeImage
@@ -18,7 +19,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.DeltaTracker
-import net.minecraft.client.renderer.DynamicUniforms
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.AABB
@@ -81,25 +81,17 @@ fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, 
     return this
 }
 
-fun DynamicUniforms.defaultUniforms() = writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
-
-fun CommandEncoder.defaultRenderPass(pipeline: RenderPipeline, unit: (RenderPass) -> Unit) {
-    val transforms = RenderSystem.getDynamicUniforms().defaultUniforms()
-
-    createRenderPass(mainTarget, pipeline) {
-        RenderSystem.bindDefaultUniforms(it)
-        it.setUniform("DynamicTransforms", transforms)
-        unit(it)
-    }
-}
-
 fun CommandEncoder.createRenderPass(target: RenderTarget, pipeline: RenderPipeline, unit: (RenderPass) -> Unit) {
+    val transforms = RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
+    val projection = RenderSystem.getProjectionMatrixBuffer()
+
     createRenderPass(
         { "rendertest-pass" },
         target.colorTextureView!!, OptionalInt.empty(),
         target.depthTextureView, OptionalDouble.empty()
     ).use {
         it.setPipeline(pipeline)
+        it.setDefaultUniforms(transforms, projection)
         unit(it)
     }
 }
@@ -108,12 +100,16 @@ val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
 
 fun RenderTarget.clearColorAndDepth() = RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(colorTexture!!, 0, depthTexture!!, 1.0)
 
-fun RenderPass.setNearest(name: String, textureView: GpuTextureView?) {
-    bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
-}
+fun RenderPass.setNearest(name: String, textureView: GpuTextureView?) = bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
 
-fun RenderPass.setLinear(name: String, textureView: GpuTextureView?) {
-    bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+fun RenderPass.setLinear(name: String, textureView: GpuTextureView?) = bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+
+fun RenderPass.setDefaultUniforms(transforms: GpuBufferSlice, projection: GpuBufferSlice?) {
+    if (projection != null) {
+        setUniform("Projection", projection)
+    }
+
+    setUniform("DynamicTransforms", transforms)
 }
 
 val DeltaTracker.partialTicks get() = getGameTimeDeltaPartialTick(false)

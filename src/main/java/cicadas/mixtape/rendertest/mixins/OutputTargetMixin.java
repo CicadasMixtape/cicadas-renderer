@@ -1,6 +1,6 @@
 package cicadas.mixtape.rendertest.mixins;
 
-import cicadas.mixtape.rendertest.passes.HandsPass;
+import cicadas.mixtape.rendertest.pass.HandsPass;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
 import org.spongepowered.asm.mixin.Mixin;

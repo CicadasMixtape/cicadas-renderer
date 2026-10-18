@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.fonts
+package cicadas.mixtape.rendertest.font
 
 import com.mojang.blaze3d.vertex.BufferBuilder
 import java.awt.Color

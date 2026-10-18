@@ -1,6 +1,5 @@
 #version 330
 
-#moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <rendertest:msdf_uniform.glsl>
 
 in vec2 vertexCoord;
@@ -19,5 +18,5 @@ void main() {
     float dist = median(texture(Sampler0, vertexCoord).rgb) - 0.5 + thickness;
     float pixels = range * inversesqrt(h.x * h.x + h.y * h.y);
     float step = smoothstep(-0.5, 0.5, dist * pixels);
-    fragColor = vec4(vertexColor.rgb, vertexColor.a * step) * ColorModulator;
+    fragColor = vec4(vertexColor.rgb, vertexColor.a * step);
 }

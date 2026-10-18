@@ -2,8 +2,8 @@ package cicadas.mixtape.rendertest.mixins;
 
 import cicadas.mixtape.rendertest.RenderManager;
 import cicadas.mixtape.rendertest.api.ExtensionsKt;
-import cicadas.mixtape.rendertest.passes.KawasePass;
-import cicadas.mixtape.rendertest.passes.HandsPass;
+import cicadas.mixtape.rendertest.pass.KawasePass;
+import cicadas.mixtape.rendertest.pass.HandsPass;
 import cicadas.mixtape.rendertest.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;

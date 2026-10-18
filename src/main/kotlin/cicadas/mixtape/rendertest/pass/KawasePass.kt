@@ -1,9 +1,9 @@
-package cicadas.mixtape.rendertest.passes
+package cicadas.mixtape.rendertest.pass
 
 import cicadas.mixtape.rendertest.api.mainTarget
 import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.shader.uniform.KawaseUniform
-import cicadas.mixtape.rendertest.targets.KawaseTarget
+import cicadas.mixtape.rendertest.target.KawaseTarget
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem

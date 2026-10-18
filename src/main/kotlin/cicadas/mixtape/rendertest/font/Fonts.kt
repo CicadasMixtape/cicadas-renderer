@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.fonts
+package cicadas.mixtape.rendertest.font
 
 import cicadas.mixtape.rendertest.RenderTest
 

@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.fonts
+package cicadas.mixtape.rendertest.font
 
 import net.minecraft.network.chat.Component
 

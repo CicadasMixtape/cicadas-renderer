@@ -1,7 +1,7 @@
 package cicadas.mixtape.rendertest
 
 import cicadas.mixtape.rendertest.api.init
-import cicadas.mixtape.rendertest.fonts.Fonts
+import cicadas.mixtape.rendertest.font.Fonts
 import cicadas.mixtape.rendertest.shader.Formats
 import cicadas.mixtape.rendertest.shader.Types
 import cicadas.mixtape.rendertest.shader.Pipelines

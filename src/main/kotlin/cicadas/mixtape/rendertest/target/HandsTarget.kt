@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.targets
+package cicadas.mixtape.rendertest.target
 
 import com.mojang.blaze3d.pipeline.RenderTarget
 
