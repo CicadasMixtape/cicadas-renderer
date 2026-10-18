@@ -11,6 +11,8 @@ import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.textures.FilterMode
+import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
@@ -38,9 +40,9 @@ fun Any.init() = this
 
 fun Duration.toFloat(unit: DurationUnit) = toInt(unit).toFloat()
 
-fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
+val Color.vector4f get() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha / 255f)
 
-fun Color.toVector4f() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha / 255f)
+fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
 
 fun Tesselator.beginQuads(format: VertexFormat) = begin(VertexFormat.Mode.QUADS, format)
 
@@ -82,22 +84,37 @@ fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, 
 fun DynamicUniforms.defaultUniforms() = writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
 
 fun CommandEncoder.defaultRenderPass(pipeline: RenderPipeline, unit: (RenderPass) -> Unit) {
-    val target = mc.mainRenderTarget
     val transforms = RenderSystem.getDynamicUniforms().defaultUniforms()
 
+    createRenderPass(mainTarget, pipeline) {
+        RenderSystem.bindDefaultUniforms(it)
+        it.setUniform("DynamicTransforms", transforms)
+        unit(it)
+    }
+}
+
+fun CommandEncoder.createRenderPass(target: RenderTarget, pipeline: RenderPipeline, unit: (RenderPass) -> Unit) {
     createRenderPass(
         { "rendertest-pass" },
         target.colorTextureView!!, OptionalInt.empty(),
         target.depthTextureView, OptionalDouble.empty()
     ).use {
         it.setPipeline(pipeline)
-        it.setUniform("DynamicTransforms", transforms)
-        RenderSystem.bindDefaultUniforms(it)
         unit(it)
     }
 }
 
 val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
+
+fun RenderTarget.clearColorAndDepth() = RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(colorTexture!!, 0, depthTexture!!, 1.0)
+
+fun RenderPass.setNearest(name: String, textureView: GpuTextureView?) {
+    bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
+}
+
+fun RenderPass.setLinear(name: String, textureView: GpuTextureView?) {
+    bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
+}
 
 val DeltaTracker.partialTicks get() = getGameTimeDeltaPartialTick(false)
 

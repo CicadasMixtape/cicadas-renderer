@@ -5,28 +5,30 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
-import org.joml.Vector4f
+import org.joml.Vector2f
 import org.lwjgl.system.MemoryStack
 import kotlin.use
 
-object ColorUniform {
+object KawaseUniform {
     private val SIZE = Std140SizeCalculator()
-        .putVec4()
+        .putFloat()
+        .putVec2()
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
-        { "ColorData" },
+        { "KawaseBuffer" },
         GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST,
         SIZE.toLong()
     )
 
-    fun update(color: Vector4f): GpuBufferSlice {
+    fun update(offset: Float, halfPixel: Vector2f): GpuBufferSlice {
         MemoryStack.stackPush().use {
-            val data = Std140Builder.onStack(it, SIZE)
-                .putVec4(color)
+            val buffer = Std140Builder.onStack(it, SIZE)
+                .putFloat(offset)
+                .putVec2(halfPixel)
                 .get()
 
-            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), data)
+            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
         return BUFFER.slice()

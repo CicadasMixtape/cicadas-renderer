@@ -6,10 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "EndCrystalRendererMixin",
     "GameRendererMixin",
     "LevelRendererMixin",
-    "RenderTypeMixin",
+    "OutputTargetMixin",
     "accessors.BufferBuilderAccessor"
   ],
   "injectors": {

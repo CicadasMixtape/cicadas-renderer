@@ -204,7 +204,7 @@ object Renderer3D {
                 drawDefaultBox(builder, matrix4f, it)
             }
 
-            Types.quads().draw(builder.buildOrThrow())
+            Types.QUADS.draw(builder.buildOrThrow())
         }
 
         if (defaultOutlines.isNotEmpty()) {
@@ -214,7 +214,7 @@ object Renderer3D {
                 drawDefaultOutline(builder, matrix4f, it)
             }
 
-            Types.lines().draw(builder.buildOrThrow())
+            Types.LINES.draw(builder.buildOrThrow())
         }
     }
 
@@ -226,7 +226,7 @@ object Renderer3D {
                 drawVoxelBox(builder, matrix4f, it)
             }
 
-            Types.quads().draw(builder.buildOrThrow())
+            Types.QUADS.draw(builder.buildOrThrow())
         }
 
         if (voxelOutlines.isNotEmpty()) {
@@ -236,7 +236,7 @@ object Renderer3D {
                 drawVoxelOutline(builder, matrix4f, it)
             }
 
-            Types.lines().draw(builder.buildOrThrow())
+            Types.LINES.draw(builder.buildOrThrow())
         }
     }
 

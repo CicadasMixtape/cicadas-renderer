@@ -13,18 +13,18 @@ object SquircleUniform {
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
-        { "SquircleData" },
+        { "SquircleBuffer" },
         GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST,
         SIZE.toLong()
     )
 
     fun update(squirt: Float): GpuBufferSlice {
         MemoryStack.stackPush().use {
-            val data = Std140Builder.onStack(it, SIZE)
+            val buffer = Std140Builder.onStack(it, SIZE)
                 .putFloat(squirt)
                 .get()
 
-            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), data)
+            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
         return BUFFER.slice()

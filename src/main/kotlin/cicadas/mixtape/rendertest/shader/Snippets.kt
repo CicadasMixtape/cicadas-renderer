@@ -23,37 +23,42 @@ object Snippets {
         .buildSnippet()
 
     @JvmField
-    val SQUIRCLE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
-        .withUniform("SquircleData", UniformType.UNIFORM_BUFFER)
+    val TEXTURE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
+        .withSampler("Sampler0")
         .buildSnippet()
 
     @JvmField
-    val TEXTURE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
-        .withSampler("sampler0")
+    val SQUIRCLE_SNIPPET = RenderPipeline.builder(RECT_SNIPPET)
+        .withUniform("Squircle", UniformType.UNIFORM_BUFFER)
+        .buildSnippet()
+
+    @JvmField
+    val BLUR_SNIPPET = RenderPipeline.builder(TEXTURE_SNIPPET)
+        .withUniform("Screen", UniformType.UNIFORM_BUFFER)
         .buildSnippet()
 
     @JvmField
     val MSDF_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, DEFAULT_SNIPPET)
-        .withSampler("sampler0")
-        .withUniform("FontData", UniformType.UNIFORM_BUFFER)
+        .withSampler("Sampler0")
+        .withUniform("Msdf", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
         .withBlend(BlendFunction.TRANSLUCENT)
         .buildSnippet()
 
     @JvmField
     val KAWASE_SNIPPET = RenderPipeline.builder(DEFAULT_SNIPPET)
-        .withSampler("sampler0")
-        .withUniform("BlurData", UniformType.UNIFORM_BUFFER)
+        .withSampler("Sampler0")
+        .withUniform("Kawase", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(DefaultVertexFormat.EMPTY, VertexFormat.Mode.TRIANGLES)
         .buildSnippet()
 
     @JvmField
-    val ENTITY_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+    val OUTLINE_SNIPPET = RenderPipeline.builder()
         .withSampler("Sampler0")
-        .withSampler("Sampler3")
-        .withUniform("ScreenData", UniformType.UNIFORM_BUFFER)
-        .withUniform("ColorData", UniformType.UNIFORM_BUFFER)
-        .withVertexFormat(DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS)
+        .withUniform("Hands", UniformType.UNIFORM_BUFFER)
+        .withUniform("Screen", UniformType.UNIFORM_BUFFER)
+        .withVertexFormat(DefaultVertexFormat.EMPTY, VertexFormat.Mode.TRIANGLES)
         .withBlend(BlendFunction.TRANSLUCENT)
+        .withCull(false)
         .buildSnippet()
 }

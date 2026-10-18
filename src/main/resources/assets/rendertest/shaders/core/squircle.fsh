@@ -2,7 +2,7 @@
 
 #moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <rendertest:squircle.glsl>
-#moj_import <rendertest:squircle_data.glsl>
+#moj_import <rendertest:squircle_uniform.glsl>
 
 in vec2 vertexSize;
 in vec2 vertexCoord;

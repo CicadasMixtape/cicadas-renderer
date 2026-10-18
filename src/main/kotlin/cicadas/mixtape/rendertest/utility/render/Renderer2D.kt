@@ -5,18 +5,20 @@ import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.api.addVertex
 import cicadas.mixtape.rendertest.api.beginQuads
 import cicadas.mixtape.rendertest.api.defaultRenderPass
+import cicadas.mixtape.rendertest.api.mainTarget
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.screenSize
-import cicadas.mixtape.rendertest.blur.BlurPass
+import cicadas.mixtape.rendertest.api.setLinear
+import cicadas.mixtape.rendertest.api.setNearest
+import cicadas.mixtape.rendertest.passes.KawasePass
 import cicadas.mixtape.rendertest.fonts.Font
 import cicadas.mixtape.rendertest.objects.Gradient
 import cicadas.mixtape.rendertest.objects.Radius
 import cicadas.mixtape.rendertest.shader.Formats
-import cicadas.mixtape.rendertest.shader.uniform.FontUniform
+import cicadas.mixtape.rendertest.shader.uniform.MsdfUniform
 import cicadas.mixtape.rendertest.shader.uniform.ScreenUniform
 import cicadas.mixtape.rendertest.shader.uniform.SquircleUniform
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.vertex.Tesselator
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
@@ -52,10 +54,10 @@ object Renderer2D {
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
-        val squircleData = SquircleUniform.update(squirt)
+        val squircleUniform = SquircleUniform.update(squirt)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.SQUIRCLE_PIPELINE) {
-            it.setUniform("SquircleData", squircleData)
+            it.setUniform("Squircle", squircleUniform)
             buffer.drawIndexed(it)
         }
 
@@ -72,11 +74,11 @@ object Renderer2D {
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
-        val screenData = ScreenUniform.update(mc.mainRenderTarget.screenSize)
+        val screenUniform = ScreenUniform.update(mainTarget.screenSize)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.BLUR_PIPELINE) {
-            it.bindTexture("sampler0", BlurPass.target().colorTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
-            it.setUniform("ScreenData", screenData)
+            it.setLinear("Sampler0", KawasePass.target().colorTextureView)
+            it.setUniform("Screen", screenUniform)
             buffer.drawIndexed(it)
         }
 
@@ -99,7 +101,7 @@ object Renderer2D {
         val buffer = CustomBuffer.create(mesh)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.TEXTURE_PIPELINE) {
-            it.bindTexture("sampler0", texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
+            it.setNearest("Sampler0", texture.textureView)
             buffer.drawIndexed(it)
         }
 
@@ -113,11 +115,11 @@ object Renderer2D {
         val builder = msdf.applyGlyphs(text, size, x, y,  color)
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
-        val fontData = FontUniform.update(msdf.atlas.distanceRange, msdf.thickness)
+        val fontUniform = MsdfUniform.update(msdf.atlas.distanceRange, msdf.thickness)
 
         RenderSystem.getDevice().createCommandEncoder().defaultRenderPass(Pipelines.MSDF_PIPELINE) {
-            it.bindTexture("sampler0", msdf.texture.textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
-            it.setUniform("FontData", fontData)
+            it.setNearest("Sampler0", msdf.texture.textureView)
+            it.setUniform("Msdf", fontUniform)
             buffer.drawIndexed(it)
         }
 

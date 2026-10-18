@@ -5,30 +5,29 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
-import org.joml.Vector2f
 import org.lwjgl.system.MemoryStack
 import kotlin.use
 
-object BlurUniform {
+object MsdfUniform {
     private val SIZE = Std140SizeCalculator()
         .putFloat()
-        .putVec2()
+        .putFloat()
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
-        { "BlurData" },
+        { "MsdfBuffer" },
         GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST,
         SIZE.toLong()
     )
 
-    fun update(offset: Float, halfPixel: Vector2f): GpuBufferSlice {
+    fun update(range: Float, thickness: Float): GpuBufferSlice {
         MemoryStack.stackPush().use {
-            val data = Std140Builder.onStack(it, SIZE)
-                .putFloat(offset)
-                .putVec2(halfPixel)
+            val buffer = Std140Builder.onStack(it, SIZE)
+                .putFloat(range)
+                .putFloat(thickness)
                 .get()
 
-            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), data)
+            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
         return BUFFER.slice()

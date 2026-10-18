@@ -5,29 +5,30 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
+import org.joml.Vector4f
 import org.lwjgl.system.MemoryStack
 import kotlin.use
 
-object FontUniform {
+object HandsUniform {
     private val SIZE = Std140SizeCalculator()
-        .putFloat()
+        .putVec4()
         .putFloat()
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
-        { "FontData" },
+        { "HandsBuffer" },
         GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST,
         SIZE.toLong()
     )
 
-    fun update(range: Float, thickness: Float): GpuBufferSlice {
+    fun update(tint: Vector4f, lineWidth: Float): GpuBufferSlice {
         MemoryStack.stackPush().use {
-            val data = Std140Builder.onStack(it, SIZE)
-                .putFloat(range)
-                .putFloat(thickness)
+            val buffer = Std140Builder.onStack(it, SIZE)
+                .putVec4(tint)
+                .putFloat(lineWidth)
                 .get()
 
-            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), data)
+            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
         return BUFFER.slice()

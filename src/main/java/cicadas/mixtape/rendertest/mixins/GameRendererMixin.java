@@ -2,8 +2,8 @@ package cicadas.mixtape.rendertest.mixins;
 
 import cicadas.mixtape.rendertest.RenderManager;
 import cicadas.mixtape.rendertest.api.ExtensionsKt;
-import cicadas.mixtape.rendertest.blur.BlurPass;
-import cicadas.mixtape.rendertest.shader.Hands;
+import cicadas.mixtape.rendertest.passes.KawasePass;
+import cicadas.mixtape.rendertest.passes.HandsPass;
 import cicadas.mixtape.rendertest.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
@@ -41,14 +41,14 @@ public abstract class GameRendererMixin {
     }
 
     @Inject(method = "renderItemInHand", at = @At("HEAD"))
-    public void renderItemInHand(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
-        BlurPass.INSTANCE.update();
-        Hands.INSTANCE.setToggled(true);
+    public void renderItemInHand$head(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
+        KawasePass.INSTANCE.update();
+        HandsPass.INSTANCE.begin();
     }
 
     @Inject(method = "renderItemInHand", at = @At("TAIL"))
-    public void renderItemInHand2(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
-        Hands.INSTANCE.setToggled(false);
+    public void renderItemInHand$tail(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
+        HandsPass.INSTANCE.end();
     }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
@@ -66,7 +66,7 @@ public abstract class GameRendererMixin {
     }
 
     @Inject(method = "renderLevel", at = @At("TAIL"))
-    public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci) {
+    public void renderLevel$tail(DeltaTracker deltaTracker, CallbackInfo ci) {
         Renderer3D.INSTANCE.clearAll();
     }
 

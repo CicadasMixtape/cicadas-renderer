@@ -15,18 +15,18 @@ object ScreenUniform {
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
-        { "ScreenData" },
+        { "ScreenBuffer" },
         GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST,
         SIZE.toLong()
     )
 
     fun update(screenSize: Vector2f): GpuBufferSlice {
         MemoryStack.stackPush().use {
-            val data = Std140Builder.onStack(it, SIZE)
+            val buffer = Std140Builder.onStack(it, SIZE)
                 .putVec2(screenSize)
                 .get()
 
-            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), data)
+            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
         return BUFFER.slice()
