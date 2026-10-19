@@ -49,6 +49,12 @@ object RenderManager {
             x += 125f
             Renderer2D.drawRoundedBlur(x, 25f, 100f, 100f, RADIUS)
 
+            x += 125f
+            Renderer2D.drawLiquidGlass(x, 25f, 100f, 100f, 15f, true, RADIUS)
+
+            x += 125f
+            Renderer2D.drawLiquidGlass(x, 25f, 100f, 100f, 15f, false, RADIUS)
+
             val size1 = FloatSize(100f, 100f)
             val svg1 = SVGManager.getTexture(RenderTest.id("vector/cloud.svg"), size1)
             x += 125f

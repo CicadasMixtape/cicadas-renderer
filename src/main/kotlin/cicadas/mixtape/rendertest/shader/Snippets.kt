@@ -38,6 +38,11 @@ object Snippets {
         .buildSnippet()
 
     @JvmField
+    val LIQUID_SNIPPET = RenderPipeline.builder(BLUR_SNIPPET)
+        .withUniform("Liquid", UniformType.UNIFORM_BUFFER)
+        .buildSnippet()
+
+    @JvmField
     val MSDF_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, DEFAULT_SNIPPET)
         .withSampler("Sampler0")
         .withUniform("Msdf", UniformType.UNIFORM_BUFFER)

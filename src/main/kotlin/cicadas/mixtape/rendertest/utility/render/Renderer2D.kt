@@ -15,6 +15,7 @@ import cicadas.mixtape.rendertest.font.Font
 import cicadas.mixtape.rendertest.objects.Gradient
 import cicadas.mixtape.rendertest.objects.Radius
 import cicadas.mixtape.rendertest.shader.Formats
+import cicadas.mixtape.rendertest.shader.uniform.LiquidUniform
 import cicadas.mixtape.rendertest.shader.uniform.MsdfUniform
 import cicadas.mixtape.rendertest.shader.uniform.ScreenUniform
 import cicadas.mixtape.rendertest.shader.uniform.SquircleUniform
@@ -29,10 +30,10 @@ object Renderer2D {
     fun drawRoundedRect(x: Float, y: Float, width: Float, height: Float, radius: Radius, gradient: Gradient) {
         val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
+        builder.addVertex(x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
+        builder.addVertex(x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
+        builder.addVertex(x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
+        builder.addVertex(x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
@@ -44,13 +45,36 @@ object Renderer2D {
         mesh.close()
     }
 
+    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Radius = Radius.EMPTY, gradient: Gradient = Gradient.EMPTY) {
+        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, gradient)
+    }
+
+    fun drawRoundedTexture(texture: AbstractTexture, x: Float, y: Float, width: Float, height: Float, radius: Radius = Radius.EMPTY, gradient: Gradient = Gradient.EMPTY) {
+        val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
+
+        builder.addVertex(x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
+        builder.addVertex(x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
+        builder.addVertex(x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
+        builder.addVertex(x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
+
+        val mesh = builder.buildOrThrow()
+        val buffer = CustomBuffer.create(mesh)
+
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.TEXTURE_PIPELINE) {
+            it.setNearest("Sampler0", texture.textureView)
+            buffer.drawIndexed(it)
+        }
+
+        mesh.close()
+    }
+
     fun drawSquircle(x: Float, y: Float, width: Float, height: Float, squirt: Float, radius: Radius, gradient: Gradient) {
         val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
+        builder.addVertex(x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
+        builder.addVertex(x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
+        builder.addVertex(x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
+        builder.addVertex(x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
@@ -67,17 +91,17 @@ object Renderer2D {
     fun drawRoundedBlur(x: Float, y: Float, width: Float, height: Float, radius: Radius, gradient: Gradient = Gradient.EMPTY) {
         val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
+        builder.addVertex(x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
+        builder.addVertex(x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
+        builder.addVertex(x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
+        builder.addVertex(x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
         val screenUniform = ScreenUniform.update(mainTarget.screenSize)
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.BLUR_PIPELINE) {
-            it.setLinear("Sampler0", KawasePass.target().colorTextureView)
+            it.setLinear("Sampler0", KawasePass.texture())
             it.setUniform("Screen", screenUniform)
             buffer.drawIndexed(it)
         }
@@ -85,23 +109,23 @@ object Renderer2D {
         mesh.close()
     }
 
-    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Radius = Radius.EMPTY, gradient: Gradient = Gradient.EMPTY) {
-        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, gradient)
-    }
-
-    fun drawRoundedTexture(texture: AbstractTexture, x: Float, y: Float, width: Float, height: Float, radius: Radius = Radius.EMPTY, gradient: Gradient = Gradient.EMPTY) {
+    fun drawLiquidGlass(x: Float, y: Float, width: Float, height: Float, power: Float, clean: Boolean, radius: Radius, gradient: Gradient = Gradient.EMPTY) {
         val builder = Tesselator.getInstance().beginQuads(Formats.RECT)
 
-        builder.addVertex(x,         y + height, width, height, 0f, 1f, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
-        builder.addVertex(x + width, y + height, width, height, 1f, 1f, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
-        builder.addVertex(x + width, y,          width, height, 1f, 0f, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
-        builder.addVertex(x,         y,          width, height, 0f, 0f, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
+        builder.addVertex(x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
+        builder.addVertex(x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
+        builder.addVertex(x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.rgb)
+        builder.addVertex(x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.rgb)
 
         val mesh = builder.buildOrThrow()
         val buffer = CustomBuffer.create(mesh)
+        val liquidUniform = LiquidUniform.update(power)
+        val screenUniform = ScreenUniform.update(mainTarget.screenSize)
 
-        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.TEXTURE_PIPELINE) {
-            it.setNearest("Sampler0", texture.textureView)
+        RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.LIQUID_GLASS) {
+            it.setLinear("Sampler0", if (clean) mainTarget.colorTextureView else KawasePass.texture())
+            it.setUniform("Liquid", liquidUniform)
+            it.setUniform("Screen", screenUniform)
             buffer.drawIndexed(it)
         }
 

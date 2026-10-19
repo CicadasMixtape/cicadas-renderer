@@ -61,6 +61,15 @@ object Pipelines {
     )
 
     @JvmField
+    val LIQUID_GLASS = RenderPipelines.register(
+        RenderPipeline.builder(Snippets.LIQUID_SNIPPET)
+            .withLocation(RenderTest.id("pipeline/liquid_glass"))
+            .withFragmentShader(RenderTest.id("core/liquid_glass"))
+            .withVertexShader(RenderTest.id("core/rect"))
+            .build()
+    )
+
+    @JvmField
     val MSDF_PIPELINE = RenderPipelines.register(
         RenderPipeline.builder(Snippets.MSDF_SNIPPET)
             .withLocation(RenderTest.id("pipeline/msdf"))
@@ -73,8 +82,8 @@ object Pipelines {
     val KAWASE_UP_PIPELINE = RenderPipelines.register(
         RenderPipeline.builder(Snippets.KAWASE_SNIPPET)
             .withLocation(RenderTest.id("pipeline/kawase_up"))
-            .withFragmentShader(RenderTest.id("core/kawase_up"))
-            .withVertexShader(RenderTest.id("core/kawase"))
+            .withFragmentShader(RenderTest.id("post/kawase_up"))
+            .withVertexShader(RenderTest.id("post/kawase"))
             .build()
     )
 
@@ -82,8 +91,8 @@ object Pipelines {
     val KAWASE_DOWN_PIPELINE = RenderPipelines.register(
         RenderPipeline.builder(Snippets.KAWASE_SNIPPET)
             .withLocation(RenderTest.id("pipeline/kawase_down"))
-            .withFragmentShader(RenderTest.id("core/kawase_down"))
-            .withVertexShader(RenderTest.id("core/kawase"))
+            .withFragmentShader(RenderTest.id("post/kawase_down"))
+            .withVertexShader(RenderTest.id("post/kawase"))
             .build()
     )
 

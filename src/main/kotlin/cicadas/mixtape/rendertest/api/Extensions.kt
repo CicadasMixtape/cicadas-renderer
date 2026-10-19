@@ -69,9 +69,8 @@ fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): Ve
     return this
 }
 
-fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, u: Float, v: Float, radius: Float) = addVertex(x, y, 0f)
+fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, radius: Float) = addVertex(x, y, 0f)
     .setVec2(Formats.SIZE, width, height)
-    .setVec2(Formats.COORD, u, v)
     .setFloat(Formats.RADIUS, radius)
 
 fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float, color: Int, lineWidth: Float): VertexConsumer {

@@ -13,9 +13,9 @@ import org.joml.Vector2f
 import java.util.OptionalInt
 
 object KawasePass {
-    private val targets = List(4) { KawaseTarget() }
+    private val targets = List(3) { KawaseTarget() }
 
-    fun target() = targets.first()
+    fun texture() = targets.first().colorTextureView
 
     fun update() {
         targets.forEachIndexed { i, target ->
@@ -43,7 +43,7 @@ object KawasePass {
     }
 
     private fun createPass(pipeline: RenderPipeline, src: RenderTarget, dst: RenderTarget, sampler: GpuSampler) {
-        val kawaseUniform = KawaseUniform.update(5f, Vector2f(0.5f / src.width, 0.5f / src.height))
+        val kawaseUniform = KawaseUniform.update(3f, Vector2f(0.5f / src.width, 0.5f / src.height))
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
             { "kawase-pass" },
