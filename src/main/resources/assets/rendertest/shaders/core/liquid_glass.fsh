@@ -13,21 +13,6 @@ uniform sampler2D Sampler0;
 
 out vec4 fragColor;
 
-// void main() {
-//     vec2 center = vertexSize / 2.0;
-//     vec2 p = vertexCoord * vertexSize - center;
-//     float dist = rect(-p, center - 1.0, vertexRadius);
-//     float alpha = 1.0 - smoothstep(-0.5, 0.5, dist);
-//
-//     vec2 uv = gl_FragCoord.xy / screenSize;
-//     vec2 n = p / (center - 1.0);
-//     float rb = pow(abs(n.x), power) + pow(abs(n.y), power);
-//     vec2 lens = ((uv - 0.5) * 1.0 * (1.0 - rb * 0.5) + 0.5);
-//     vec4 color = vec4(texture(Sampler0, lens).rgb, 1.0) * vertexColor;
-//
-//     fragColor = vec4(color.rgb, color.a * alpha);
-// }
-
 void main() {
     vec2 center = vertexSize / 2.0;
     vec2 p = vertexCoord * vertexSize - center;
@@ -40,9 +25,9 @@ void main() {
     d = sign(d) * max(abs(d), 1e-6);
 
     vec2 wc = (gl_FragCoord.xy - p / d) / screenSize;
-    vec2 n = p / (center - 1.0);
-    float rb = min(pow(abs(n.x), power) + pow(abs(n.y), power), 1.0);
-    vec2 lens = wc + (uv - wc) * (1.0 - rb * 0.5);
+    float bevel = min(center.x, center.y);
+    float rb = pow(1.0 - clamp(-dist / bevel, 0.0, 1.0), power);
+    vec2 lens = clamp(wc + (uv - wc) * (1.0 - rb * 0.5), 0.0, 1.0);
     vec4 color = vec4(texture(Sampler0, lens).rgb, 1.0) * vertexColor;
 
     fragColor = vec4(color.rgb, color.a * alpha);
