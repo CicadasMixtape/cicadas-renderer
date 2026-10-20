@@ -9,14 +9,14 @@ import org.joml.Vector4f
 import org.lwjgl.system.MemoryStack
 import kotlin.use
 
-object HandsUniform {
+object OutlineUniform {
     private val SIZE = Std140SizeCalculator()
         .putVec4()
         .putFloat()
         .get()
 
     private val BUFFER = RenderSystem.getDevice().createBuffer(
-        { "HandsBuffer" },
+        { "OutlineBuffer" },
         GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST,
         SIZE.toLong()
     )

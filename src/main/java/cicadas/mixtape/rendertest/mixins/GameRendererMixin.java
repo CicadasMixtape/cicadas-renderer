@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.CachedPerspectiveProjectionMatrixBuffer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.PerspectiveProjectionMatrixBuffer;
+import net.minecraft.util.profiling.Profiler;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,22 +38,31 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
     public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+        Profiler.get().push("rendertest-render-2d");
         RenderManager.INSTANCE.onRender2D();
+        Profiler.get().pop();
     }
 
     @Inject(method = "renderItemInHand", at = @At("HEAD"))
     public void renderItemInHand$head(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
+        Profiler.get().push("rendertest-kawase-update");
         KawasePass.INSTANCE.update();
+        Profiler.get().popPush("rendertest-hands-begin");
         HandsPass.INSTANCE.begin();
+        Profiler.get().pop();
     }
 
-    @Inject(method = "renderItemInHand", at = @At("TAIL"))
-    public void renderItemInHand$tail(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
+    @Inject(method = "renderItemInHand", at = @At("RETURN"))
+    public void renderItemInHand$return(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
+        Profiler.get().push("rendertest-hands-end");
         HandsPass.INSTANCE.end();
+        Profiler.get().pop();
     }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
+        Profiler.get().push("rendertest-render-3d");
+
         var partialTicks = ExtensionsKt.getPartialTicks(deltaTracker);
         var projection = getProjectionMatrix(getFov(mainCamera, partialTicks, true));
         var stack = bob(new PoseStack());
@@ -63,6 +73,8 @@ public abstract class GameRendererMixin {
         Renderer3D.INSTANCE.drawDefaults(stack.last().pose());
         Renderer3D.INSTANCE.drawVoxels(stack.last().pose());
         RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(minecraft.getMainRenderTarget().width, minecraft.getMainRenderTarget().height, getFov(mainCamera, partialTicks, false)), ProjectionType.PERSPECTIVE);
+
+        Profiler.get().pop();
     }
 
     @Inject(method = "renderLevel", at = @At("TAIL"))

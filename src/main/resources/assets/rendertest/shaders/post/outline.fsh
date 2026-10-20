@@ -1,6 +1,6 @@
 #version 330
 
-#moj_import <rendertest:hands_uniform.glsl>
+#moj_import <rendertest:outline_uniform.glsl>
 #moj_import <rendertest:screen_uniform.glsl>
 
 in vec2 vertexCoord;

@@ -60,9 +60,10 @@ object Snippets {
     @JvmField
     val OUTLINE_SNIPPET = RenderPipeline.builder()
         .withSampler("Sampler0")
-        .withUniform("Hands", UniformType.UNIFORM_BUFFER)
+        .withUniform("Outline", UniformType.UNIFORM_BUFFER)
         .withUniform("Screen", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(DefaultVertexFormat.EMPTY, VertexFormat.Mode.TRIANGLES)
+        .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
         .withBlend(BlendFunction.TRANSLUCENT)
         .withCull(false)
         .buildSnippet()

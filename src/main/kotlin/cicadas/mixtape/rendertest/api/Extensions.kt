@@ -74,7 +74,7 @@ fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, ra
     .setFloat(Formats.RADIUS, radius)
 
 fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float, color: Int, lineWidth: Float): VertexConsumer {
-    val normal = Vector3f(x2 - x1, y2 - y1, z1 - z2).normalize()
+    val normal = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
     addVertex(matrix4f, x1, y1, z1).setNormal(normal.x, normal.y, normal.z).setColor(color).setLineWidth(lineWidth)
     addVertex(matrix4f, x2, y2, z2).setNormal(normal.x, normal.y, normal.z).setColor(color).setLineWidth(lineWidth)
     return this
