@@ -1,7 +1,7 @@
 package cicadas.mixtape.rendertest.shader.uniform
 
+import cicadas.mixtape.rendertest.shader.slice.CustomSlice
 import com.mojang.blaze3d.buffers.GpuBuffer
-import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
@@ -20,7 +20,7 @@ object MsdfUniform {
         SIZE.toLong()
     )
 
-    fun update(range: Float, thickness: Float): GpuBufferSlice {
+    fun update(range: Float, thickness: Float): CustomSlice {
         MemoryStack.stackPush().use {
             val buffer = Std140Builder.onStack(it, SIZE)
                 .putFloat(range)
@@ -30,6 +30,6 @@ object MsdfUniform {
             RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
-        return BUFFER.slice()
+        return CustomSlice("Msdf", BUFFER.slice())
     }
 }

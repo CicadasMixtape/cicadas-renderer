@@ -1,7 +1,7 @@
 package cicadas.mixtape.rendertest.shader.uniform
 
+import cicadas.mixtape.rendertest.shader.slice.CustomSlice
 import com.mojang.blaze3d.buffers.GpuBuffer
-import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
@@ -21,7 +21,7 @@ object KawaseUniform {
         SIZE.toLong()
     )
 
-    fun update(offset: Float, halfPixel: Vector2f): GpuBufferSlice {
+    fun update(offset: Float, halfPixel: Vector2f): CustomSlice {
         MemoryStack.stackPush().use {
             val buffer = Std140Builder.onStack(it, SIZE)
                 .putFloat(offset)
@@ -31,6 +31,6 @@ object KawaseUniform {
             RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
-        return BUFFER.slice()
+        return CustomSlice("Kawase", BUFFER.slice())
     }
 }

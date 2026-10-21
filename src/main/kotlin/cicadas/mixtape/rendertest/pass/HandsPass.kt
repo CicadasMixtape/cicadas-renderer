@@ -5,6 +5,7 @@ import cicadas.mixtape.rendertest.api.createRenderPass
 import cicadas.mixtape.rendertest.api.mainTarget
 import cicadas.mixtape.rendertest.api.screenSize
 import cicadas.mixtape.rendertest.api.setNearest
+import cicadas.mixtape.rendertest.api.setUniform
 import cicadas.mixtape.rendertest.api.vector4f
 import cicadas.mixtape.rendertest.api.withAlpha
 import cicadas.mixtape.rendertest.shader.Pipelines
@@ -36,8 +37,8 @@ object HandsPass {
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.OUTLINE_PIPELINE) {
             it.setNearest("Sampler0", target.colorTextureView)
-            it.setUniform("Outline", outlineUniform)
-            it.setUniform("Screen", screenUniform)
+            it.setUniform(outlineUniform)
+            it.setUniform(screenUniform)
             it.draw(0, 3)
         }
 

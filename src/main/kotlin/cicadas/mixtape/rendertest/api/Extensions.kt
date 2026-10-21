@@ -2,6 +2,7 @@ package cicadas.mixtape.rendertest.api
 
 import cicadas.mixtape.rendertest.shader.Formats
 import cicadas.mixtape.rendertest.mixins.accessors.BufferBuilderAccessor
+import cicadas.mixtape.rendertest.shader.slice.CustomSlice
 import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.view.FloatSize
 import com.github.weisj.jsvg.view.ViewBox
@@ -98,6 +99,8 @@ fun CommandEncoder.createRenderPass(target: RenderTarget, pipeline: RenderPipeli
 val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
 
 fun RenderTarget.clearColorAndDepth() = RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(colorTexture!!, 0, depthTexture!!, 1.0)
+
+fun RenderPass.setUniform(slice: CustomSlice) = setUniform(slice.name, slice.slice)
 
 fun RenderPass.setNearest(name: String, textureView: GpuTextureView?) = bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
 

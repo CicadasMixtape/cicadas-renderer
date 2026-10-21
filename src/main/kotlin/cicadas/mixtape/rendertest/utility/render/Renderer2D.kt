@@ -10,6 +10,7 @@ import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.screenSize
 import cicadas.mixtape.rendertest.api.setLinear
 import cicadas.mixtape.rendertest.api.setNearest
+import cicadas.mixtape.rendertest.api.setUniform
 import cicadas.mixtape.rendertest.pass.KawasePass
 import cicadas.mixtape.rendertest.font.Font
 import cicadas.mixtape.rendertest.objects.Gradient
@@ -81,7 +82,7 @@ object Renderer2D {
         val squircleUniform = SquircleUniform.update(squirt)
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.SQUIRCLE_PIPELINE) {
-            it.setUniform("Squircle", squircleUniform)
+            it.setUniform(squircleUniform)
             buffer.drawIndexed(it)
         }
 
@@ -102,7 +103,7 @@ object Renderer2D {
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.BLUR_PIPELINE) {
             it.setLinear("Sampler0", KawasePass.texture())
-            it.setUniform("Screen", screenUniform)
+            it.setUniform(screenUniform)
             buffer.drawIndexed(it)
         }
 
@@ -124,8 +125,8 @@ object Renderer2D {
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.LIQUID_GLASS) {
             it.setLinear("Sampler0", if (clean) mainTarget.colorTextureView else KawasePass.texture())
-            it.setUniform("Liquid", liquidUniform)
-            it.setUniform("Screen", screenUniform)
+            it.setUniform(liquidUniform)
+            it.setUniform(screenUniform)
             buffer.drawIndexed(it)
         }
 
@@ -143,7 +144,7 @@ object Renderer2D {
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.MSDF_PIPELINE) {
             it.setNearest("Sampler0", msdf.texture.textureView)
-            it.setUniform("Msdf", fontUniform)
+            it.setUniform(fontUniform)
             buffer.drawIndexed(it)
         }
 

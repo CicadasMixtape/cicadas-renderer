@@ -1,7 +1,7 @@
 package cicadas.mixtape.rendertest.shader.uniform
 
+import cicadas.mixtape.rendertest.shader.slice.CustomSlice
 import com.mojang.blaze3d.buffers.GpuBuffer
-import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.Std140Builder
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
 import com.mojang.blaze3d.systems.RenderSystem
@@ -21,7 +21,7 @@ object OutlineUniform {
         SIZE.toLong()
     )
 
-    fun update(tint: Vector4f, lineWidth: Float): GpuBufferSlice {
+    fun update(tint: Vector4f, lineWidth: Float): CustomSlice {
         MemoryStack.stackPush().use {
             val buffer = Std140Builder.onStack(it, SIZE)
                 .putVec4(tint)
@@ -31,6 +31,6 @@ object OutlineUniform {
             RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
         }
 
-        return BUFFER.slice()
+        return CustomSlice("Outline", BUFFER.slice())
     }
 }
