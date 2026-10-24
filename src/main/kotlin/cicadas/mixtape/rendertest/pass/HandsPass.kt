@@ -4,19 +4,21 @@ import cicadas.mixtape.rendertest.api.clearColorAndDepth
 import cicadas.mixtape.rendertest.api.createRenderPass
 import cicadas.mixtape.rendertest.api.mainTarget
 import cicadas.mixtape.rendertest.api.screenSize
-import cicadas.mixtape.rendertest.api.setNearest
+import cicadas.mixtape.rendertest.api.setSampler
 import cicadas.mixtape.rendertest.api.setUniform
 import cicadas.mixtape.rendertest.api.vector4f
 import cicadas.mixtape.rendertest.api.withAlpha
 import cicadas.mixtape.rendertest.shader.Pipelines
+import cicadas.mixtape.rendertest.shader.sampler.CustomSampler
+import cicadas.mixtape.rendertest.shader.target.CustomTarget
 import cicadas.mixtape.rendertest.shader.uniform.OutlineUniform
 import cicadas.mixtape.rendertest.shader.uniform.ScreenUniform
-import cicadas.mixtape.rendertest.target.HandsTarget
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.textures.FilterMode
 import java.awt.Color
 
 object HandsPass {
-    val target = HandsTarget()
+    val target = CustomTarget("hands-target", true)
     var toggled = false
 
     fun begin() {
@@ -36,7 +38,7 @@ object HandsPass {
         target.blitAndBlendToTexture(mainTarget.colorTextureView!!)
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(mainTarget, Pipelines.OUTLINE_PIPELINE) {
-            it.setNearest("Sampler0", target.colorTextureView)
+            it.setSampler(CustomSampler("Sampler0", target.colorTextureView, FilterMode.NEAREST))
             it.setUniform(outlineUniform)
             it.setUniform(screenUniform)
             it.draw(0, 3)

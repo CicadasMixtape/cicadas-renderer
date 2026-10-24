@@ -2,23 +2,21 @@ package cicadas.mixtape.rendertest.api
 
 import cicadas.mixtape.rendertest.shader.Formats
 import cicadas.mixtape.rendertest.mixins.accessors.BufferBuilderAccessor
+import cicadas.mixtape.rendertest.shader.sampler.CustomSampler
 import cicadas.mixtape.rendertest.shader.slice.CustomSlice
 import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.view.FloatSize
 import com.github.weisj.jsvg.view.ViewBox
+import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.CommandEncoder
+import com.mojang.blaze3d.systems.GpuDevice
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.FilterMode
-import com.mojang.blaze3d.textures.GpuTextureView
-import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.DeltaTracker
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
@@ -45,43 +43,58 @@ val Color.vector4f get() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha
 
 fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
 
-fun Tesselator.beginQuads(format: VertexFormat) = begin(VertexFormat.Mode.QUADS, format)
-
-fun Tesselator.beginLines(format: VertexFormat) = begin(VertexFormat.Mode.LINES, format)
-
-fun VertexConsumer.setFloat(element: VertexFormatElement, a: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(element)
+fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
+    val ptr = (this as BufferBuilderAccessor)._beginElement(Formats.RADIUS)
 
     if (ptr != -1L) {
-        MemoryUtil.memPutFloat(ptr, a)
+        MemoryUtil.memPutFloat(ptr, radius)
     }
 
     return this
 }
 
-fun VertexConsumer.setVec2(element: VertexFormatElement, a: Float, b: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(element)
+fun VertexConsumer.setSize(width: Float, height: Float): VertexConsumer {
+    val ptr = (this as BufferBuilderAccessor)._beginElement(Formats.SIZE)
 
     if (ptr != -1L) {
-        MemoryUtil.memPutFloat(ptr, a)
-        MemoryUtil.memPutFloat(ptr + 4, b)
+        MemoryUtil.memPutFloat(ptr, width)
+        MemoryUtil.memPutFloat(ptr + 4, height)
     }
 
     return this
 }
 
-fun VertexConsumer.addVertex(x: Float, y: Float, width: Float, height: Float, radius: Float) = addVertex(x, y, 0f)
-    .setVec2(Formats.SIZE, width, height)
-    .setFloat(Formats.RADIUS, radius)
+fun VertexConsumer.addVertex(
+    matrix4f: Matrix4f,
+    x: Float,
+    y: Float,
+    width: Float,
+    height: Float,
+    radius: Float
+) = addVertex(matrix4f, x, y, 0f).setSize(width, height).setRadius(radius)
 
-fun VertexConsumer.addLine(matrix4f: Matrix4f, x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float, color: Int, lineWidth: Float): VertexConsumer {
+fun VertexConsumer.addLine(
+    matrix4f: Matrix4f,
+    x1: Float,
+    y1: Float,
+    z1: Float,
+    x2: Float,
+    y2: Float,
+    z2: Float,
+    color: Int,
+    lineWidth: Float
+): VertexConsumer {
     val normal = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
     addVertex(matrix4f, x1, y1, z1).setNormal(normal.x, normal.y, normal.z).setColor(color).setLineWidth(lineWidth)
     addVertex(matrix4f, x2, y2, z2).setNormal(normal.x, normal.y, normal.z).setColor(color).setLineWidth(lineWidth)
     return this
 }
 
-fun CommandEncoder.createRenderPass(target: RenderTarget, pipeline: RenderPipeline, unit: (RenderPass) -> Unit) {
+fun CommandEncoder.createRenderPass(
+    target: RenderTarget,
+    pipeline: RenderPipeline,
+    unit: (RenderPass) -> Unit
+) {
     val transforms = RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
     val projection = RenderSystem.getProjectionMatrixBuffer()
 
@@ -100,11 +113,11 @@ val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
 
 fun RenderTarget.clearColorAndDepth() = RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(colorTexture!!, 0, depthTexture!!, 1.0)
 
+fun GpuDevice.createBuffer(name: String, size: Int) = createBuffer({ "${name}Buffer" }, GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST, size.toLong())
+
+fun RenderPass.setSampler(sampler: CustomSampler) = bindTexture(sampler.name, sampler.texture, RenderSystem.getSamplerCache().getClampToEdge(sampler.filter))
+
 fun RenderPass.setUniform(slice: CustomSlice) = setUniform(slice.name, slice.slice)
-
-fun RenderPass.setNearest(name: String, textureView: GpuTextureView?) = bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST))
-
-fun RenderPass.setLinear(name: String, textureView: GpuTextureView?) = bindTexture(name, textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR))
 
 fun RenderPass.setDefaultUniforms(transforms: GpuBufferSlice, projection: GpuBufferSlice?) {
     if (projection != null) {

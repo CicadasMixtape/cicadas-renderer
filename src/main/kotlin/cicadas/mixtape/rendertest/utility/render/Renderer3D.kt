@@ -2,11 +2,9 @@ package cicadas.mixtape.rendertest.utility.render
 
 import cicadas.mixtape.rendertest.api.aabb
 import cicadas.mixtape.rendertest.api.addLine
-import cicadas.mixtape.rendertest.api.beginLines
-import cicadas.mixtape.rendertest.api.beginQuads
+import cicadas.mixtape.rendertest.api.frustum
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.withCamera
-import cicadas.mixtape.rendertest.interfaces.ILevelRenderer
 import cicadas.mixtape.rendertest.objects.DefaultBox
 import cicadas.mixtape.rendertest.objects.DefaultOutline
 import cicadas.mixtape.rendertest.objects.VoxelBox
@@ -15,6 +13,7 @@ import cicadas.mixtape.rendertest.shader.Types
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
+import com.mojang.blaze3d.vertex.VertexFormat
 import org.joml.Matrix4f
 
 object Renderer3D {
@@ -22,10 +21,9 @@ object Renderer3D {
     private val defaultOutlines = arrayListOf<DefaultOutline>()
     private val voxelBoxes = arrayListOf<VoxelBox>()
     private val voxelOutlines = arrayListOf<VoxelOutline>()
-    private val frustum get() = (mc.levelRenderer as ILevelRenderer).`rendertest$getFrustum`()
 
     fun addDefaultBox(box: DefaultBox) {
-        if (frustum?.isVisible(box.aabb) == false) {
+        if (!frustum.isVisible(box.aabb)) {
             return
         }
 
@@ -33,7 +31,7 @@ object Renderer3D {
     }
 
     fun addDefaultOutline(outline: DefaultOutline) {
-        if (frustum?.isVisible(outline.aabb) == false) {
+        if (!frustum.isVisible(outline.aabb)) {
             return
         }
 
@@ -41,7 +39,7 @@ object Renderer3D {
     }
 
     fun addVoxelBox(box: VoxelBox) {
-        if (frustum?.isVisible(box.pos.aabb) == false) {
+        if (!frustum.isVisible(box.pos.aabb)) {
             return
         }
 
@@ -53,7 +51,7 @@ object Renderer3D {
     }
 
     fun addVoxelOutline(outline: VoxelOutline) {
-        if (frustum?.isVisible(outline.pos.aabb) == false) {
+        if (!frustum.isVisible(outline.pos.aabb)) {
             return
         }
 
@@ -198,7 +196,7 @@ object Renderer3D {
 
     fun drawDefaults(matrix4f: Matrix4f) {
         if (defaultBoxes.isNotEmpty()) {
-            val builder = Tesselator.getInstance().beginQuads(DefaultVertexFormat.POSITION_COLOR)
+            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
             defaultBoxes.forEach {
                 drawDefaultBox(builder, matrix4f, it)
@@ -208,7 +206,7 @@ object Renderer3D {
         }
 
         if (defaultOutlines.isNotEmpty()) {
-            val builder = Tesselator.getInstance().beginLines(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
+            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
             defaultOutlines.forEach {
                 drawDefaultOutline(builder, matrix4f, it)
@@ -220,7 +218,7 @@ object Renderer3D {
 
     fun drawVoxels(matrix4f: Matrix4f) {
         if (voxelBoxes.isNotEmpty()) {
-            val builder = Tesselator.getInstance().beginQuads(DefaultVertexFormat.POSITION_COLOR)
+            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
             voxelBoxes.forEach {
                 drawVoxelBox(builder, matrix4f, it)
@@ -230,7 +228,7 @@ object Renderer3D {
         }
 
         if (voxelOutlines.isNotEmpty()) {
-            val builder = Tesselator.getInstance().beginLines(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
+            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
             voxelOutlines.forEach {
                 drawVoxelOutline(builder, matrix4f, it)

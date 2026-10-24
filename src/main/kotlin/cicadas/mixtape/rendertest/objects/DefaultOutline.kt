@@ -6,5 +6,5 @@ import java.awt.Color
 data class DefaultOutline(
     val aabb: AABB,
     val color: Color,
-    val lineWidth: Float = 1f
+    val lineWidth: Float
 )

@@ -1,6 +1,6 @@
 package cicadas.mixtape.rendertest.mixins;
 
-import cicadas.mixtape.rendertest.interfaces.ILevelRenderer;
+import cicadas.mixtape.rendertest.mixins.ducks.ILevelRenderer;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.culling.Frustum;

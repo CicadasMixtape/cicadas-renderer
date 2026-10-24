@@ -36,7 +36,7 @@ object RenderManager {
             return
         }
 
-        RenderUtility.projection {
+        RenderUtility.setProjection {
             var x = 25f
             Renderer2D.drawRoundedRect(x, 25f, 100f, 100f, RADIUS, GRADIENT)
 
@@ -66,11 +66,13 @@ object RenderManager {
             Renderer2D.drawRoundedTexture(svg2, x, 75f - size2.height / 2f, size2.width, size2.height)
 
             val text = testText()
-            val font1 = Fonts.BOLD.getFont(20f)
-            val font2 = Fonts.ROUNDED_BOLD.getFont(20f)
+            val font1 = Fonts.BOLD.getFont(50f)
+            val font2 = Fonts.ROUNDED_BOLD.getFont(50f)
 
             Renderer2D.drawText(font1, text, 25f, 150f + font1.getHeight())
             Renderer2D.drawText(font2, text, 150f, 150f + font2.getHeight())
+
+            Renderer2D.update()
         }
     }
 

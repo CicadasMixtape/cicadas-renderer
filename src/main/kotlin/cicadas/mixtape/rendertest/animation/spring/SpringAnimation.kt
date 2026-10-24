@@ -1,7 +1,7 @@
 package cicadas.mixtape.rendertest.animation.spring
 
 import cicadas.mixtape.rendertest.animation.IAnimation
-import cicadas.mixtape.rendertest.utility.math.DeltaTimer
+import cicadas.mixtape.rendertest.utility.time.DeltaTimer
 import kotlin.Float
 
 class SpringAnimation(

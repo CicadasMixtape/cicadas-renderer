@@ -1,14 +1,12 @@
 package cicadas.mixtape.rendertest.font
 
 import cicadas.mixtape.rendertest.api.JSON
-import cicadas.mixtape.rendertest.api.beginQuads
 import cicadas.mixtape.rendertest.api.mc
 import com.mojang.blaze3d.vertex.BufferBuilder
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.Tesselator
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import org.joml.Matrix4f
 import java.awt.Color
 
 class MsdfFont private constructor(
@@ -22,16 +20,24 @@ class MsdfFont private constructor(
     companion object {
         fun build(id: Identifier): MsdfFont {
             val id = id.withPrefix("fonts/")
-            val json = mc.resourceManager.open(id.withSuffix(".json"))
+            val stream = mc.resourceManager.open(id.withSuffix(".json"))
             val texture = mc.textureManager.getTexture(id.withSuffix(".png"))
-            val data = JSON.decodeFromString<MsdfData>(json.readAllBytes().decodeToString())
+            val data = JSON.decodeFromString<MsdfData>(stream.readAllBytes().decodeToString())
             val glyphs = data.glyphs.associate { it.unicode to MsdfGlyph(it, data.atlas.width, data.atlas.height) }
             return MsdfFont(texture, data.atlas, data.metrics, glyphs)
         }
     }
 
-    fun applyGlyphs(text: Component, size: Float, x: Float, y: Float, color: Color): BufferBuilder {
-        val builder = Tesselator.getInstance().beginQuads(DefaultVertexFormat.POSITION_TEX_COLOR)
+    fun applyGlyphs(
+        builder: BufferBuilder,
+        matrix4f: Matrix4f,
+        text: Component,
+        size: Float,
+        x: Float,
+        y: Float,
+        color: Color
+    ): Int {
+        var count = 0
         var offsetX = x
         var offsetY = y
 
@@ -51,12 +57,13 @@ class MsdfFont private constructor(
 
             if (glyph == null) return@accept true
 
-            offsetX += glyph.apply(builder, size, offsetX, offsetY, current) + getThickness(size)
+            offsetX += glyph.apply(matrix4f, builder, size, offsetX, offsetY, current) + getThickness(size)
+            count += 1
 
             true
         }
 
-        return builder
+        return count
     }
 
     fun getFont(size: Float) = Font(this, size)

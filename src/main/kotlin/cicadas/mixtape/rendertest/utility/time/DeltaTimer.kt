@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.utility.math
+package cicadas.mixtape.rendertest.utility.time
 
 class DeltaTimer {
     private var last = System.nanoTime()

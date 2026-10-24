@@ -1,9 +1,10 @@
 package cicadas.mixtape.rendertest.pass
 
 import cicadas.mixtape.rendertest.api.mainTarget
+import cicadas.mixtape.rendertest.api.setUniform
 import cicadas.mixtape.rendertest.shader.Pipelines
+import cicadas.mixtape.rendertest.shader.target.CustomTarget
 import cicadas.mixtape.rendertest.shader.uniform.KawaseUniform
-import cicadas.mixtape.rendertest.target.KawaseTarget
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem
@@ -13,7 +14,7 @@ import org.joml.Vector2f
 import java.util.OptionalInt
 
 object KawasePass {
-    private val targets = List(3) { KawaseTarget() }
+    private val targets = List(3) { CustomTarget("kawase-target-$it", false) }
 
     fun texture() = targets.first().colorTextureView
 
@@ -51,7 +52,7 @@ object KawasePass {
         ).use {
             it.setPipeline(pipeline)
             it.bindTexture("Sampler0", src.colorTextureView!!, sampler)
-            it.setUniform("Kawase", kawaseUniform)
+            it.setUniform(kawaseUniform)
             it.draw(0, 3)
         }
     }

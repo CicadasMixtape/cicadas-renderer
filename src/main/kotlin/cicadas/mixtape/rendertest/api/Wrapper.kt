@@ -1,5 +1,6 @@
 package cicadas.mixtape.rendertest.api
 
+import cicadas.mixtape.rendertest.mixins.ducks.ILevelRenderer
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
 
@@ -13,3 +14,4 @@ inline val nullCheck get() = mc.player == null || mc.level == null
 
 inline val window get() = mc.window
 inline val mainTarget get() = mc.mainRenderTarget
+inline val frustum get() = (mc.levelRenderer as ILevelRenderer).`rendertest$getFrustum`()!!

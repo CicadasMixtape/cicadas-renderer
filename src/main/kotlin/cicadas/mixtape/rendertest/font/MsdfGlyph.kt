@@ -1,6 +1,7 @@
 package cicadas.mixtape.rendertest.font
 
 import com.mojang.blaze3d.vertex.BufferBuilder
+import org.joml.Matrix4f
 import java.awt.Color
 
 class MsdfGlyph(
@@ -32,15 +33,22 @@ class MsdfGlyph(
         }
     }
 
-    fun apply(builder: BufferBuilder, size: Float, x: Float, y: Float, color: Color): Float {
+    fun apply(
+        matrix4f: Matrix4f,
+        builder: BufferBuilder,
+        size: Float,
+        x: Float,
+        y: Float,
+        color: Color
+    ): Float {
         val width = width * size
         val height = height * size
         val y = y - topPosition * size
 
-        builder.addVertex(x,         y,          0f).setUv(minU, minV).setColor(color.rgb)
-        builder.addVertex(x,         y + height, 0f).setUv(minU, maxV).setColor(color.rgb)
-        builder.addVertex(x + width, y + height, 0f).setUv(maxU, maxV).setColor(color.rgb)
-        builder.addVertex(x + width, y,          0f).setUv(maxU, minV).setColor(color.rgb)
+        builder.addVertex(matrix4f, x,         y,          0f).setUv(minU, minV).setColor(color.rgb)
+        builder.addVertex(matrix4f, x,         y + height, 0f).setUv(minU, maxV).setColor(color.rgb)
+        builder.addVertex(matrix4f, x + width, y + height, 0f).setUv(maxU, maxV).setColor(color.rgb)
+        builder.addVertex(matrix4f, x + width, y,          0f).setUv(maxU, minV).setColor(color.rgb)
 
         return advance * size
     }

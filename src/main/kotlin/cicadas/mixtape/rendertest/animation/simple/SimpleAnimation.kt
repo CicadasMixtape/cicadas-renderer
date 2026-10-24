@@ -3,7 +3,7 @@ package cicadas.mixtape.rendertest.animation.simple
 import cicadas.mixtape.rendertest.animation.IAnimation
 import cicadas.mixtape.rendertest.animation.easing.IEasing
 import cicadas.mixtape.rendertest.api.toFloat
-import cicadas.mixtape.rendertest.utility.math.Timer
+import cicadas.mixtape.rendertest.utility.time.Timer
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 

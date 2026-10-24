@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer
 object RenderUtility {
     private val projection = CachedOrthoProjectionMatrixBuffer("rendertest-projection", -1000f, 1000f, true)
 
-    fun projection(unit: () -> Unit) {
+    fun setProjection(unit: () -> Unit) {
         val width = window.width.toFloat() / 2f
         val height = window.height.toFloat() / 2f
         val buffer = RenderSystem.getProjectionMatrixBuffer()!!

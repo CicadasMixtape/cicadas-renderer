@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.shader.buffer
+package cicadas.mixtape.rendertest.shader.builder
 
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.systems.RenderPass
@@ -27,9 +27,16 @@ class CustomBuffer private constructor(
         }
     }
 
-    fun drawIndexed(pass: RenderPass) {
+    fun setBuffer(pass: RenderPass) {
         pass.setVertexBuffer(0, vertex)
         pass.setIndexBuffer(index, type)
-        pass.drawIndexed(0, 0, count, 1)
+    }
+
+    fun drawIndexed(pass: RenderPass) {
+        drawIndexed(pass, 0, count)
+    }
+
+    fun drawIndexed(pass: RenderPass, start: Int, count: Int) {
+        pass.drawIndexed(0, start, count, 1)
     }
 }

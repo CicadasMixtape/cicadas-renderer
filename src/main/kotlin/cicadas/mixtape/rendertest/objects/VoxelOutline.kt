@@ -8,5 +8,5 @@ data class VoxelOutline(
     val pos: BlockPos,
     val shape: VoxelShape,
     val color: Color,
-    val lineWidth: Float = 1f
+    val lineWidth: Float
 )
