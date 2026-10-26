@@ -18,6 +18,7 @@ class Batching {
     val meshes = arrayListOf<MeshData>()
 
     fun add(batched: Batched) {
+        val last = batches.lastOrNull()
         val format = CustomFormat(batched.pipeline.vertexFormatMode, batched.pipeline.vertexFormat)
         val customBuilder = builders.getOrPut(format) { CustomBuilder(format) }
         var count = 0
@@ -26,7 +27,12 @@ class Batching {
             count += it(customBuilder.get())
         }
 
-        batches.add(Batch(batched, customBuilder, customBuilder.count * 6, count * 6))
+        if (last != null && last.match(batched)) {
+            last.count += count * 6
+        } else {
+            batches.add(Batch(batched, customBuilder, customBuilder.count * 6, count * 6))
+        }
+
         customBuilder.count += count
     }
 

@@ -1,7 +1,7 @@
-package cicadas.mixtape.rendertest.mixins.ducks;
+package cicadas.mixtape.rendertest.ducks;
 
 import net.minecraft.client.renderer.culling.Frustum;
 
-public interface ILevelRenderer {
+public interface LevelRendererDuck {
     Frustum rendertest$getFrustum();
 }
