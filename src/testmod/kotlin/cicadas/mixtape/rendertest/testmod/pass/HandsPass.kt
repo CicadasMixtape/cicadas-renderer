@@ -1,4 +1,4 @@
-package cicadas.mixtape.rendertest.pass
+package cicadas.mixtape.rendertest.testmod.pass
 
 import cicadas.mixtape.rendertest.api.clearColorAndDepth
 import cicadas.mixtape.rendertest.api.createRenderPass

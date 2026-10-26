@@ -24,6 +24,26 @@ java {
 repositories {
 }
 
+sourceSets {
+    create("testmod") {
+        compileClasspath += main.get().compileClasspath
+        runtimeClasspath += main.get().runtimeClasspath
+
+        java.srcDirs += rootProject.file("src/main/java")
+        kotlin.srcDirs += rootProject.file("src/main/kotlin")
+        resources.srcDirs += rootProject.file("src/main/resources")
+    }
+}
+
+loom {
+    runs {
+        create("testmodClient") {
+            client()
+            source(sourceSets.getByName("testmod"))
+        }
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
 
@@ -37,9 +57,11 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_language_version")}")
 
     implementation(include("com.github.weisj:jsvg:${project.property("jsvg_version")}")!!)
+
+    "testmodImplementation"(sourceSets["main"].output)
 }
 
-tasks.processResources {
+tasks.withType<ProcessResources>().configureEach {
     filteringCharset = "UTF-8"
 
     filesMatching("fabric.mod.json") {

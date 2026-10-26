@@ -5,6 +5,7 @@ import cicadas.mixtape.rendertest.shader.Pipelines
 import cicadas.mixtape.rendertest.api.mainTarget
 import cicadas.mixtape.rendertest.api.mc
 import cicadas.mixtape.rendertest.api.screenSize
+import cicadas.mixtape.rendertest.api.window
 import cicadas.mixtape.rendertest.batching.Batched
 import cicadas.mixtape.rendertest.batching.Batching
 import cicadas.mixtape.rendertest.pass.KawasePass
@@ -16,8 +17,11 @@ import cicadas.mixtape.rendertest.shader.uniform.LiquidUniform
 import cicadas.mixtape.rendertest.shader.uniform.MsdfUniform
 import cicadas.mixtape.rendertest.shader.uniform.ScreenUniform
 import cicadas.mixtape.rendertest.shader.uniform.SquircleUniform
+import com.mojang.blaze3d.ProjectionType
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -25,6 +29,7 @@ import java.awt.Color
 
 object Renderer2D {
     private val batching = Batching()
+    private val projection = CachedOrthoProjectionMatrixBuffer("rendertest-projection", -1000f, 1000f, true)
 
     fun drawRoundedRect(
         x: Float,
@@ -175,6 +180,17 @@ object Renderer2D {
                 .vertex { msdf.applyGlyphs(it, stack.last().pose(), text, size, x, y, color) }
                 .build()
         )
+    }
+
+    fun projection(unit: () -> Unit) {
+        val width = window.width.toFloat() / 2f
+        val height = window.height.toFloat() / 2f
+        val buffer = RenderSystem.getProjectionMatrixBuffer()!!
+        val type = RenderSystem.getProjectionType()
+
+        RenderSystem.setProjectionMatrix(projection.getBuffer(width, height), ProjectionType.ORTHOGRAPHIC)
+        unit()
+        RenderSystem.setProjectionMatrix(buffer, type)
     }
 
     fun update() {

@@ -1,17 +1,20 @@
 package cicadas.mixtape.rendertest.mixins;
 
-import cicadas.mixtape.rendertest.RenderManager;
 import cicadas.mixtape.rendertest.api.ExtensionsKt;
+import cicadas.mixtape.rendertest.events.EventRender2D;
+import cicadas.mixtape.rendertest.events.EventRender3D;
 import cicadas.mixtape.rendertest.pass.KawasePass;
-import cicadas.mixtape.rendertest.pass.HandsPass;
+import cicadas.mixtape.rendertest.utility.render.Renderer2D;
 import cicadas.mixtape.rendertest.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import kotlin.Unit;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.renderer.CachedPerspectiveProjectionMatrixBuffer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.PerspectiveProjectionMatrixBuffer;
@@ -36,26 +39,27 @@ public abstract class GameRendererMixin {
     @Shadow protected abstract float getFov(Camera camera, float f, boolean bl);
     @Shadow public abstract Matrix4f getProjectionMatrix(float f);
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
-    public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
-        Profiler.get().push("rendertest-render-2d");
-        RenderManager.INSTANCE.onRender2D();
-        Profiler.get().pop();
-    }
-
     @Inject(method = "renderItemInHand", at = @At("HEAD"))
     public void renderItemInHand$head(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
         Profiler.get().push("rendertest-kawase-update");
         KawasePass.INSTANCE.update();
-        Profiler.get().popPush("rendertest-hands-begin");
-        HandsPass.INSTANCE.begin();
         Profiler.get().pop();
     }
 
-    @Inject(method = "renderItemInHand", at = @At("RETURN"))
-    public void renderItemInHand$return(float partialTick, boolean sleeping, Matrix4f projectionMatrix, CallbackInfo ci) {
-        Profiler.get().push("rendertest-hands-end");
-        HandsPass.INSTANCE.end();
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
+    public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+        if (!renderLevel || minecraft.level == null || minecraft.screen instanceof LevelLoadingScreen || minecraft.debugEntries.isOverlayVisible() || minecraft.options.hideGui) {
+            return;
+        }
+
+        Profiler.get().push("rendertest-render-2d");
+
+        Renderer2D.INSTANCE.projection(() -> {
+            EventRender2D.EVENT.invoker().invoke();
+            Renderer2D.INSTANCE.update();
+            return Unit.INSTANCE;
+        });
+
         Profiler.get().pop();
     }
 
@@ -69,7 +73,7 @@ public abstract class GameRendererMixin {
         stack.mulPose(matrix4f);
 
         RenderSystem.setProjectionMatrix(levelProjectionMatrixBuffer.getBuffer(projection), ProjectionType.PERSPECTIVE);
-        RenderManager.INSTANCE.onRender3D();
+        EventRender3D.EVENT.invoker().invoke();
         Renderer3D.INSTANCE.drawDefaults(stack.last().pose());
         Renderer3D.INSTANCE.drawVoxels(stack.last().pose());
         RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(minecraft.getMainRenderTarget().width, minecraft.getMainRenderTarget().height, getFov(mainCamera, partialTicks, false)), ProjectionType.PERSPECTIVE);

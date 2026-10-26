@@ -8,7 +8,6 @@
   "client": [
     "GameRendererMixin",
     "LevelRendererMixin",
-    "OutputTargetMixin",
     "accessors.BufferBuilderAccessor"
   ],
   "injectors": {

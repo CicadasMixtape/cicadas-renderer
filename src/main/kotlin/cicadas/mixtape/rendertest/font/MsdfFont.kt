@@ -1,8 +1,8 @@
 package cicadas.mixtape.rendertest.font
 
-import cicadas.mixtape.rendertest.api.JSON
 import cicadas.mixtape.rendertest.api.mc
 import com.mojang.blaze3d.vertex.BufferBuilder
+import kotlinx.serialization.json.Json
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -19,10 +19,11 @@ class MsdfFont private constructor(
 
     companion object {
         fun build(id: Identifier): MsdfFont {
+            val json = Json { ignoreUnknownKeys = true }
             val id = id.withPrefix("fonts/")
             val stream = mc.resourceManager.open(id.withSuffix(".json"))
             val texture = mc.textureManager.getTexture(id.withSuffix(".png"))
-            val data = JSON.decodeFromString<MsdfData>(stream.readAllBytes().decodeToString())
+            val data = json.decodeFromString<MsdfData>(stream.readAllBytes().decodeToString())
             val glyphs = data.glyphs.associate { it.unicode to MsdfGlyph(it, data.atlas.width, data.atlas.height) }
             return MsdfFont(texture, data.atlas, data.metrics, glyphs)
         }
