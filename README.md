@@ -1,24 +1,24 @@
 # Cicadas-Renderer
- 
-### Рендер для всеми любимой игры Minecraft на версии 1.21.11 (может будут и другие)
 
-2D
+Рендер для всеми любимой игры Minecraft на версии 1.21.11 (может будут и другие)
+
+## 2D
 * Рект (с блюром/без)
 * Жидкое стекло (с блюром/без)
 * Сквиркл
 * Текстура
 * Текст
 
-3D (AABB и VoxelShape)
+## 3D (AABB и VoxelShape)
 * Боксы
 * Оутлайны
 
-Также рендер поддерживает загрузку SVG файлов в текстуру
+## Также рендер поддерживает загрузку SVG файлов в текстуру
 
-В тестовом моде есть [пример](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/pass/HandsPass.kt) добавления кастомного шейдера на руки.
+## В тестовом моде есть [пример](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/pass/HandsPass.kt) добавления кастомного шейдера на руки.
 
 ![preview.png](assets/preview.png)
 
-Код превью находится [тут](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/Testmod.kt).
+Код превьюшки со скриншота находится [тут](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/Testmod.kt).
 
 ###### (Написано полностью на котлине)
