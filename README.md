@@ -17,6 +17,18 @@
 
 ## В тестовом моде есть [пример](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/pass/HandsPass.kt) добавления кастомного шейдера на руки.
 
+## Добавление библиотеки в проект
+
+```kotlin
+repositories {
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.0")
+}
+```
+
 ![preview.png](assets/preview.png)
 
 Код превьюшки со скриншота находится [тут](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/Testmod.kt).
