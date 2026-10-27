@@ -22,6 +22,7 @@ java {
 }
 
 repositories {
+    maven("https://maven.parchmentmc.org")
 }
 
 sourceSets {
