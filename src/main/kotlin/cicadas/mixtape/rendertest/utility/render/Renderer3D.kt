@@ -12,11 +12,12 @@ import cicadas.mixtape.rendertest.objects.VoxelOutline
 import cicadas.mixtape.rendertest.shader.Types
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
-import org.joml.Matrix4f
 
 object Renderer3D {
+    private var stack = PoseStack()
     private val defaultBoxes = arrayListOf<DefaultBox>()
     private val defaultOutlines = arrayListOf<DefaultOutline>()
     private val voxelBoxes = arrayListOf<VoxelBox>()
@@ -62,7 +63,7 @@ object Renderer3D {
         voxelOutlines.add(outline)
     }
 
-    private fun drawDefaultBox(builder: BufferBuilder, matrix4f: Matrix4f, box: DefaultBox) {
+    private fun drawDefaultBox(builder: BufferBuilder, box: DefaultBox) {
         val aabb = box.aabb.withCamera
         val color = box.color
         val x1 = aabb.minX.toFloat()
@@ -72,38 +73,38 @@ object Renderer3D {
         val y2 = aabb.maxY.toFloat()
         val z2 = aabb.maxZ.toFloat()
 
-        builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y1, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y1, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y2, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y2, z1).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y1, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y1, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y2, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y2, z1).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y1, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y1, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y2, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y2, z1).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y1, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y1, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y2, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y2, z2).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y1, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y1, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y1, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y1, z2).setColor(color.rgb)
 
-        builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y2, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y2, z1).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x2, y2, z2).setColor(color.rgb)
+        builder.addVertex(stack.last().pose(), x1, y2, z2).setColor(color.rgb)
     }
 
-    private fun drawDefaultOutline(builder: BufferBuilder, matrix4f: Matrix4f, outline: DefaultOutline) {
+    private fun drawDefaultOutline(builder: BufferBuilder, outline: DefaultOutline) {
         val aabb = outline.aabb.withCamera
         val color = outline.color
         val lineWidth = outline.lineWidth
@@ -114,23 +115,23 @@ object Renderer3D {
         val y2 = aabb.maxY.toFloat()
         val z2 = aabb.maxZ.toFloat()
 
-        builder.addLine(matrix4f, x1, y1, z1, x1, y2, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z1, x2, y2, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z2, x2, y2, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x1, y1, z2, x1, y2, z2, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x1, y1, z1, x1, y2, z1, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x2, y1, z1, x2, y2, z1, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x2, y1, z2, x2, y2, z2, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x1, y1, z2, x1, y2, z2, color.rgb, lineWidth)
 
-        builder.addLine(matrix4f, x1, y1, z1, x2, y1, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z1, x2, y1, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z2, x1, y1, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x1, y1, z2, x1, y1, z1, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x1, y1, z1, x2, y1, z1, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x2, y1, z1, x2, y1, z2, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x2, y1, z2, x1, y1, z2, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x1, y1, z2, x1, y1, z1, color.rgb, lineWidth)
 
-        builder.addLine(matrix4f, x1, y2, z1, x2, y2, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y2, z1, x2, y2, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y2, z2, x1, y2, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x1, y2, z2, x1, y2, z1, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x1, y2, z1, x2, y2, z1, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x2, y2, z1, x2, y2, z2, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x2, y2, z2, x1, y2, z2, color.rgb, lineWidth)
+        builder.addLine(stack.last().pose(), x1, y2, z2, x1, y2, z1, color.rgb, lineWidth)
     }
 
-    private fun drawVoxelBox(builder: BufferBuilder, matrix4f: Matrix4f, box: VoxelBox) {
+    private fun drawVoxelBox(builder: BufferBuilder, box: VoxelBox) {
         val shape = box.shape
         val pos = box.pos
         val color = box.color
@@ -144,39 +145,39 @@ object Renderer3D {
             val y2 = (y2 + (pos.y - camera.y())).toFloat()
             val z2 = (z2 + (pos.z - camera.z())).toFloat()
 
-            builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y1, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y1, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y2, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y2, z1).setColor(color.rgb)
 
-            builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y1, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y1, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y2, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y2, z1).setColor(color.rgb)
 
-            builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y1, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y1, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y2, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y2, z1).setColor(color.rgb)
 
-            builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y1, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y1, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y2, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y2, z2).setColor(color.rgb)
 
-            builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y1, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y1, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y1, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y1, z2).setColor(color.rgb)
 
-            builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y2, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y2, z1).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x2, y2, z2).setColor(color.rgb)
+            builder.addVertex(stack.last().pose(), x1, y2, z2).setColor(color.rgb)
         }
     }
 
-    private fun drawVoxelOutline(builder: BufferBuilder, matrix4f: Matrix4f, outline: VoxelOutline) {
+    private fun drawVoxelOutline(builder: BufferBuilder, outline: VoxelOutline) {
         val shape = outline.shape
         val pos = outline.pos
         val color = outline.color
@@ -190,16 +191,16 @@ object Renderer3D {
             val x2 = (x2 + (pos.x - camera.x())).toFloat()
             val y2 = (y2 + (pos.y - camera.y())).toFloat()
             val z2 = (z2 + (pos.z - camera.z())).toFloat()
-            builder.addLine(matrix4f, x1, y1, z1, x2, y2, z2, color.rgb, lineWidth)
+            builder.addLine(stack.last().pose(), x1, y1, z1, x2, y2, z2, color.rgb, lineWidth)
         }
     }
 
-    fun drawDefaults(matrix4f: Matrix4f) {
+    fun drawDefaults() {
         if (defaultBoxes.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
             defaultBoxes.forEach {
-                drawDefaultBox(builder, matrix4f, it)
+                drawDefaultBox(builder, it)
             }
 
             Types.QUADS.draw(builder.buildOrThrow())
@@ -209,19 +210,19 @@ object Renderer3D {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
             defaultOutlines.forEach {
-                drawDefaultOutline(builder, matrix4f, it)
+                drawDefaultOutline(builder, it)
             }
 
             Types.LINES.draw(builder.buildOrThrow())
         }
     }
 
-    fun drawVoxels(matrix4f: Matrix4f) {
+    fun drawVoxels() {
         if (voxelBoxes.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
             voxelBoxes.forEach {
-                drawVoxelBox(builder, matrix4f, it)
+                drawVoxelBox(builder, it)
             }
 
             Types.QUADS.draw(builder.buildOrThrow())
@@ -231,7 +232,7 @@ object Renderer3D {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
             voxelOutlines.forEach {
-                drawVoxelOutline(builder, matrix4f, it)
+                drawVoxelOutline(builder, it)
             }
 
             Types.LINES.draw(builder.buildOrThrow())
@@ -243,5 +244,9 @@ object Renderer3D {
         defaultOutlines.clear()
         voxelBoxes.clear()
         voxelOutlines.clear()
+    }
+
+    fun stack(stack: PoseStack) {
+        this.stack = stack
     }
 }

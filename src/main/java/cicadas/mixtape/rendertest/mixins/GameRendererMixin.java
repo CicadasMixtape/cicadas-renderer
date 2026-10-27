@@ -10,7 +10,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import kotlin.Unit;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -54,11 +53,10 @@ public abstract class GameRendererMixin {
 
         Profiler.get().push("rendertest-render-2d");
 
-        Renderer2D.INSTANCE.projection(() -> {
-            EventRender2D.EVENT.invoker().invoke();
-            Renderer2D.INSTANCE.update();
-            return Unit.INSTANCE;
-        });
+        var stack = new PoseStack();
+        Renderer2D.INSTANCE.stack(stack);
+        EventRender2D.EVENT.invoker().invoke(stack);
+        Renderer2D.INSTANCE.update();
 
         Profiler.get().pop();
     }
@@ -73,9 +71,10 @@ public abstract class GameRendererMixin {
         stack.mulPose(matrix4f);
 
         RenderSystem.setProjectionMatrix(levelProjectionMatrixBuffer.getBuffer(projection), ProjectionType.PERSPECTIVE);
-        EventRender3D.EVENT.invoker().invoke();
-        Renderer3D.INSTANCE.drawDefaults(stack.last().pose());
-        Renderer3D.INSTANCE.drawVoxels(stack.last().pose());
+        Renderer3D.INSTANCE.stack(stack);
+        EventRender3D.EVENT.invoker().invoke(stack);
+        Renderer3D.INSTANCE.drawDefaults();
+        Renderer3D.INSTANCE.drawVoxels();
         RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(minecraft.getMainRenderTarget().width, minecraft.getMainRenderTarget().height, getFov(mainCamera, partialTicks, false)), ProjectionType.PERSPECTIVE);
 
         Profiler.get().pop();

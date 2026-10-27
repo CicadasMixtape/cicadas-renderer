@@ -28,6 +28,7 @@ import net.minecraft.resources.Identifier
 import java.awt.Color
 
 object Renderer2D {
+    private var stack = PoseStack()
     private val batching = Batching()
     private val projection = CachedOrthoProjectionMatrixBuffer("rendertest-projection", -1000f, 1000f, true)
 
@@ -37,8 +38,7 @@ object Renderer2D {
         width: Float,
         height: Float,
         radius: Radius,
-        gradient: Gradient,
-        stack: PoseStack = PoseStack()
+        gradient: Gradient
     ) {
         batching.add(
             Batched.builder()
@@ -54,10 +54,6 @@ object Renderer2D {
         )
     }
 
-    fun drawRoundedTexture(id: Identifier, x: Float, y: Float, width: Float, height: Float, radius: Radius = Radius.EMPTY, gradient: Gradient = Gradient.EMPTY) {
-        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, gradient)
-    }
-
     fun drawRoundedTexture(
         texture: AbstractTexture,
         x: Float,
@@ -65,8 +61,7 @@ object Renderer2D {
         width: Float,
         height: Float,
         radius: Radius = Radius.EMPTY,
-        gradient: Gradient = Gradient.EMPTY,
-        stack: PoseStack = PoseStack()
+        gradient: Gradient = Gradient.EMPTY
     ) {
         batching.add(
             Batched.builder()
@@ -83,6 +78,18 @@ object Renderer2D {
         )
     }
 
+    fun drawRoundedTexture(
+        id: Identifier,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        radius: Radius = Radius.EMPTY,
+        gradient: Gradient = Gradient.EMPTY
+    ) {
+        drawRoundedTexture(mc.textureManager.getTexture(id), x, y, width, height, radius, gradient)
+    }
+
     fun drawSquircle(
         x: Float,
         y: Float,
@@ -90,8 +97,7 @@ object Renderer2D {
         height: Float,
         squirt: Float,
         radius: Radius,
-        gradient: Gradient,
-        stack: PoseStack = PoseStack()
+        gradient: Gradient
     ) {
         batching.add(
             Batched.builder()
@@ -114,8 +120,7 @@ object Renderer2D {
         width: Float,
         height: Float,
         radius: Radius,
-        gradient: Gradient = Gradient.EMPTY,
-        stack: PoseStack = PoseStack()
+        gradient: Gradient = Gradient.EMPTY
     ) {
         batching.add(
             Batched.builder()
@@ -141,8 +146,7 @@ object Renderer2D {
         power: Float,
         clean: Boolean,
         radius: Radius,
-        gradient: Gradient = Gradient.EMPTY,
-        stack: PoseStack = PoseStack()
+        gradient: Gradient = Gradient.EMPTY
     ) {
         batching.add(
             Batched.builder()
@@ -166,8 +170,7 @@ object Renderer2D {
         text: Component,
         x: Float,
         y: Float,
-        color: Color = Color.WHITE,
-        stack: PoseStack = PoseStack()
+        color: Color = Color.WHITE
     ) {
         val msdf = font.msdf
         val size = font.size
@@ -182,18 +185,18 @@ object Renderer2D {
         )
     }
 
-    fun projection(unit: () -> Unit) {
+    fun update() {
         val width = window.width.toFloat() / 2f
         val height = window.height.toFloat() / 2f
         val buffer = RenderSystem.getProjectionMatrixBuffer()!!
         val type = RenderSystem.getProjectionType()
 
         RenderSystem.setProjectionMatrix(projection.getBuffer(width, height), ProjectionType.ORTHOGRAPHIC)
-        unit()
+        batching.update()
         RenderSystem.setProjectionMatrix(buffer, type)
     }
 
-    fun update() {
-        batching.update()
+    fun stack(stack: PoseStack) {
+        this.stack = stack
     }
 }

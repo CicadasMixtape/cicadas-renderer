@@ -29,6 +29,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
 import java.awt.Color
 
 object Testmod : ModInitializer {
@@ -90,13 +91,17 @@ object Testmod : ModInitializer {
     private fun onRender3D() {
         val result = mc.hitResult ?: return
 
+        if (result.type == HitResult.Type.MISS) {
+            return
+        }
+
         when (result) {
             is BlockHitResult -> {
                 val pos = result.blockPos
                 val state = pos.blockState
                 val shape = state.getShape(level, pos)
 
-                if (state.isAir) {
+                if (shape.isEmpty) {
                     return
                 }
 

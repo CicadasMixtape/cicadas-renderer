@@ -39,6 +39,7 @@ loom {
     runs {
         create("testmodClient") {
             client()
+            name("Testmod Client")
             source(sourceSets.getByName("testmod"))
         }
     }

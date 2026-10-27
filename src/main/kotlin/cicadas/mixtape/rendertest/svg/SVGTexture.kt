@@ -11,8 +11,7 @@ import net.minecraft.resources.Identifier
 class SVGTexture(val id: Identifier, val size: FloatSize) : AbstractTexture() {
     fun load(): SVGTexture {
         val id = Identifier.fromNamespaceAndPath(id.namespace, id.path.removeSuffix("_${size.width}x${size.height}"))
-        val document = SVGManager.loadDocument(id)
-        val image = document.toBuffered(size).toNative()
+        val image = SVGManager.loadDocument(id).toBuffered(size).toNative()
 
         close()
 

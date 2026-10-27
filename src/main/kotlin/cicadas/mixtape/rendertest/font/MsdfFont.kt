@@ -58,7 +58,7 @@ class MsdfFont private constructor(
 
             if (glyph == null) return@accept true
 
-            offsetX += glyph.apply(matrix4f, builder, size, offsetX, offsetY, current) + getThickness(size)
+            offsetX += glyph.apply(builder, matrix4f, size, offsetX, offsetY, current) + getThickness(size)
             count += 1
 
             true

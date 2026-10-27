@@ -34,8 +34,8 @@ class MsdfGlyph(
     }
 
     fun apply(
-        matrix4f: Matrix4f,
         builder: BufferBuilder,
+        matrix4f: Matrix4f,
         size: Float,
         x: Float,
         y: Float,

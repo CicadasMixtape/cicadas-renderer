@@ -43,7 +43,12 @@ object KawasePass {
         }
     }
 
-    private fun createPass(pipeline: RenderPipeline, src: RenderTarget, dst: RenderTarget, sampler: GpuSampler) {
+    private fun createPass(
+        pipeline: RenderPipeline,
+        src: RenderTarget,
+        dst: RenderTarget,
+        sampler: GpuSampler
+    ) {
         val kawaseUniform = KawaseUniform.update(3f, Vector2f(0.5f / src.width, 0.5f / src.height))
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(

@@ -1,16 +1,17 @@
 package cicadas.mixtape.rendertest.events
 
+import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.event.EventFactory
 
 fun interface EventRender3D {
     companion object {
         @JvmField
-        val EVENT= EventFactory.createArrayBacked(EventRender3D::class.java) { i ->
+        val EVENT= EventFactory.createArrayBacked(EventRender3D::class.java) { events ->
             EventRender3D {
-                i.forEach { t -> t.invoke() }
+                events.forEach { event -> event.invoke(it) }
             }
         }
     }
 
-    fun invoke()
+    fun invoke(stack: PoseStack)
 }
