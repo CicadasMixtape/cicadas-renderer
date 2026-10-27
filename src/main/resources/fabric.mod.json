@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "render-test",
+  "id": "cicadas-renderer",
   "version": "${version}",
-  "name": "render-test",
+  "name": "cicadas-renderer",
   "description": "A render library for minecraft",
   "authors": ["cicadasmixtape"],
   "contact": {},
   "license": "All-Rights-Reserved",
-  "icon": "assets/rendertest/icon.png",
+  "icon": "assets/cicadasrenderer/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       {
         "adapter": "kotlin",
-        "value": "cicadas.mixtape.rendertest.RenderTest"
+        "value": "cicadas.mixtape.renderer.CicadasRenderer"
       }
     ]
   },
   "mixins": [
-    "render-test.mixins.json"
+    "cicadas-renderer.mixins.json"
   ],
   "depends": {
     "minecraft": "${minecraft_version}",

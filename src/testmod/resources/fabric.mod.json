@@ -13,7 +13,7 @@
     "main": [
       {
         "adapter": "kotlin",
-        "value": "cicadas.mixtape.rendertest.testmod.Testmod"
+        "value": "cicadas.mixtape.renderer.testmod.Testmod"
       }
     ]
   },

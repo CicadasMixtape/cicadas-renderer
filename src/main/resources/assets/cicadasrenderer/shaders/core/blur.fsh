@@ -1,0 +1,21 @@
+#version 330
+
+#moj_import <cicadasrenderer:rect.glsl>
+#moj_import <cicadasrenderer:screen_uniform.glsl>
+
+in vec2 vertexSize;
+in vec2 vertexCoord;
+in float vertexRadius;
+in vec4 vertexColor;
+
+uniform sampler2D Sampler0;
+
+out vec4 fragColor;
+
+void main() {
+    vec2 center = vertexSize / 2.0;
+    float dist = rect(center - (vertexCoord * vertexSize), center - 1.0, vertexRadius);
+    float alpha = 1.0 - smoothstep(-0.5, 0.5, dist);
+    vec4 color = vec4(texture(Sampler0, gl_FragCoord.xy / screenSize).rgb, 1.0) * vertexColor;
+    fragColor = vec4(color.rgb, color.a * alpha);
+}
