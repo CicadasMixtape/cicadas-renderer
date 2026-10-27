@@ -14,7 +14,7 @@ version = project.property("mod_version") as String
 group = project.property("maven_group") as String
 
 base {
-    archivesName.set(project.property("archives_name") as String)
+    archivesName.set("${project.property("archives_name")}-${project.property("minecraft_version")}")
 }
 
 java {
