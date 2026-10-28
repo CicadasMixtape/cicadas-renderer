@@ -5,6 +5,7 @@ import kotlin.math.abs
 
 fun interface BezierEasing : IEasing {
     companion object {
+        @JvmStatic
         fun create(x1: Float, y1: Float, x2: Float, y2: Float): BezierEasing {
             fun bez(a: Float, b: Float, s: Float): Float {
                 val u = 1f - s

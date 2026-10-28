@@ -2,7 +2,7 @@ package cicadas.mixtape.renderer.pass
 
 import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.api.setUniform
-import cicadas.mixtape.renderer.shader.Pipelines
+import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.shader.target.CustomTarget
 import cicadas.mixtape.renderer.shader.uniform.KawaseUniform
 import com.mojang.blaze3d.pipeline.RenderPipeline
@@ -33,13 +33,13 @@ object KawasePass {
         for (i in targets.indices) {
             val src = if (i == 0) mainTarget else targets[i - 1]
             val dst = targets[i]
-            createPass(Pipelines.KAWASE_DOWN_PIPELINE, src, dst, sampler)
+            createPass(CicadasPipelines.KAWASE_DOWN_PIPELINE, src, dst, sampler)
         }
 
         for (i in targets.lastIndex downTo 1) {
             val src = targets[i]
             val dst = targets[i - 1]
-            createPass(Pipelines.KAWASE_UP_PIPELINE, src, dst, sampler)
+            createPass(CicadasPipelines.KAWASE_UP_PIPELINE, src, dst, sampler)
         }
     }
 

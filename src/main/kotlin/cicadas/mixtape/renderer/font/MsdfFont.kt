@@ -18,6 +18,7 @@ class MsdfFont private constructor(
     val thickness = 0.05f
 
     companion object {
+        @JvmStatic
         fun build(id: Identifier): MsdfFont {
             val json = Json { ignoreUnknownKeys = true }
             val id = id.withPrefix("fonts/")

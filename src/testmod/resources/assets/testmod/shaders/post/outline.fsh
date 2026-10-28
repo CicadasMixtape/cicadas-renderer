@@ -1,6 +1,6 @@
 #version 330
 
-#moj_import <cicadasrenderer:outline_uniform.glsl>
+#moj_import <testmod:outline_uniform.glsl>
 #moj_import <cicadasrenderer:screen_uniform.glsl>
 
 in vec2 vertexCoord;
@@ -14,11 +14,12 @@ void main() {
     float center = texture(Sampler0, vertexCoord).a;
 
     if (center != 0.0) {
-        fragColor = tint;
+        fragColor = color;
         return;
     }
 
     float alpha = 0.0;
+
     for (float x = -lineWidth; x <= lineWidth; x++) {
         for (float y = -lineWidth; y <= lineWidth; y++) {
             float a = texture(Sampler0, vertexCoord + vec2(x, y) * texel).a;
@@ -29,5 +30,5 @@ void main() {
         }
     }
 
-    fragColor = vec4(tint.rgb, alpha);
+    fragColor = vec4(color.rgb, alpha);
 }

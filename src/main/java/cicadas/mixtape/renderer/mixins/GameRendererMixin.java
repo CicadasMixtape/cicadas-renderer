@@ -1,8 +1,8 @@
 package cicadas.mixtape.renderer.mixins;
 
-import cicadas.mixtape.renderer.api.ExtensionsKt;
-import cicadas.mixtape.renderer.events.EventRender2D;
-import cicadas.mixtape.renderer.events.EventRender3D;
+import cicadas.mixtape.renderer.events.Render2DCallback;
+import cicadas.mixtape.renderer.events.Render3DCallback;
+import cicadas.mixtape.renderer.objects.UIContext;
 import cicadas.mixtape.renderer.pass.KawasePass;
 import cicadas.mixtape.renderer.utility.render.Renderer2D;
 import cicadas.mixtape.renderer.utility.render.Renderer3D;
@@ -55,7 +55,7 @@ public abstract class GameRendererMixin {
 
         var stack = new PoseStack();
         Renderer2D.INSTANCE.stack(stack);
-        EventRender2D.EVENT.invoker().invoke(stack);
+        Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, minecraft.mouseHandler));
         Renderer2D.INSTANCE.update();
 
         Profiler.get().pop();
@@ -65,14 +65,14 @@ public abstract class GameRendererMixin {
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
         Profiler.get().push("cicadasrenderer-render-3d");
 
-        var partialTicks = ExtensionsKt.getPartialTicks(deltaTracker);
+        var partialTicks = deltaTracker.getGameTimeDeltaPartialTick(false);
         var projection = getProjectionMatrix(getFov(mainCamera, partialTicks, true));
         var stack = bob(new PoseStack());
         stack.mulPose(matrix4f);
 
         RenderSystem.setProjectionMatrix(levelProjectionMatrixBuffer.getBuffer(projection), ProjectionType.PERSPECTIVE);
         Renderer3D.INSTANCE.stack(stack);
-        EventRender3D.EVENT.invoker().invoke(stack);
+        Render3DCallback.EVENT.invoker().invoke(stack);
         Renderer3D.INSTANCE.drawDefaults();
         Renderer3D.INSTANCE.drawVoxels();
         RenderSystem.setProjectionMatrix(hud3dProjectionMatrixBuffer.getBuffer(minecraft.getMainRenderTarget().width, minecraft.getMainRenderTarget().height, getFov(mainCamera, partialTicks, false)), ProjectionType.PERSPECTIVE);

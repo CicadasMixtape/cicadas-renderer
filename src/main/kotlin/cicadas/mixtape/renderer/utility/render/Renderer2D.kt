@@ -1,7 +1,7 @@
 package cicadas.mixtape.renderer.utility.render
 
 import cicadas.mixtape.renderer.api.addVertex
-import cicadas.mixtape.renderer.shader.Pipelines
+import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.api.mc
 import cicadas.mixtape.renderer.api.screenSize
@@ -42,7 +42,7 @@ object Renderer2D {
     ) {
         batching.add(
             Batched.builder()
-                .pipeline(Pipelines.RECT_PIPELINE)
+                .pipeline(CicadasPipelines.RECT_PIPELINE)
                 .vertex {
                     it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
                     it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.rgb)
@@ -65,7 +65,7 @@ object Renderer2D {
     ) {
         batching.add(
             Batched.builder()
-                .pipeline(Pipelines.TEXTURE_PIPELINE)
+                .pipeline(CicadasPipelines.TEXTURE_PIPELINE)
                 .sampler(CustomSampler("Sampler0", texture.textureView, FilterMode.NEAREST))
                 .vertex {
                     it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
@@ -101,7 +101,7 @@ object Renderer2D {
     ) {
         batching.add(
             Batched.builder()
-                .pipeline(Pipelines.SQUIRCLE_PIPELINE)
+                .pipeline(CicadasPipelines.SQUIRCLE_PIPELINE)
                 .slice(SquircleUniform.update(squirt))
                 .vertex {
                     it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.rgb)
@@ -124,7 +124,7 @@ object Renderer2D {
     ) {
         batching.add(
             Batched.builder()
-                .pipeline(Pipelines.BLUR_PIPELINE)
+                .pipeline(CicadasPipelines.BLUR_PIPELINE)
                 .sampler(CustomSampler("Sampler0", KawasePass.texture(), FilterMode.LINEAR))
                 .slice(ScreenUniform.update(mainTarget.screenSize))
                 .vertex {
@@ -150,7 +150,7 @@ object Renderer2D {
     ) {
         batching.add(
             Batched.builder()
-                .pipeline(Pipelines.LIQUID_GLASS)
+                .pipeline(CicadasPipelines.LIQUID_GLASS)
                 .sampler(CustomSampler("Sampler0", if (clean) mainTarget.colorTextureView else KawasePass.texture(), FilterMode.LINEAR))
                 .slice(LiquidUniform.update(power))
                 .slice(ScreenUniform.update(mainTarget.screenSize))
@@ -177,7 +177,7 @@ object Renderer2D {
 
         batching.add(
             Batched.builder()
-                .pipeline(Pipelines.MSDF_PIPELINE)
+                .pipeline(CicadasPipelines.MSDF_PIPELINE)
                 .sampler(CustomSampler("Sampler0", msdf.texture.textureView, FilterMode.LINEAR))
                 .slice(MsdfUniform.update(msdf.atlas.distanceRange, msdf.thickness))
                 .vertex { msdf.applyGlyphs(it, stack.last().pose(), text, size, x, y, color) }

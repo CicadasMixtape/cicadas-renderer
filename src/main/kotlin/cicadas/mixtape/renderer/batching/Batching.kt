@@ -4,11 +4,9 @@ import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.shader.builder.CustomBuffer
 import cicadas.mixtape.renderer.shader.builder.CustomBuilder
 import cicadas.mixtape.renderer.shader.builder.CustomFormat
+import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData
-import org.joml.Matrix4f
-import org.joml.Vector3f
-import org.joml.Vector4f
 import java.util.OptionalDouble
 import java.util.OptionalInt
 
@@ -47,8 +45,7 @@ class Batching {
             it.buffer = if (mesh != null) CustomBuffer.create(mesh).also { meshes.add(mesh) } else null
         }
 
-        val transforms = RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
-        val projection = RenderSystem.getProjectionMatrixBuffer()
+        val defaultUniform = DefaultUniform.create()
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
             { "batching-pass" },
@@ -60,7 +57,7 @@ class Batching {
             batches.forEach {
                 val buffer = it.builder.buffer ?: return@forEach
 
-                it.batched.update(pass, transforms, projection)
+                it.batched.update(pass, defaultUniform)
 
                 if (current != buffer) {
                     buffer.setBuffer(pass)

@@ -1,11 +1,11 @@
 package cicadas.mixtape.renderer.batching
 
-import cicadas.mixtape.renderer.api.setDefaultUniforms
+import cicadas.mixtape.renderer.api.setDefaultUniform
 import cicadas.mixtape.renderer.api.setSampler
 import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
-import com.mojang.blaze3d.buffers.GpuBufferSlice
+import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.vertex.BufferBuilder
@@ -18,16 +18,16 @@ class Batched private constructor(
     val slices: List<CustomSlice> // Юниформы
 ) {
     companion object {
+        @JvmStatic
         fun builder() = Builder()
     }
 
     fun update(
         pass: RenderPass,
-        transforms: GpuBufferSlice,
-        projection: GpuBufferSlice?
+        defaultUniform: DefaultUniform
     ) {
         pass.setPipeline(pipeline)
-        pass.setDefaultUniforms(transforms, projection)
+        pass.setDefaultUniform(defaultUniform)
 
         slices.forEach {
             pass.setUniform(it)

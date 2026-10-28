@@ -1,6 +1,5 @@
 package cicadas.mixtape.renderer.utility.render
 
-import cicadas.mixtape.renderer.api.aabb
 import cicadas.mixtape.renderer.api.addLine
 import cicadas.mixtape.renderer.api.frustum
 import cicadas.mixtape.renderer.api.mc
@@ -9,12 +8,13 @@ import cicadas.mixtape.renderer.objects.DefaultBox
 import cicadas.mixtape.renderer.objects.DefaultOutline
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
-import cicadas.mixtape.renderer.shader.Types
+import cicadas.mixtape.renderer.shader.CicadasTypes
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
+import net.minecraft.world.phys.AABB
 
 object Renderer3D {
     private var stack = PoseStack()
@@ -40,7 +40,7 @@ object Renderer3D {
     }
 
     fun addVoxelBox(box: VoxelBox) {
-        if (!frustum.isVisible(box.pos.aabb)) {
+        if (!frustum.isVisible(AABB(box.pos))) {
             return
         }
 
@@ -52,7 +52,7 @@ object Renderer3D {
     }
 
     fun addVoxelOutline(outline: VoxelOutline) {
-        if (!frustum.isVisible(outline.pos.aabb)) {
+        if (!frustum.isVisible(AABB(outline.pos))) {
             return
         }
 
@@ -203,7 +203,7 @@ object Renderer3D {
                 drawDefaultBox(builder, it)
             }
 
-            Types.QUADS.draw(builder.buildOrThrow())
+            CicadasTypes.QUADS.draw(builder.buildOrThrow())
         }
 
         if (defaultOutlines.isNotEmpty()) {
@@ -213,7 +213,7 @@ object Renderer3D {
                 drawDefaultOutline(builder, it)
             }
 
-            Types.LINES.draw(builder.buildOrThrow())
+            CicadasTypes.LINES.draw(builder.buildOrThrow())
         }
     }
 
@@ -225,7 +225,7 @@ object Renderer3D {
                 drawVoxelBox(builder, it)
             }
 
-            Types.QUADS.draw(builder.buildOrThrow())
+            CicadasTypes.QUADS.draw(builder.buildOrThrow())
         }
 
         if (voxelOutlines.isNotEmpty()) {
@@ -235,7 +235,7 @@ object Renderer3D {
                 drawVoxelOutline(builder, it)
             }
 
-            Types.LINES.draw(builder.buildOrThrow())
+            CicadasTypes.LINES.draw(builder.buildOrThrow())
         }
     }
 

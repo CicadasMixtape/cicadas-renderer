@@ -1,50 +1,35 @@
 package cicadas.mixtape.renderer.api
 
-import cicadas.mixtape.renderer.shader.Formats
+import cicadas.mixtape.renderer.shader.CicadasFormats
 import cicadas.mixtape.renderer.mixins.accessors.BufferBuilderAccessor
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
+import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
 import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.view.FloatSize
 import com.github.weisj.jsvg.view.ViewBox
 import com.mojang.blaze3d.buffers.GpuBuffer
-import com.mojang.blaze3d.buffers.GpuBufferSlice
-import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.platform.NativeImage
-import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.GpuDevice
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexConsumer
-import net.minecraft.client.DeltaTracker
-import net.minecraft.core.BlockPos
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.joml.Vector4f
 import org.lwjgl.system.MemoryUtil
-import java.awt.Color
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
-import java.util.OptionalDouble
-import java.util.OptionalInt
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
-fun Any.init() = this
-
-fun Duration.toFloat(unit: DurationUnit) = toInt(unit).toFloat()
-
-val Color.vector4f get() = Vector4f(red / 255f, green / 255f, blue / 255f, alpha / 255f)
-
-fun Color.withAlpha(alpha: Int) = Color(red, green, blue, alpha)
+internal fun Duration.toFloat(unit: DurationUnit) = toInt(unit).toFloat()
 
 fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(Formats.RADIUS)
+    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.RADIUS)
 
     if (ptr != -1L) {
         MemoryUtil.memPutFloat(ptr, radius)
@@ -54,7 +39,7 @@ fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
 }
 
 fun VertexConsumer.setSize(width: Float, height: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(Formats.SIZE)
+    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.SIZE)
 
     if (ptr != -1L) {
         MemoryUtil.memPutFloat(ptr, width)
@@ -90,25 +75,6 @@ fun VertexConsumer.addLine(
     return this
 }
 
-fun CommandEncoder.createRenderPass(
-    target: RenderTarget,
-    pipeline: RenderPipeline,
-    unit: (RenderPass) -> Unit
-) {
-    val transforms = RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewMatrix(), Vector4f(1f), Vector3f(), Matrix4f())
-    val projection = RenderSystem.getProjectionMatrixBuffer()
-
-    createRenderPass(
-        { "cicadasrenderer-pass" },
-        target.colorTextureView!!, OptionalInt.empty(),
-        target.depthTextureView, OptionalDouble.empty()
-    ).use {
-        it.setPipeline(pipeline)
-        it.setDefaultUniforms(transforms, projection)
-        unit(it)
-    }
-}
-
 val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
 
 fun RenderTarget.clearColorAndDepth() = RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(colorTexture!!, 0, depthTexture!!, 1.0)
@@ -119,15 +85,13 @@ fun RenderPass.setSampler(sampler: CustomSampler) = bindTexture(sampler.name, sa
 
 fun RenderPass.setUniform(slice: CustomSlice) = setUniform(slice.name, slice.slice)
 
-fun RenderPass.setDefaultUniforms(transforms: GpuBufferSlice, projection: GpuBufferSlice?) {
-    if (projection != null) {
-        setUniform("Projection", projection)
+fun RenderPass.setDefaultUniform(uniform: DefaultUniform) {
+    if (uniform.projection != null) {
+        setUniform("Projection", uniform.projection)
     }
 
-    setUniform("DynamicTransforms", transforms)
+    setUniform("DynamicTransforms", uniform.transforms)
 }
-
-val DeltaTracker.partialTicks get() = getGameTimeDeltaPartialTick(false)
 
 val AABB.withCamera: AABB get() {
     val camera = mc.gameRenderer.mainCamera.position()
@@ -135,19 +99,6 @@ val AABB.withCamera: AABB get() {
     val max = Vec3(maxX, maxY, maxZ).subtract(camera)
     return AABB(min, max)
 }
-
-val Entity.lerpedAABB: AABB get() {
-    val pos = oldPosition().lerp(position(), mc.deltaTracker.partialTicks.toDouble())
-    val width = bbWidth / 2.0
-    val height = bbHeight.toDouble()
-    val min = pos.add(-width, 0.0, -width)
-    val max = pos.add(width, height, width)
-    return AABB(min, max)
-}
-
-val BlockPos.blockState get() = level.getBlockState(this)
-
-val BlockPos.aabb get() = AABB(this)
 
 fun SVGDocument.toBuffered(size: FloatSize): BufferedImage {
     val size = FloatSize(size.width * 2f, size.height * 2f)

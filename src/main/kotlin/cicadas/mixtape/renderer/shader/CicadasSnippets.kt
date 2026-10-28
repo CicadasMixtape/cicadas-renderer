@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.renderer.RenderPipelines
 
-object Snippets {
+object CicadasSnippets {
     @JvmField
     val DEFAULT_SNIPPET = RenderPipeline.builder()
         .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
@@ -18,7 +18,7 @@ object Snippets {
 
     @JvmField
     val RECT_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET, DEFAULT_SNIPPET)
-        .withVertexFormat(Formats.RECT, VertexFormat.Mode.QUADS)
+        .withVertexFormat(CicadasFormats.RECT, VertexFormat.Mode.QUADS)
         .withBlend(BlendFunction.TRANSLUCENT)
         .buildSnippet()
 
@@ -55,16 +55,5 @@ object Snippets {
         .withSampler("Sampler0")
         .withUniform("Kawase", UniformType.UNIFORM_BUFFER)
         .withVertexFormat(DefaultVertexFormat.EMPTY, VertexFormat.Mode.TRIANGLES)
-        .buildSnippet()
-
-    @JvmField
-    val OUTLINE_SNIPPET = RenderPipeline.builder()
-        .withSampler("Sampler0")
-        .withUniform("Outline", UniformType.UNIFORM_BUFFER)
-        .withUniform("Screen", UniformType.UNIFORM_BUFFER)
-        .withVertexFormat(DefaultVertexFormat.EMPTY, VertexFormat.Mode.TRIANGLES)
-        .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-        .withBlend(BlendFunction.TRANSLUCENT)
-        .withCull(false)
         .buildSnippet()
 }

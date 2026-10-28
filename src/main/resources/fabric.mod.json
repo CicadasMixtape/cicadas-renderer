@@ -9,14 +9,6 @@
   "license": "All-Rights-Reserved",
   "icon": "assets/cicadasrenderer/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      {
-        "adapter": "kotlin",
-        "value": "cicadas.mixtape.renderer.CicadasRenderer"
-      }
-    ]
-  },
   "mixins": [
     "cicadas-renderer.mixins.json"
   ],

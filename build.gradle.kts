@@ -10,8 +10,8 @@ plugins {
     id("fabric-loom") version "1.16-SNAPSHOT"
 }
 
-version = project.property("mod_version") as String
-group = project.property("maven_group") as String
+version = project.property("mod_version").toString()
+group = project.property("maven_group").toString()
 
 base {
     archivesName.set("${project.property("archives_name")}-${project.property("minecraft_version")}")
@@ -69,10 +69,10 @@ tasks.withType<ProcessResources>().configureEach {
     filesMatching("fabric.mod.json") {
         expand(
             "version" to project.version,
-            "minecraft_version" to project.property("minecraft_version") as String,
-            "fabric_loader_version" to project.property("fabric_loader_version") as String,
-            "fabric_api_version" to project.property("fabric_api_version") as String,
-            "kotlin_language_version" to project.property("kotlin_language_version") as String
+            "minecraft_version" to project.property("minecraft_version").toString(),
+            "fabric_loader_version" to project.property("fabric_loader_version").toString(),
+            "fabric_api_version" to project.property("fabric_api_version").toString(),
+            "kotlin_language_version" to project.property("kotlin_language_version").toString()
         )
     }
 }

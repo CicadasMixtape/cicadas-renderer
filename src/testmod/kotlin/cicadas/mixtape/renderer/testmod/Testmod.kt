@@ -1,13 +1,7 @@
 package cicadas.mixtape.renderer.testmod
 
-import cicadas.mixtape.renderer.api.blockState
-import cicadas.mixtape.renderer.api.init
-import cicadas.mixtape.renderer.api.lerpedAABB
-import cicadas.mixtape.renderer.api.level
-import cicadas.mixtape.renderer.api.mc
-import cicadas.mixtape.renderer.api.withAlpha
-import cicadas.mixtape.renderer.events.EventRender2D
-import cicadas.mixtape.renderer.events.EventRender3D
+import cicadas.mixtape.renderer.events.Render2DCallback
+import cicadas.mixtape.renderer.events.Render3DCallback
 import cicadas.mixtape.renderer.testmod.font.Fonts
 import cicadas.mixtape.renderer.objects.DefaultBox
 import cicadas.mixtape.renderer.objects.DefaultOutline
@@ -16,17 +10,16 @@ import cicadas.mixtape.renderer.objects.Radius
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.svg.SVGManager
+import cicadas.mixtape.renderer.testmod.api.level
+import cicadas.mixtape.renderer.testmod.api.mc
+import cicadas.mixtape.renderer.testmod.api.withAlpha
 import cicadas.mixtape.renderer.utility.render.Renderer2D
 import cicadas.mixtape.renderer.utility.render.Renderer3D
 import com.github.weisj.jsvg.view.FloatSize
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
-import net.minecraft.server.packs.PackType
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener
-import net.minecraft.world.entity.boss.enderdragon.EndCrystal
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
@@ -38,15 +31,11 @@ object Testmod : ModInitializer {
     private val GRADIENT = Gradient.Vertical(Color.WHITE, COLOR)
 
     override fun onInitialize() {
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(id("reloader"), ResourceManagerReloadListener {
-            Fonts.init()
-        })
-
-        EventRender2D.EVENT.register {
+        Render2DCallback.EVENT.register {
             onRender2D()
         }
 
-        EventRender3D.EVENT.register {
+        Render3DCallback.EVENT.register {
             onRender3D()
         }
     }
@@ -98,12 +87,8 @@ object Testmod : ModInitializer {
         when (result) {
             is BlockHitResult -> {
                 val pos = result.blockPos
-                val state = pos.blockState
+                val state = level.getBlockState(pos)
                 val shape = state.getShape(level, pos)
-
-                if (shape.isEmpty) {
-                    return
-                }
 
                 Renderer3D.addVoxelBox(VoxelBox(pos, shape, COLOR.withAlpha(100)))
                 Renderer3D.addVoxelOutline(VoxelOutline(pos, shape, COLOR, 3f))
@@ -111,12 +96,8 @@ object Testmod : ModInitializer {
 
             is EntityHitResult -> {
                 val entity = result.entity
+                val aabb = entity.boundingBox
 
-                if (entity is EndCrystal) {
-                    return
-                }
-
-                val aabb = entity.lerpedAABB
                 Renderer3D.addDefaultBox(DefaultBox(aabb, COLOR.withAlpha(100)))
                 Renderer3D.addDefaultOutline(DefaultOutline(aabb, COLOR, 3f))
             }

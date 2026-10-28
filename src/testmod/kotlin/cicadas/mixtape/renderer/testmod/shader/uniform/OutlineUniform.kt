@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.shader.uniform
+package cicadas.mixtape.renderer.testmod.shader.uniform
 
 import cicadas.mixtape.renderer.api.createBuffer
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
@@ -17,10 +17,10 @@ object OutlineUniform {
 
     private val BUFFER = RenderSystem.getDevice().createBuffer("Outline", SIZE)
 
-    fun update(tint: Vector4f, lineWidth: Float): CustomSlice {
+    fun update(color: Vector4f, lineWidth: Float): CustomSlice {
         MemoryStack.stackPush().use {
             val buffer = Std140Builder.onStack(it, SIZE)
-                .putVec4(tint)
+                .putVec4(color)
                 .putFloat(lineWidth)
                 .get()
 

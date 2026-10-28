@@ -13,6 +13,7 @@ class CustomBuffer private constructor(
     private val count: Int
 ) {
     companion object {
+        @JvmStatic
         fun create(mesh: MeshData): CustomBuffer {
             val state = mesh.drawState()
             val format = state.format
@@ -34,5 +35,9 @@ class CustomBuffer private constructor(
 
     fun drawIndexed(pass: RenderPass, start: Int, count: Int) {
         pass.drawIndexed(0, start, count, 1)
+    }
+
+    fun drawIndexed(pass: RenderPass) {
+        drawIndexed(pass, 0, count)
     }
 }

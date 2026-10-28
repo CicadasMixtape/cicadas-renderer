@@ -13,6 +13,11 @@
 * Боксы
 * Оутлайны
 
+## Анимации
+* Simple
+* CubicBezier
+* Spring
+
 ## Также рендер поддерживает загрузку SVG файлов в текстуру
 
 ## В тестовом моде есть [пример](src/testmod/kotlin/cicadas/mixtape/renderer/testmod/pass/HandsPass.kt) добавления кастомного шейдера на руки.
@@ -25,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.0")
+    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.1")
 }
 ```
 

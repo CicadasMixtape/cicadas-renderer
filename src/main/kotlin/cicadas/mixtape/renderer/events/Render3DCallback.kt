@@ -3,12 +3,12 @@ package cicadas.mixtape.renderer.events
 import com.mojang.blaze3d.vertex.PoseStack
 import net.fabricmc.fabric.api.event.EventFactory
 
-fun interface EventRender3D {
+fun interface Render3DCallback {
     companion object {
         @JvmField
-        val EVENT= EventFactory.createArrayBacked(EventRender3D::class.java) { events ->
-            EventRender3D {
-                events.forEach { event -> event.invoke(it) }
+        val EVENT = EventFactory.createArrayBacked(Render3DCallback::class.java) { callbacks ->
+            Render3DCallback {
+                callbacks.forEach { callback -> callback.invoke(it) }
             }
         }
     }
