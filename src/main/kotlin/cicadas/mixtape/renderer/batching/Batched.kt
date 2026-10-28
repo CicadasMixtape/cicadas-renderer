@@ -1,11 +1,9 @@
 package cicadas.mixtape.renderer.batching
 
-import cicadas.mixtape.renderer.api.setDefaultUniform
 import cicadas.mixtape.renderer.api.setSampler
 import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
-import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.systems.RenderPass
 import com.mojang.blaze3d.vertex.BufferBuilder
@@ -22,12 +20,9 @@ class Batched private constructor(
         fun builder() = Builder()
     }
 
-    fun update(
-        pass: RenderPass,
-        defaultUniform: DefaultUniform
-    ) {
+    fun update(pass: RenderPass, projectionUniform: CustomSlice) {
         pass.setPipeline(pipeline)
-        pass.setDefaultUniform(defaultUniform)
+        pass.setUniform(projectionUniform)
 
         slices.forEach {
             pass.setUniform(it)

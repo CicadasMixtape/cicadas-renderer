@@ -47,7 +47,7 @@ object CicadasPipelines {
         RenderPipeline.builder(CicadasSnippets.SQUIRCLE_SNIPPET)
             .withLocation(CicadasRenderer.id("pipeline/squircle"))
             .withFragmentShader(CicadasRenderer.id("core/squircle"))
-            .withVertexShader(CicadasRenderer.id("core/rect"))
+            .withVertexShader(CicadasRenderer.id("core/squircle"))
             .build()
     )
 

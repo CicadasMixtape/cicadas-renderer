@@ -4,7 +4,6 @@ import cicadas.mixtape.renderer.shader.CicadasFormats
 import cicadas.mixtape.renderer.mixins.accessors.BufferBuilderAccessor
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
-import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
 import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.view.FloatSize
 import com.github.weisj.jsvg.view.ViewBox
@@ -21,6 +20,7 @@ import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.system.MemoryUtil
+import java.awt.Color
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import kotlin.time.Duration
@@ -28,14 +28,12 @@ import kotlin.time.DurationUnit
 
 internal fun Duration.toFloat(unit: DurationUnit) = toInt(unit).toFloat()
 
-fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.RADIUS)
-
-    if (ptr != -1L) {
-        MemoryUtil.memPutFloat(ptr, radius)
-    }
-
-    return this
+internal fun Color.mul(other: Color): Color {
+    val red = red * other.red / 255
+    val green = green * other.green / 255
+    val blue = blue * other.blue / 255
+    val alpha = alpha * other.alpha / 255
+    return Color(red, green, blue, alpha)
 }
 
 fun VertexConsumer.setSize(width: Float, height: Float): VertexConsumer {
@@ -49,6 +47,26 @@ fun VertexConsumer.setSize(width: Float, height: Float): VertexConsumer {
     return this
 }
 
+fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
+    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.RADIUS)
+
+    if (ptr != -1L) {
+        MemoryUtil.memPutFloat(ptr, radius)
+    }
+
+    return this
+}
+
+fun VertexConsumer.setSquirt(squirt: Float): VertexConsumer {
+    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.SQUIRT)
+
+    if (ptr != -1L) {
+        MemoryUtil.memPutFloat(ptr, squirt)
+    }
+
+    return this
+}
+
 fun VertexConsumer.addVertex(
     matrix4f: Matrix4f,
     x: Float,
@@ -57,6 +75,16 @@ fun VertexConsumer.addVertex(
     height: Float,
     radius: Float
 ) = addVertex(matrix4f, x, y, 0f).setSize(width, height).setRadius(radius)
+
+fun VertexConsumer.addVertex(
+    matrix4f: Matrix4f,
+    x: Float,
+    y: Float,
+    width: Float,
+    height: Float,
+    radius: Float,
+    squirt: Float
+) = addVertex(matrix4f, x, y, 0f).setSize(width, height).setRadius(radius).setSquirt(squirt)
 
 fun VertexConsumer.addLine(
     matrix4f: Matrix4f,
@@ -84,14 +112,6 @@ fun GpuDevice.createBuffer(name: String, size: Int) = createBuffer({ "${name}Buf
 fun RenderPass.setSampler(sampler: CustomSampler) = bindTexture(sampler.name, sampler.texture, RenderSystem.getSamplerCache().getClampToEdge(sampler.filter))
 
 fun RenderPass.setUniform(slice: CustomSlice) = setUniform(slice.name, slice.slice)
-
-fun RenderPass.setDefaultUniform(uniform: DefaultUniform) {
-    if (uniform.projection != null) {
-        setUniform("Projection", uniform.projection)
-    }
-
-    setUniform("DynamicTransforms", uniform.transforms)
-}
 
 val AABB.withCamera: AABB get() {
     val camera = mc.gameRenderer.mainCamera.position()

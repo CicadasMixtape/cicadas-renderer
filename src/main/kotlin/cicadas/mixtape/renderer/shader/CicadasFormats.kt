@@ -6,12 +6,22 @@ import com.mojang.blaze3d.vertex.VertexFormatElement
 object CicadasFormats {
     @JvmField val SIZE = VertexFormatElement.register(8, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 2)
     @JvmField val RADIUS = VertexFormatElement.register(9, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 1)
+    @JvmField val SQUIRT = VertexFormatElement.register(10, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 1)
 
     @JvmField
     val RECT = VertexFormat.builder()
         .add("Position", VertexFormatElement.POSITION)
         .add("Size", SIZE)
         .add("Radius", RADIUS)
+        .add("Color", VertexFormatElement.COLOR)
+        .build()
+
+    @JvmField
+    val SQUIRCLE = VertexFormat.builder()
+        .add("Position", VertexFormatElement.POSITION)
+        .add("Size", SIZE)
+        .add("Radius", RADIUS)
+        .add("Squirt", SQUIRT)
         .add("Color", VertexFormatElement.COLOR)
         .build()
 }

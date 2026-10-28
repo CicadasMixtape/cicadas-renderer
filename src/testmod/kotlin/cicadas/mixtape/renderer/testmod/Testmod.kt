@@ -7,6 +7,7 @@ import cicadas.mixtape.renderer.objects.DefaultBox
 import cicadas.mixtape.renderer.objects.DefaultOutline
 import cicadas.mixtape.renderer.objects.Gradient
 import cicadas.mixtape.renderer.objects.Radius
+import cicadas.mixtape.renderer.objects.Squirt
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.svg.SVGManager
@@ -27,6 +28,7 @@ import java.awt.Color
 
 object Testmod : ModInitializer {
     private val COLOR = Color(255, 100, 100)
+    private val SQUIRT = Squirt(10f, 15f, 5f, 15f)
     private val RADIUS = Radius(15f, 25f, 10f, 25f)
     private val GRADIENT = Gradient.Vertical(Color.WHITE, COLOR)
 
@@ -45,7 +47,7 @@ object Testmod : ModInitializer {
         Renderer2D.drawRoundedRect(x, 25f, 100f, 100f, RADIUS, GRADIENT)
 
         x += 125f
-        Renderer2D.drawSquircle(x, 25f, 100f, 100f, 5f, RADIUS, GRADIENT)
+        Renderer2D.drawSquircle(x, 25f, 100f, 100f, SQUIRT, RADIUS, GRADIENT)
 
         x += 125f
         Renderer2D.drawRoundedTexture(id("textures/kot.png"), x, 25f, 100f, 100f, RADIUS)

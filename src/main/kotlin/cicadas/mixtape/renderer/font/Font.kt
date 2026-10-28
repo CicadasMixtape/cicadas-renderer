@@ -7,5 +7,6 @@ data class Font(
     val size: Float
 ) {
     fun getWidth(text: Component) = msdf.getWidth(text, size)
+    fun getWidth(text: String) = msdf.getWidth(text, size)
     fun getHeight() = msdf.getHeight(size)
 }

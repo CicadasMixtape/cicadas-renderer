@@ -1,7 +1,6 @@
 #version 330
 
-#moj_import <minecraft:projection.glsl>
-#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <cicadasrenderer:projection_uniform.glsl>
 #moj_import <cicadasrenderer:vertices.glsl>
 
 in vec3 Position;
@@ -15,7 +14,7 @@ out float vertexRadius;
 out vec4 vertexColor;
 
 void main() {
-    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+    gl_Position = proj * modelView * vec4(Position, 1.0);
     vertexSize = Size;
     vertexCoord = rvertexcoord(gl_VertexID);
     vertexRadius = Radius;

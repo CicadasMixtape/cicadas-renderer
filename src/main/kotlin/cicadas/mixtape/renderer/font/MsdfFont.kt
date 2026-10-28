@@ -41,7 +41,7 @@ class MsdfFont private constructor(
     ): Int {
         var count = 0
         var offsetX = x
-        var offsetY = y
+        var offsetY = y + getHeight(size)
 
         text.visualOrderText.accept { _, style, code ->
             if (code == '\n'.code) {
@@ -82,9 +82,9 @@ class MsdfFont private constructor(
         return width
     }
 
-    fun getHeight(size: Float): Float {
-        return (metrics.lineHeight + metrics.descender - 0.2f) * size
-    }
+    fun getWidth(text: String, size: Float) = getWidth(Component.literal(text), size)
+
+    fun getHeight(size: Float) = (metrics.lineHeight + metrics.descender - 0.2f) * size
 
     private fun getThickness(size: Float) = thickness * 0.5f * size
 }

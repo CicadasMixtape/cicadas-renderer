@@ -2,12 +2,10 @@ package cicadas.mixtape.renderer.testmod.pass
 
 import cicadas.mixtape.renderer.api.clearColorAndDepth
 import cicadas.mixtape.renderer.api.screenSize
-import cicadas.mixtape.renderer.api.setDefaultUniform
 import cicadas.mixtape.renderer.api.setSampler
 import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.target.CustomTarget
-import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
 import cicadas.mixtape.renderer.testmod.shader.uniform.OutlineUniform
 import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
 import cicadas.mixtape.renderer.testmod.api.mainTarget
@@ -37,7 +35,6 @@ object HandsPass {
     fun end() {
         val outlineUniform = OutlineUniform.update(Color.WHITE.withAlpha(150).vector4f, 3f)
         val screenUniform = ScreenUniform.update(mainTarget.screenSize)
-        val defaultUniform = DefaultUniform.create()
 
         target.blitAndBlendToTexture(mainTarget.colorTextureView!!)
 
@@ -47,7 +44,6 @@ object HandsPass {
             mainTarget.depthTextureView, OptionalDouble.empty()
         ).use {
             it.setPipeline(TestPipelines.OUTLINE_PIPELINE)
-            it.setDefaultUniform(defaultUniform)
             it.setSampler(CustomSampler("Sampler0", target.colorTextureView, FilterMode.NEAREST))
             it.setUniform(outlineUniform)
             it.setUniform(screenUniform)

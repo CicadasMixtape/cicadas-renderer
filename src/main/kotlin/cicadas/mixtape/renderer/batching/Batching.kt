@@ -4,7 +4,7 @@ import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.shader.builder.CustomBuffer
 import cicadas.mixtape.renderer.shader.builder.CustomBuilder
 import cicadas.mixtape.renderer.shader.builder.CustomFormat
-import cicadas.mixtape.renderer.shader.uniform.DefaultUniform
+import cicadas.mixtape.renderer.shader.slice.CustomSlice
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData
 import java.util.OptionalDouble
@@ -34,7 +34,7 @@ class Batching {
         customBuilder.count += count
     }
 
-    fun update() {
+    fun update(projectionUniform: CustomSlice) {
         if (batches.isEmpty()) {
             return
         }
@@ -45,25 +45,15 @@ class Batching {
             it.buffer = if (mesh != null) CustomBuffer.create(mesh).also { meshes.add(mesh) } else null
         }
 
-        val defaultUniform = DefaultUniform.create()
-
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
             { "batching-pass" },
             mainTarget.colorTextureView!!, OptionalInt.empty(),
             mainTarget.depthTextureView, OptionalDouble.empty()
         ).use { pass ->
-            var current: CustomBuffer? = null
-
             batches.forEach {
                 val buffer = it.builder.buffer ?: return@forEach
-
-                it.batched.update(pass, defaultUniform)
-
-                if (current != buffer) {
-                    buffer.setBuffer(pass)
-                    current = buffer
-                }
-
+                it.batched.update(pass, projectionUniform)
+                buffer.setBuffer(pass)
                 buffer.drawIndexed(pass, it.start, it.count)
             }
         }
