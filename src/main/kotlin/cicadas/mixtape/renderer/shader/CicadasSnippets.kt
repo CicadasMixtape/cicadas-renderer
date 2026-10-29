@@ -88,6 +88,7 @@ object CicadasSnippets {
     @JvmField
     val KAWASE_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET)
         .withVertexFormat(DefaultVertexFormat.EMPTY, VertexFormat.Mode.TRIANGLES)
+        .withoutBlend()
         .withSampler("Sampler0")
         .withUniform("Kawase", UniformType.UNIFORM_BUFFER)
         .buildSnippet()

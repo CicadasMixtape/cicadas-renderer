@@ -14,5 +14,5 @@ void main() {
     sum += texture(Sampler0, vertexCoord + halfPixel.xy * offset);
     sum += texture(Sampler0, vertexCoord + vec2(halfPixel.x, -halfPixel.y) * offset);
     sum += texture(Sampler0, vertexCoord - vec2(halfPixel.x, -halfPixel.y) * offset);
-    fragColor = sum / 8.0;
+    fragColor = vec4(sum.rgb / 8.0, 1.0);
 }

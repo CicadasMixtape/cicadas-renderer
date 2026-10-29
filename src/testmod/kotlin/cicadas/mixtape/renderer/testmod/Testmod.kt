@@ -13,6 +13,7 @@ import cicadas.mixtape.renderer.objects.UIContext
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.svg.SVGManager
+import cicadas.mixtape.renderer.testmod.api.init
 import cicadas.mixtape.renderer.testmod.api.level
 import cicadas.mixtape.renderer.testmod.api.mc
 import cicadas.mixtape.renderer.testmod.api.withAlpha
@@ -36,7 +37,7 @@ object Testmod : ModInitializer {
     override fun onInitialize() {
         // Нужно, чтобы при первом кадре отрисовки не было пролага
         // Опционально
-        CicadasRenderer.initialization { Fonts }
+        CicadasRenderer.initialization { Fonts.init() }
 
         Render2DCallback.EVENT.register {
             onRender2D(it)

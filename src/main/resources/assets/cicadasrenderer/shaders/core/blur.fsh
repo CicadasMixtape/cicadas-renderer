@@ -13,7 +13,7 @@ uniform sampler2D Sampler0;
 out vec4 fragColor;
 
 void main() {
-    vec4 color = vec4(texture(Sampler0, gl_FragCoord.xy / screenSize).rgb, 1.0) * vertexColor;
+    vec4 color = texture(Sampler0, gl_FragCoord.xy / screenSize) * vertexColor;
     vec2 center = vertexSize / 2.0;
     float dist = rect(center - (vertexCoord * vertexSize), center - 1.0, vertexRadius);
     float alpha = 1.0 - smoothstep(-0.5, 0.5, dist);
