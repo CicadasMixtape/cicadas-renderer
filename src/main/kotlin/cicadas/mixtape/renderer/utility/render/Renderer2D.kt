@@ -3,6 +3,7 @@ package cicadas.mixtape.renderer.utility.render
 import cicadas.mixtape.renderer.api.addVertex
 import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.api.mainTarget
+import cicadas.mixtape.renderer.api.mc
 import cicadas.mixtape.renderer.api.mul
 import cicadas.mixtape.renderer.api.screenSize
 import cicadas.mixtape.renderer.api.window
@@ -18,10 +19,12 @@ import cicadas.mixtape.renderer.shader.uniform.LiquidUniform
 import cicadas.mixtape.renderer.shader.uniform.MsdfUniform
 import cicadas.mixtape.renderer.shader.uniform.ProjectionUniform
 import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
+import cicadas.mixtape.renderer.svg.SVGTexture
 import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import org.joml.Matrix4f
 import java.awt.Color
 
@@ -55,6 +58,29 @@ object Renderer2D {
         )
     }
 
+    fun drawRoundedRect(
+        stack: PoseStack,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        radius: Radius,
+        gradient: Gradient
+    ) {
+        batching.add(
+            Batched.builder()
+                .pipeline(CicadasPipelines.RECT_PIPELINE)
+                .vertex {
+                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    1
+                }
+                .build()
+        )
+    }
+
     fun drawTexture(
         stack: PoseStack,
         texture: AbstractTexture,
@@ -79,27 +105,16 @@ object Renderer2D {
         )
     }
 
-    fun drawRoundedRect(
+    fun drawTexture(
         stack: PoseStack,
+        id: Identifier,
         x: Float,
         y: Float,
         width: Float,
         height: Float,
-        radius: Radius,
-        gradient: Gradient
+        gradient: Gradient = Gradient.EMPTY
     ) {
-        batching.add(
-            Batched.builder()
-                .pipeline(CicadasPipelines.RECT_PIPELINE)
-                .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
-                    1
-                }
-                .build()
-        )
+        drawTexture(stack, mc.textureManager.getTexture(id), x, y, width, height, gradient)
     }
 
     fun drawRoundedTexture(
@@ -125,6 +140,19 @@ object Renderer2D {
                 }
                 .build()
         )
+    }
+
+    fun drawRoundedTexture(
+        stack: PoseStack,
+        id: Identifier,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        radius: Radius = Radius.EMPTY,
+        gradient: Gradient = Gradient.EMPTY
+    ) {
+        drawRoundedTexture(stack, mc.textureManager.getTexture(id), x, y, width, height, radius, gradient)
     }
 
     fun drawSquircle(
@@ -223,6 +251,71 @@ object Renderer2D {
                 .vertex { msdf.applyGlyphs(it, stack.last().pose(), text, size, x, y, color.mul(shaderColor)) }
                 .build()
         )
+    }
+
+    fun drawText(
+        stack: PoseStack,
+        font: Font,
+        text: String,
+        x: Float,
+        y: Float,
+        color: Color = Color.WHITE
+    ) {
+        drawText(stack, font, Component.literal(text), x, y, color)
+    }
+
+    fun drawCenteredText(
+        stack: PoseStack,
+        font: Font,
+        text: Component,
+        x: Float,
+        y: Float,
+        color: Color = Color.WHITE
+    ) {
+        drawText(stack, font, text, x - font.getWidth(text) / 2f, y, color)
+    }
+
+    fun drawCenteredText(
+        stack: PoseStack,
+        font: Font,
+        text: String,
+        x: Float,
+        y: Float,
+        color: Color = Color.WHITE
+    ) {
+        drawText(stack, font, text, x - font.getWidth(text) / 2f, y, color)
+    }
+
+    fun drawRightText(
+        stack: PoseStack,
+        font: Font,
+        text: Component,
+        x: Float,
+        y: Float,
+        color: Color = Color.WHITE
+    ) {
+        drawText(stack, font, text, x - font.getWidth(text), y, color)
+    }
+
+    fun drawRightText(
+        stack: PoseStack,
+        font: Font,
+        text: String,
+        x: Float,
+        y: Float,
+        color: Color = Color.WHITE
+    ) {
+        drawText(stack, font, text, x - font.getWidth(text), y, color)
+    }
+
+    fun drawVector(
+        stack: PoseStack,
+        texture: SVGTexture,
+        x: Float,
+        y: Float,
+        gradient: Gradient = Gradient.EMPTY
+    ) {
+        drawTexture(stack, texture, x, y, texture.width(), texture.height(), gradient)
     }
 
     fun update() {
