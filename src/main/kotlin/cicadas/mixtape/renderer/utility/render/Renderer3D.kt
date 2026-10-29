@@ -2,22 +2,35 @@ package cicadas.mixtape.renderer.utility.render
 
 import cicadas.mixtape.renderer.api.addLine
 import cicadas.mixtape.renderer.api.frustum
+import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.api.mc
+import cicadas.mixtape.renderer.api.screenSize
+import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.api.withCamera
 import cicadas.mixtape.renderer.objects.DefaultBox
 import cicadas.mixtape.renderer.objects.DefaultOutline
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
-import cicadas.mixtape.renderer.shader.CicadasTypes
+import cicadas.mixtape.renderer.shader.CicadasPipelines
+import cicadas.mixtape.renderer.shader.builder.CustomBuffer
+import cicadas.mixtape.renderer.shader.uniform.ProjectionUniform
+import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.world.phys.AABB
+import org.joml.Matrix4f
+import java.util.OptionalDouble
+import java.util.OptionalInt
 
 object Renderer3D {
     private var stack = PoseStack()
+    private var projection = Matrix4f()
+    private var modelView = Matrix4f()
+
     private val defaultBoxes = arrayListOf<DefaultBox>()
     private val defaultOutlines = arrayListOf<DefaultOutline>()
     private val voxelBoxes = arrayListOf<VoxelBox>()
@@ -195,47 +208,77 @@ object Renderer3D {
         }
     }
 
-    fun drawDefaults() {
-        if (defaultBoxes.isNotEmpty()) {
+    fun drawBoxes() {
+        if (defaultBoxes.isNotEmpty() || voxelBoxes.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
-            defaultBoxes.forEach {
-                drawDefaultBox(builder, it)
+            if (defaultBoxes.isNotEmpty()) {
+                defaultBoxes.forEach {
+                    drawDefaultBox(builder, it)
+                }
             }
 
-            CicadasTypes.QUADS.draw(builder.buildOrThrow())
-        }
-
-        if (defaultOutlines.isNotEmpty()) {
-            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
-
-            defaultOutlines.forEach {
-                drawDefaultOutline(builder, it)
+            if (voxelBoxes.isNotEmpty()) {
+                voxelBoxes.forEach {
+                    drawVoxelBox(builder, it)
+                }
             }
 
-            CicadasTypes.LINES.draw(builder.buildOrThrow())
+            val mesh = builder.buildOrThrow()
+            val buffer = CustomBuffer.create(mesh)
+            val projectionUniform = ProjectionUniform.update(projection, modelView)
+
+            RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                { "cicadasrenderer-boxes-pass" },
+                mainTarget.colorTextureView!!, OptionalInt.empty(),
+                mainTarget.depthTextureView, OptionalDouble.empty()
+            ).use {
+                it.setPipeline(CicadasPipelines.POSITION_COLOR_PIPELINE)
+                it.setUniform(projectionUniform)
+
+                buffer.setBuffer(it)
+                buffer.drawIndexed(it)
+            }
+
+            mesh.close()
         }
     }
 
-    fun drawVoxels() {
-        if (voxelBoxes.isNotEmpty()) {
-            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
-
-            voxelBoxes.forEach {
-                drawVoxelBox(builder, it)
-            }
-
-            CicadasTypes.QUADS.draw(builder.buildOrThrow())
-        }
-
-        if (voxelOutlines.isNotEmpty()) {
+    fun drawOutlines() {
+        if (defaultOutlines.isNotEmpty() || voxelOutlines.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
-            voxelOutlines.forEach {
-                drawVoxelOutline(builder, it)
+            if (defaultOutlines.isNotEmpty()) {
+                defaultOutlines.forEach {
+                    drawDefaultOutline(builder, it)
+                }
             }
 
-            CicadasTypes.LINES.draw(builder.buildOrThrow())
+            if (voxelOutlines.isNotEmpty()) {
+                voxelOutlines.forEach {
+                    drawVoxelOutline(builder, it)
+                }
+            }
+
+            val mesh = builder.buildOrThrow()
+            val buffer = CustomBuffer.create(mesh)
+            val projectionUniform = ProjectionUniform.update(projection, modelView)
+            val screenUniform = ScreenUniform.update(mainTarget.screenSize)
+
+            RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                { "cicadasrenderer-lines-pass" },
+                mainTarget.colorTextureView!!, OptionalInt.empty(),
+                mainTarget.depthTextureView, OptionalDouble.empty()
+            ).use {
+                it.setPipeline(CicadasPipelines.LINES_PIPELINE)
+                it.setUniform(projectionUniform)
+                it.setUniform(screenUniform)
+
+                buffer.setBuffer(it)
+                buffer.drawIndexed(it)
+            }
+
+            mesh.close()
         }
     }
 
@@ -248,5 +291,9 @@ object Renderer3D {
 
     fun stack(stack: PoseStack) {
         this.stack = stack
+    }
+
+    fun projection(projection: Matrix4f) {
+        this.projection = projection
     }
 }

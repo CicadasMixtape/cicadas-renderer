@@ -26,6 +26,8 @@ import java.awt.image.BufferedImage
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
+internal fun Any.init() = this
+
 internal fun Duration.toFloat(unit: DurationUnit) = toInt(unit).toFloat()
 
 internal fun Color.mul(other: Color): Color {

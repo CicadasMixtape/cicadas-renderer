@@ -1,5 +1,6 @@
 package cicadas.mixtape.renderer.testmod
 
+import cicadas.mixtape.renderer.CicadasRenderer
 import cicadas.mixtape.renderer.events.Render2DCallback
 import cicadas.mixtape.renderer.events.Render3DCallback
 import cicadas.mixtape.renderer.testmod.font.Fonts
@@ -8,13 +9,13 @@ import cicadas.mixtape.renderer.objects.DefaultOutline
 import cicadas.mixtape.renderer.objects.Gradient
 import cicadas.mixtape.renderer.objects.Radius
 import cicadas.mixtape.renderer.objects.Squirt
+import cicadas.mixtape.renderer.objects.UIContext
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.svg.SVGManager
 import cicadas.mixtape.renderer.testmod.api.level
 import cicadas.mixtape.renderer.testmod.api.mc
 import cicadas.mixtape.renderer.testmod.api.withAlpha
-import cicadas.mixtape.renderer.utility.render.Renderer2D
 import cicadas.mixtape.renderer.utility.render.Renderer3D
 import com.github.weisj.jsvg.view.FloatSize
 import net.fabricmc.api.ModInitializer
@@ -33,8 +34,12 @@ object Testmod : ModInitializer {
     private val GRADIENT = Gradient.Vertical(Color.WHITE, COLOR)
 
     override fun onInitialize() {
+        // Нужно, чтобы при первом кадре отрисовки не было пролага
+        // Опционально
+        CicadasRenderer.initialization { Fonts }
+
         Render2DCallback.EVENT.register {
-            onRender2D()
+            onRender2D(it)
         }
 
         Render3DCallback.EVENT.register {
@@ -42,41 +47,36 @@ object Testmod : ModInitializer {
         }
     }
 
-    private fun onRender2D() {
+    private fun onRender2D(context: UIContext) {
         var x = 25f
-        Renderer2D.drawRoundedRect(x, 25f, 100f, 100f, RADIUS, GRADIENT)
+        context.drawRoundedRect(x, 25f, 100f, 100f, RADIUS, GRADIENT)
+        context.drawRect(x, 150f, 100f, 100f, GRADIENT)
 
         x += 125f
-        Renderer2D.drawSquircle(x, 25f, 100f, 100f, SQUIRT, RADIUS, GRADIENT)
+        context.drawSquircle(x, 25f, 100f, 100f, SQUIRT, RADIUS, GRADIENT)
 
         x += 125f
-        Renderer2D.drawRoundedTexture(id("textures/kot.png"), x, 25f, 100f, 100f, RADIUS)
+        context.drawRoundedTexture(id("textures/kot.png"), x, 25f, 100f, 100f, RADIUS)
+        context.drawTexture(id("textures/kot.png"), x, 150f, 100f, 100f)
 
         x += 125f
-        Renderer2D.drawRoundedBlur(x, 25f, 100f, 100f, RADIUS)
+        context.drawRoundedBlur(x, 25f, 100f, 100f, RADIUS)
+        context.drawLiquidGlass(x, 150f, 100f, 100f, 15f, true, RADIUS)
+        context.drawLiquidGlass(x, 275f, 100f, 100f, 15f, false, RADIUS)
 
         x += 125f
-        Renderer2D.drawLiquidGlass(x, 25f, 100f, 100f, 15f, true, RADIUS)
+        val svg1 = SVGManager.getTexture(id("vector/cloud.svg"), FloatSize(100f, 100f))
+        val svg2 = SVGManager.getTexture(id("vector/cloud.svg"), FloatSize(50f, 50f))
 
-        x += 125f
-        Renderer2D.drawLiquidGlass(x, 25f, 100f, 100f, 15f, false, RADIUS)
-
-        val size1 = FloatSize(100f, 100f)
-        val svg1 = SVGManager.getTexture(id("vector/cloud.svg"), size1)
-        x += 125f
-        Renderer2D.drawRoundedTexture(svg1, x, 25f, size1.width, size1.height)
-
-        val size2 = FloatSize(32f, 32f)
-        val svg2 = SVGManager.getTexture(id("vector/cloud.svg"), size2)
-        x += 125f
-        Renderer2D.drawRoundedTexture(svg2, x, 75f - size2.height / 2f, size2.width, size2.height)
+        context.drawVector(svg1, x, 25f)
+        context.drawVector(svg2, x, 150f)
 
         val text = getText()
         val font1 = Fonts.BOLD.getFont(25f)
         val font2 = Fonts.ROUNDED_BOLD.getFont(25f)
 
-        Renderer2D.drawText(font1, text, 25f, 150f + font1.getHeight())
-        Renderer2D.drawText(font2, text, 150f, 150f + font2.getHeight())
+        context.drawText(font1, text, 25f, 275f)
+        context.drawText(font2, text, 150f, 275f)
     }
 
     private fun onRender3D() {

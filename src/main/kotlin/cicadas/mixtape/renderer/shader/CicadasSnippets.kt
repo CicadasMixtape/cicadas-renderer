@@ -21,6 +21,26 @@ object CicadasSnippets {
         .buildSnippet()
 
     @JvmField
+    val POSITION_COLOR_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
+        .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+        .withBlend(BlendFunction.TRANSLUCENT)
+        .buildSnippet()
+
+    @JvmField
+    val POSITION_TEXTURE_COLOR_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
+        .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+        .withBlend(BlendFunction.TRANSLUCENT)
+        .withSampler("Sampler0")
+        .buildSnippet()
+
+    @JvmField
+    val LINES_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
+        .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.Mode.QUADS)
+        .withBlend(BlendFunction.TRANSLUCENT)
+        .withUniform("Screen", UniformType.UNIFORM_BUFFER)
+        .buildSnippet()
+
+    @JvmField
     val RECT_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
         .withVertexFormat(CicadasFormats.RECT, VertexFormat.Mode.QUADS)
         .withBlend(BlendFunction.TRANSLUCENT)

@@ -3,10 +3,11 @@
 Рендер для всеми любимой игры Minecraft на версии 1.21.11 (может будут и другие)
 
 ## 2D
-* Рект (с блюром/без)
-* Жидкое стекло (с блюром/без)
+* Рект (загруглённый/обычный)
+* Текстура (загруглённая/обычная)
+* Блюр
 * Сквиркл
-* Текстура
+* Жидкое стекло
 * Текст
 
 ## 3D (AABB и VoxelShape)
@@ -15,8 +16,11 @@
 
 ## Анимации
 * Simple
-* CubicBezier
 * Spring
+
+## Функции плавности
+* Simple
+* CubicBezier
 
 ## Также рендер поддерживает загрузку SVG файлов в текстуру
 
@@ -30,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.2")
+    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.3")
 }
 ```
 

@@ -2,25 +2,33 @@ package cicadas.mixtape.renderer.shader
 
 import cicadas.mixtape.renderer.CicadasRenderer
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.DepthTestFunction
 import net.minecraft.client.renderer.RenderPipelines
 
 object CicadasPipelines {
     @JvmField
-    val QUAD_PIPELINE = RenderPipelines.register(
-        RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withLocation(CicadasRenderer.id("pipeline/quad"))
-            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withCull(false)
+    val POSITION_COLOR_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(CicadasSnippets.POSITION_COLOR_SNIPPET)
+            .withLocation(CicadasRenderer.id("pipeline/position_color"))
+            .withFragmentShader(CicadasRenderer.id("core/position_color"))
+            .withVertexShader(CicadasRenderer.id("core/position_color"))
+            .build()
+    )
+
+    @JvmField
+    val POSITION_TEXTURE_COLOR_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(CicadasSnippets.POSITION_TEXTURE_COLOR_SNIPPET)
+            .withLocation(CicadasRenderer.id("pipeline/position_texture_color"))
+            .withFragmentShader(CicadasRenderer.id("core/position_texture_color"))
+            .withVertexShader(CicadasRenderer.id("core/position_texture_color"))
             .build()
     )
 
     @JvmField
     val LINES_PIPELINE = RenderPipelines.register(
-        RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+        RenderPipeline.builder(CicadasSnippets.LINES_SNIPPET)
             .withLocation(CicadasRenderer.id("pipeline/lines"))
-            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withCull(false)
+            .withFragmentShader(CicadasRenderer.id("core/lines"))
+            .withVertexShader(CicadasRenderer.id("core/lines"))
             .build()
     )
 

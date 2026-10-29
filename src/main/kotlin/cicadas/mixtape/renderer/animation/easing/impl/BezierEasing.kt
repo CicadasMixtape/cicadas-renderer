@@ -41,6 +41,5 @@ fun interface BezierEasing : IEasing {
         }
 
         @JvmField val LINEAR = create(0f, 0f, 1f, 1f)
-        @JvmField val EASE_OUT_BACK = create(0.34f, 1.56f, 0.64f, 1f)
     }
 }

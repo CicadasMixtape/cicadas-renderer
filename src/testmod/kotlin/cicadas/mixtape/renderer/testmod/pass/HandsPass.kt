@@ -44,7 +44,7 @@ object HandsPass {
             mainTarget.depthTextureView, OptionalDouble.empty()
         ).use {
             it.setPipeline(TestPipelines.OUTLINE_PIPELINE)
-            it.setSampler(CustomSampler("Sampler0", target.colorTextureView, FilterMode.NEAREST))
+            it.setSampler(CustomSampler(0, target.colorTextureView, FilterMode.NEAREST))
             it.setUniform(outlineUniform)
             it.setUniform(screenUniform)
             it.draw(0, 3)

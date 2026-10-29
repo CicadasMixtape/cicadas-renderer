@@ -72,14 +72,21 @@ class MsdfFont private constructor(
 
     fun getWidth(text: Component, size: Float): Float {
         var width = 0f
+        var lineWidth = 0f
 
         text.visualOrderText.accept { _, _, code ->
+            if (code == '\n'.code) {
+                width = maxOf(width, lineWidth)
+                lineWidth = 0f
+                return@accept true
+            }
+
             val glyph = glyphs[code] ?: return@accept true
-            width += (glyph.advance * size) + getThickness(size)
+            lineWidth += (glyph.advance * size) + getThickness(size)
             true
         }
 
-        return width
+        return maxOf(width, lineWidth)
     }
 
     fun getWidth(text: String, size: Float) = getWidth(Component.literal(text), size)
