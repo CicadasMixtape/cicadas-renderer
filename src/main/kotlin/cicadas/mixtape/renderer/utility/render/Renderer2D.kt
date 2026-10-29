@@ -30,6 +30,7 @@ object Renderer2D {
     private var modelView = Matrix4f()
 
     private val batching = Batching()
+    private var backupColor = Color.WHITE
     private var shaderColor = Color.WHITE
 
     fun drawRect(
@@ -231,7 +232,15 @@ object Renderer2D {
         batching.update(projectionUniform)
     }
 
+    fun backupColor() {
+        backupColor = shaderColor
+    }
+
     fun shaderColor(shaderColor: Color) {
         this.shaderColor = shaderColor
+    }
+
+    fun resetColor() {
+        shaderColor = backupColor
     }
 }
