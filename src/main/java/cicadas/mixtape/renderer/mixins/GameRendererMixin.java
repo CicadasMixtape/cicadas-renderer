@@ -37,7 +37,7 @@ public abstract class GameRendererMixin {
         Profiler.get().push("cicadasrenderer-render-2d");
 
         var stack = new PoseStack();
-        var inLevel = renderLevel && minecraft.level != null && !(minecraft.screen instanceof LevelLoadingScreen) && !minecraft.debugEntries.isOverlayVisible() && minecraft.options.hideGui;
+        var inLevel = renderLevel && minecraft.level != null && !(minecraft.screen instanceof LevelLoadingScreen) && !minecraft.debugEntries.isOverlayVisible() && !minecraft.options.hideGui;
         KawasePass.INSTANCE.update();
         Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, minecraft.mouseHandler, () -> inLevel));
         Renderer2D.INSTANCE.update();
