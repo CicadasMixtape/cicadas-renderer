@@ -14,11 +14,12 @@ import java.awt.Color
 class UIContext private constructor(
     val stack: PoseStack,
     val mouseX: Float,
-    val mouseY: Float
+    val mouseY: Float,
+    val inLevel: () -> Boolean
 ) {
     companion object {
         @JvmStatic
-        fun create(stack: PoseStack, handler: MouseHandler) = UIContext(stack, handler.xpos().toFloat() / 2f, handler.ypos().toFloat() / 2f)
+        fun create(stack: PoseStack, handler: MouseHandler, inLevel: () -> Boolean) = UIContext(stack, handler.xpos().toFloat() / 2f, handler.ypos().toFloat() / 2f, inLevel)
     }
 
     fun push() {

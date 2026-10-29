@@ -34,15 +34,12 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
     public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
-        if (!renderLevel || minecraft.level == null || minecraft.screen instanceof LevelLoadingScreen || minecraft.debugEntries.isOverlayVisible() || minecraft.options.hideGui) {
-            return;
-        }
-
         Profiler.get().push("cicadasrenderer-render-2d");
 
         var stack = new PoseStack();
+        var inLevel = renderLevel && minecraft.level != null && !(minecraft.screen instanceof LevelLoadingScreen) && !minecraft.debugEntries.isOverlayVisible() && minecraft.options.hideGui;
         KawasePass.INSTANCE.update();
-        Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, minecraft.mouseHandler));
+        Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, minecraft.mouseHandler, () -> inLevel));
         Renderer2D.INSTANCE.update();
 
         Profiler.get().pop();
