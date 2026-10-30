@@ -15,6 +15,7 @@ import cicadas.mixtape.renderer.objects.Gradient
 import cicadas.mixtape.renderer.objects.Radius
 import cicadas.mixtape.renderer.objects.Squirt
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
+import cicadas.mixtape.renderer.shader.storage.api.UniformStorage
 import cicadas.mixtape.renderer.shader.uniform.LiquidUniform
 import cicadas.mixtape.renderer.shader.uniform.MsdfUniform
 import cicadas.mixtape.renderer.shader.uniform.ProjectionUniform
@@ -323,6 +324,7 @@ object Renderer2D {
         val height = window.height.toFloat() / 2f
         val projectionUniform = ProjectionUniform.update(projection.setOrtho(0f, width, height, 0f, -1000f, 1000f), modelView)
         batching.update(projectionUniform)
+        UniformStorage.endFrame()
     }
 
     fun backupColor() {
@@ -330,7 +332,7 @@ object Renderer2D {
     }
 
     fun shaderColor(shaderColor: Color) {
-        this.shaderColor = shaderColor
+        this.shaderColor = this.shaderColor.mul(shaderColor)
     }
 
     fun resetColor() {

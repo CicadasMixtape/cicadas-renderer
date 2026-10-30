@@ -8,5 +8,5 @@ data class Batch(
     val start: Int,
     var count: Int
 ) {
-    fun match(batched: Batched) = this.batched.pipeline == batched.pipeline && this.batched.samplers == batched.samplers && this.batched.slices == batched.slices
+    fun match(batched: Batched, builder: CustomBuilder) = this.batched.state == batched.state && this.builder == builder
 }

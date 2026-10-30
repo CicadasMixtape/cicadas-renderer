@@ -3,8 +3,8 @@
 Рендер для всеми любимой игры Minecraft на версии 1.21.11 (может будут и другие)
 
 ## 2D
-* Рект (загруглённый/обычный)
-* Текстура (загруглённая/обычная)
+* Рект (закруглённый/обычный)
+* Текстура (закруглённая/обычная)
 * Блюр
 * Сквиркл
 * Жидкое стекло
@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.3")
+    implementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.4")
 }
 ```
 

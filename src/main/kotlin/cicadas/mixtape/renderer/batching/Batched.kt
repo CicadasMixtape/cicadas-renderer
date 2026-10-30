@@ -20,6 +20,8 @@ class Batched private constructor(
         fun builder() = Builder()
     }
 
+    val state = BatchState(pipeline, samplers.toSet(), slices.toSet())
+
     fun update(pass: RenderPass, projectionUniform: CustomSlice) {
         pass.setPipeline(pipeline)
         pass.setUniform(projectionUniform)

@@ -34,6 +34,10 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
     public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+        if (!minecraft.isGameLoadFinished()) {
+            return;
+        }
+
         Profiler.get().push("cicadasrenderer-render-2d");
 
         var stack = new PoseStack();

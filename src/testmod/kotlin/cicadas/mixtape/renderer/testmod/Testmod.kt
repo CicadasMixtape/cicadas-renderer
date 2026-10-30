@@ -49,6 +49,10 @@ object Testmod : ModInitializer {
     }
 
     private fun onRender2D(context: UIContext) {
+        if (!context.inLevel()) {
+            return
+        }
+
         var x = 25f
         context.drawRoundedRect(x, 25f, 100f, 100f, RADIUS, GRADIENT)
         context.drawRect(x, 150f, 100f, 100f, GRADIENT)

@@ -1,30 +1,13 @@
 package cicadas.mixtape.renderer.shader.uniform
 
-import cicadas.mixtape.renderer.api.createBuffer
-import cicadas.mixtape.renderer.shader.slice.CustomSlice
-import com.mojang.blaze3d.buffers.Std140Builder
+import cicadas.mixtape.renderer.shader.storage.api.UniformStorage
+import cicadas.mixtape.renderer.shader.storage.impl.ScreenData
 import com.mojang.blaze3d.buffers.Std140SizeCalculator
-import com.mojang.blaze3d.systems.RenderSystem
 import org.joml.Vector2f
-import org.lwjgl.system.MemoryStack
-import kotlin.use
 
 object ScreenUniform {
-    private val SIZE = Std140SizeCalculator()
-        .putVec2()
-        .get()
+    private val SIZE = Std140SizeCalculator().putVec2().get()
+    private val STORAGE = UniformStorage<ScreenData>("Screen", SIZE)
 
-    private val BUFFER = RenderSystem.getDevice().createBuffer("Screen", SIZE)
-
-    fun update(screenSize: Vector2f): CustomSlice {
-        MemoryStack.stackPush().use {
-            val buffer = Std140Builder.onStack(it, SIZE)
-                .putVec2(screenSize)
-                .get()
-
-            RenderSystem.getDevice().createCommandEncoder().writeToBuffer(BUFFER.slice(), buffer)
-        }
-
-        return CustomSlice("Screen", BUFFER.slice())
-    }
+    fun update(screenSize: Vector2f) = STORAGE.write(ScreenData(screenSize))
 }

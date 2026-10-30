@@ -25,7 +25,7 @@ class Batching {
             count += it(customBuilder.get())
         }
 
-        if (last != null && last.match(batched)) {
+        if (last != null && last.match(batched, customBuilder)) {
             last.count += count * 6
         } else {
             batches.add(Batch(batched, customBuilder, customBuilder.count * 6, count * 6))
