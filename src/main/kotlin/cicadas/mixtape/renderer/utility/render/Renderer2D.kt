@@ -21,6 +21,7 @@ import cicadas.mixtape.renderer.shader.uniform.MsdfUniform
 import cicadas.mixtape.renderer.shader.uniform.ProjectionUniform
 import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
 import cicadas.mixtape.renderer.svg.SVGTexture
+import cicadas.mixtape.renderer.utility.color.ShaderColor
 import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.texture.AbstractTexture
@@ -34,8 +35,7 @@ object Renderer2D {
     private var modelView = Matrix4f()
 
     private val batching = Batching()
-    private var backupColor = Color.WHITE
-    private var shaderColor = Color.WHITE
+    private val shaderColor = ShaderColor()
 
     fun drawRect(
         stack: PoseStack,
@@ -49,10 +49,10 @@ object Renderer2D {
             Batched.builder()
                 .pipeline(CicadasPipelines.POSITION_COLOR_PIPELINE)
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, 0f).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, 0f).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          0f).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          0f).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, 0f).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, 0f).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          0f).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          0f).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -72,10 +72,10 @@ object Renderer2D {
             Batched.builder()
                 .pipeline(CicadasPipelines.RECT_PIPELINE)
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -96,10 +96,10 @@ object Renderer2D {
                 .pipeline(CicadasPipelines.POSITION_TEXTURE_COLOR_PIPELINE)
                 .sampler(CustomSampler(0, texture.textureView, FilterMode.NEAREST))
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, 0f).setUv(0f, 1f).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, 0f).setUv(1f, 1f).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          0f).setUv(1f, 0f).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          0f).setUv(0f, 0f).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, 0f).setUv(0f, 1f).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, 0f).setUv(1f, 1f).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          0f).setUv(1f, 0f).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          0f).setUv(0f, 0f).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -133,10 +133,10 @@ object Renderer2D {
                 .pipeline(CicadasPipelines.TEXTURE_PIPELINE)
                 .sampler(CustomSampler(0, texture.textureView, FilterMode.NEAREST))
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -170,10 +170,10 @@ object Renderer2D {
             Batched.builder()
                 .pipeline(CicadasPipelines.SQUIRCLE_PIPELINE)
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius,  squirt.leftBottomSquirt).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius, squirt.rightBottomSquirt).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius,    squirt.rightTopSquirt).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius,     squirt.leftTopSquirt).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius,  squirt.leftBottomSquirt).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius, squirt.rightBottomSquirt).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius,    squirt.rightTopSquirt).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius,     squirt.leftTopSquirt).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -195,10 +195,10 @@ object Renderer2D {
                 .sampler(CustomSampler(0, KawasePass.texture(), FilterMode.LINEAR))
                 .slice(ScreenUniform.update(mainTarget.screenSize))
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -223,10 +223,10 @@ object Renderer2D {
                 .slice(LiquidUniform.update(power))
                 .slice(ScreenUniform.update(mainTarget.screenSize))
                 .vertex {
-                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor).rgb)
-                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor).rgb)
+                    it.addVertex(stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
                     1
                 }
                 .build()
@@ -249,7 +249,7 @@ object Renderer2D {
                 .pipeline(CicadasPipelines.MSDF_PIPELINE)
                 .sampler(CustomSampler(0, msdf.texture.textureView, FilterMode.LINEAR))
                 .slice(MsdfUniform.update(msdf.atlas.distanceRange, msdf.thickness))
-                .vertex { msdf.applyGlyphs(it, stack.last().pose(), text, size, x, y, color.mul(shaderColor)) }
+                .vertex { msdf.applyGlyphs(it, stack.last().pose(), text, size, x, y, color.mul(shaderColor.current())) }
                 .build()
         )
     }
@@ -328,14 +328,14 @@ object Renderer2D {
     }
 
     fun backupColor() {
-        backupColor = shaderColor
-    }
-
-    fun shaderColor(shaderColor: Color) {
-        this.shaderColor = this.shaderColor.mul(shaderColor)
+        shaderColor.backup()
     }
 
     fun resetColor() {
-        shaderColor = backupColor
+        shaderColor.reset()
+    }
+
+    fun setColor(color: Color) {
+        shaderColor.set(color)
     }
 }

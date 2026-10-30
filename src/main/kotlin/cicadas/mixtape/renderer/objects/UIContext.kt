@@ -206,4 +206,16 @@ class UIContext private constructor(
     ) {
         Renderer2D.drawVector(stack, texture, x, y, gradient)
     }
+
+    fun backupColor() {
+        Renderer2D.backupColor()
+    }
+
+    fun resetColor() {
+        Renderer2D.resetColor()
+    }
+
+    fun setColor(color: Color) {
+        Renderer2D.setColor(color)
+    }
 }
