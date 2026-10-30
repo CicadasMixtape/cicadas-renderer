@@ -1,6 +1,6 @@
 package cicadas.mixtape.renderer.events
 
-import com.mojang.blaze3d.vertex.PoseStack
+import cicadas.mixtape.renderer.context.UIContext
 import net.fabricmc.fabric.api.event.EventFactory
 
 fun interface Render3DCallback {
@@ -13,5 +13,5 @@ fun interface Render3DCallback {
         }
     }
 
-    fun invoke(stack: PoseStack)
+    fun invoke(context: UIContext)
 }

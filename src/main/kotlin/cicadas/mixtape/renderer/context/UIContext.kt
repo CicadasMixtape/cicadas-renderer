@@ -1,6 +1,10 @@
-package cicadas.mixtape.renderer.objects
+package cicadas.mixtape.renderer.context
 
 import cicadas.mixtape.renderer.font.Font
+import cicadas.mixtape.renderer.objects.Gradient
+import cicadas.mixtape.renderer.objects.Radius
+import cicadas.mixtape.renderer.objects.Squirt
+import cicadas.mixtape.renderer.shader.projection.Projection
 import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.render.Renderer2D
 import com.mojang.blaze3d.vertex.PoseStack
@@ -10,15 +14,22 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import java.awt.Color
 
+// Отсылка на презервативы
 class UIContext private constructor(
     val stack: PoseStack,
+    val projection: Projection,
     val mouseX: Float,
     val mouseY: Float,
     val inLevel: () -> Boolean
 ) {
     companion object {
         @JvmStatic
-        fun create(stack: PoseStack, handler: MouseHandler, inLevel: () -> Boolean) = UIContext(stack, handler.xpos().toFloat() / 2f, handler.ypos().toFloat() / 2f, inLevel)
+        fun create(
+            stack: PoseStack,
+            projection: Projection,
+            handler: MouseHandler,
+            inLevel: () -> Boolean
+        ) = UIContext(stack, projection, handler.xpos().toFloat() / 2f, handler.ypos().toFloat() / 2f, inLevel)
     }
 
     fun push() {
@@ -35,6 +46,10 @@ class UIContext private constructor(
         stack.translate(-x, -y, 0f)
     }
 
+    fun matrix4f() = stack.last().pose()
+
+    fun projectionUniform() = projection.uniform()
+
     fun drawRect(
         x: Float,
         y: Float,
@@ -42,7 +57,7 @@ class UIContext private constructor(
         height: Float,
         gradient: Gradient
     ) {
-        Renderer2D.drawRect(stack, x, y, width, height, gradient)
+        Renderer2D.drawRect(this, x, y, width, height, gradient)
     }
 
     fun drawRoundedRect(
@@ -53,7 +68,7 @@ class UIContext private constructor(
         radius: Radius,
         gradient: Gradient
     ) {
-        Renderer2D.drawRoundedRect(stack, x, y, width, height, radius, gradient)
+        Renderer2D.drawRoundedRect(this, x, y, width, height, radius, gradient)
     }
 
     fun drawTexture(
@@ -64,7 +79,7 @@ class UIContext private constructor(
         height: Float,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawTexture(stack, texture, x, y, width, height, gradient)
+        Renderer2D.drawTexture(this, texture, x, y, width, height, gradient)
     }
 
     fun drawTexture(
@@ -75,7 +90,7 @@ class UIContext private constructor(
         height: Float,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawTexture(stack, id, x, y, width, height, gradient)
+        Renderer2D.drawTexture(this, id, x, y, width, height, gradient)
     }
 
     fun drawRoundedTexture(
@@ -87,7 +102,7 @@ class UIContext private constructor(
         radius: Radius,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawRoundedTexture(stack, texture, x, y, width, height, radius, gradient)
+        Renderer2D.drawRoundedTexture(this, texture, x, y, width, height, radius, gradient)
     }
 
     fun drawRoundedTexture(
@@ -99,7 +114,7 @@ class UIContext private constructor(
         radius: Radius,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawRoundedTexture(stack, id, x, y, width, height, radius, gradient)
+        Renderer2D.drawRoundedTexture(this, id, x, y, width, height, radius, gradient)
     }
 
     fun drawSquircle(
@@ -111,7 +126,7 @@ class UIContext private constructor(
         radius: Radius,
         gradient: Gradient
     ) {
-        Renderer2D.drawSquircle(stack, x, y, width, height, squirt, radius, gradient)
+        Renderer2D.drawSquircle(this, x, y, width, height, squirt, radius, gradient)
     }
 
     fun drawRoundedBlur(
@@ -122,7 +137,7 @@ class UIContext private constructor(
         radius: Radius,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawRoundedBlur(stack, x, y, width, height, radius, gradient)
+        Renderer2D.drawRoundedBlur(this, x, y, width, height, radius, gradient)
     }
 
     fun drawLiquidGlass(
@@ -135,7 +150,7 @@ class UIContext private constructor(
         radius: Radius,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawLiquidGlass(stack, x, y, width, height, power, clean, radius, gradient)
+        Renderer2D.drawLiquidGlass(this, x, y, width, height, power, clean, radius, gradient)
     }
 
     fun drawText(
@@ -145,7 +160,7 @@ class UIContext private constructor(
         y: Float,
         color: Color = Color.WHITE
     ) {
-        Renderer2D.drawText(stack, font, text, x, y, color)
+        Renderer2D.drawText(this, font, text, x, y, color)
     }
 
     fun drawText(
@@ -155,7 +170,7 @@ class UIContext private constructor(
         y: Float,
         color: Color = Color.WHITE
     ) {
-        Renderer2D.drawText(stack, font, text, x, y, color)
+        Renderer2D.drawText(this, font, text, x, y, color)
     }
 
     fun drawCenteredText(
@@ -165,7 +180,7 @@ class UIContext private constructor(
         y: Float,
         color: Color = Color.WHITE
     ) {
-        Renderer2D.drawCenteredText(stack, font, text, x, y, color)
+        Renderer2D.drawCenteredText(this, font, text, x, y, color)
     }
 
     fun drawCenteredText(
@@ -175,7 +190,7 @@ class UIContext private constructor(
         y: Float,
         color: Color = Color.WHITE
     ) {
-        Renderer2D.drawCenteredText(stack, font, text, x, y, color)
+        Renderer2D.drawCenteredText(this, font, text, x, y, color)
     }
 
     fun drawRightText(
@@ -185,7 +200,7 @@ class UIContext private constructor(
         y: Float,
         color: Color = Color.WHITE
     ) {
-        Renderer2D.drawRightText(stack, font, text, x, y, color)
+        Renderer2D.drawRightText(this, font, text, x, y, color)
     }
 
     fun drawRightText(
@@ -195,7 +210,7 @@ class UIContext private constructor(
         y: Float,
         color: Color = Color.WHITE
     ) {
-        Renderer2D.drawRightText(stack, font, text, x, y, color)
+        Renderer2D.drawRightText(this, font, text, x, y, color)
     }
 
     fun drawVector(
@@ -204,7 +219,7 @@ class UIContext private constructor(
         y: Float,
         gradient: Gradient = Gradient.EMPTY
     ) {
-        Renderer2D.drawVector(stack, texture, x, y, gradient)
+        Renderer2D.drawVector(this, texture, x, y, gradient)
     }
 
     fun backupColor() {

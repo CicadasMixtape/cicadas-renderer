@@ -9,7 +9,7 @@ import cicadas.mixtape.renderer.objects.DefaultOutline
 import cicadas.mixtape.renderer.objects.Gradient
 import cicadas.mixtape.renderer.objects.Radius
 import cicadas.mixtape.renderer.objects.Squirt
-import cicadas.mixtape.renderer.objects.UIContext
+import cicadas.mixtape.renderer.context.UIContext
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.svg.SVGManager
@@ -44,7 +44,7 @@ object Testmod : ModInitializer {
         }
 
         Render3DCallback.EVENT.register {
-            onRender3D()
+            onRender3D(it)
         }
     }
 
@@ -84,7 +84,7 @@ object Testmod : ModInitializer {
         context.drawText(font2, text, 150f, 275f)
     }
 
-    private fun onRender3D() {
+    private fun onRender3D(context: UIContext) {
         val result = mc.hitResult ?: return
 
         if (result.type == HitResult.Type.MISS) {

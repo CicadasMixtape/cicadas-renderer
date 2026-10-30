@@ -2,11 +2,13 @@ package cicadas.mixtape.renderer.mixins;
 
 import cicadas.mixtape.renderer.events.Render2DCallback;
 import cicadas.mixtape.renderer.events.Render3DCallback;
-import cicadas.mixtape.renderer.objects.UIContext;
+import cicadas.mixtape.renderer.context.UIContext;
 import cicadas.mixtape.renderer.pass.KawasePass;
+import cicadas.mixtape.renderer.shader.projection.Projection;
 import cicadas.mixtape.renderer.utility.render.Renderer2D;
 import cicadas.mixtape.renderer.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
@@ -41,9 +43,10 @@ public abstract class GameRendererMixin {
         Profiler.get().push("cicadasrenderer-render-2d");
 
         var stack = new PoseStack();
+        var projection = Projection.create(new Matrix4f().setOrtho(0f, minecraft.getWindow().getWidth() / 2f, minecraft.getWindow().getHeight() / 2f, 0f, -1000f, 1000f), RenderSystem.getModelViewMatrix());
         var inLevel = renderLevel && minecraft.level != null && !(minecraft.screen instanceof LevelLoadingScreen) && !minecraft.debugEntries.isOverlayVisible() && !minecraft.options.hideGui;
         KawasePass.INSTANCE.update();
-        Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, minecraft.mouseHandler, () -> inLevel));
+        Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, projection, minecraft.mouseHandler, () -> inLevel));
         Renderer2D.INSTANCE.update();
 
         Profiler.get().pop();
@@ -53,16 +56,13 @@ public abstract class GameRendererMixin {
     public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
         Profiler.get().push("cicadasrenderer-render-3d");
 
-        var partialTicks = deltaTracker.getGameTimeDeltaPartialTick(false);
-        var projection = getProjectionMatrix(getFov(mainCamera, partialTicks, true));
-        var stack = bob(new PoseStack());
-        stack.mulPose(matrix4f);
+        var stack = createStack(matrix4f);
+        var projection = Projection.create(getProjectionMatrix(deltaTracker), RenderSystem.getModelViewMatrix());
+        var context = UIContext.create(stack, projection, minecraft.mouseHandler, () -> true);
 
-        Renderer3D.INSTANCE.stack(stack);
-        Renderer3D.INSTANCE.projection(projection);
-        Render3DCallback.EVENT.invoker().invoke(stack);
-        Renderer3D.INSTANCE.drawBoxes();
-        Renderer3D.INSTANCE.drawOutlines();
+        Render3DCallback.EVENT.invoker().invoke(context);
+        Renderer3D.INSTANCE.drawBoxes(context);
+        Renderer3D.INSTANCE.drawOutlines(context);
 
         Profiler.get().pop();
     }
@@ -73,9 +73,18 @@ public abstract class GameRendererMixin {
     }
 
     @Unique
-    private PoseStack bob(PoseStack stack) {
+    private Matrix4f getProjectionMatrix(DeltaTracker tracker) {
+        var partialTicks = tracker.getGameTimeDeltaPartialTick(false);
+        var fov = getFov(mainCamera, partialTicks, true);
+        return getProjectionMatrix(fov);
+    }
+
+    @Unique
+    private PoseStack createStack(Matrix4f matrix4f) {
+        var stack = new PoseStack();
         bobHurt(stack, mainCamera.getPartialTickTime());
         if (minecraft.options.bobView().get()) bobView(stack, mainCamera.getPartialTickTime());
+        stack.mulPose(matrix4f);
         return stack;
     }
 }

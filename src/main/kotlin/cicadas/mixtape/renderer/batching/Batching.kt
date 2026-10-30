@@ -4,7 +4,6 @@ import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.shader.builder.CustomBuffer
 import cicadas.mixtape.renderer.shader.builder.CustomBuilder
 import cicadas.mixtape.renderer.shader.builder.CustomFormat
-import cicadas.mixtape.renderer.shader.slice.CustomSlice
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData
 import java.util.OptionalDouble
@@ -34,7 +33,7 @@ class Batching {
         customBuilder.count += count
     }
 
-    fun update(projectionUniform: CustomSlice) {
+    fun update() {
         if (batches.isEmpty()) {
             return
         }
@@ -52,7 +51,7 @@ class Batching {
         ).use { pass ->
             batches.forEach {
                 val buffer = it.builder.buffer ?: return@forEach
-                it.batched.update(pass, projectionUniform)
+                it.batched.update(pass)
                 buffer.setBuffer(pass)
                 buffer.drawIndexed(pass, it.start, it.count)
             }

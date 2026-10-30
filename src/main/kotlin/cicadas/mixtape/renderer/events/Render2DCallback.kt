@@ -1,6 +1,6 @@
 package cicadas.mixtape.renderer.events
 
-import cicadas.mixtape.renderer.objects.UIContext
+import cicadas.mixtape.renderer.context.UIContext
 import net.fabricmc.fabric.api.event.EventFactory
 
 fun interface Render2DCallback {
