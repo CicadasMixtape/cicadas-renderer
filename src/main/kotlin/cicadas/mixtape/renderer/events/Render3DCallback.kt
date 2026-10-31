@@ -1,6 +1,6 @@
 package cicadas.mixtape.renderer.events
 
-import cicadas.mixtape.renderer.context.UIContext
+import cicadas.mixtape.renderer.context.LevelContext
 import net.fabricmc.fabric.api.event.EventFactory
 
 fun interface Render3DCallback {
@@ -13,5 +13,5 @@ fun interface Render3DCallback {
         }
     }
 
-    fun invoke(context: UIContext)
+    fun invoke(context: LevelContext)
 }

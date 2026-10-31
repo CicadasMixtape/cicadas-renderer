@@ -1,12 +1,11 @@
 package cicadas.mixtape.renderer.mixins;
 
+import cicadas.mixtape.renderer.context.LevelContext;
 import cicadas.mixtape.renderer.events.Render2DCallback;
 import cicadas.mixtape.renderer.events.Render3DCallback;
 import cicadas.mixtape.renderer.context.UIContext;
 import cicadas.mixtape.renderer.pass.KawasePass;
 import cicadas.mixtape.renderer.shader.projection.Projection;
-import cicadas.mixtape.renderer.utility.render.Renderer2D;
-import cicadas.mixtape.renderer.utility.render.Renderer3D;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -34,42 +33,45 @@ public abstract class GameRendererMixin {
     @Shadow protected abstract float getFov(Camera camera, float f, boolean bl);
     @Shadow public abstract Matrix4f getProjectionMatrix(float f);
 
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(FZLorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
+    public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
+        Profiler.get().push("cicadasrenderer-update-kawase");
+        KawasePass.INSTANCE.update();
+        Profiler.get().pop();
+    }
+
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
     public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
         if (!minecraft.isGameLoadFinished()) {
             return;
         }
 
-        Profiler.get().push("cicadasrenderer-render-2d");
+        Profiler.get().push("cicadasrenderer-render-ui");
 
         var stack = new PoseStack();
         var projection = Projection.create(new Matrix4f().setOrtho(0f, minecraft.getWindow().getWidth() / 2f, minecraft.getWindow().getHeight() / 2f, 0f, -1000f, 1000f), RenderSystem.getModelViewMatrix());
+        var handler = minecraft.mouseHandler;
         var inLevel = renderLevel && minecraft.level != null && !(minecraft.screen instanceof LevelLoadingScreen) && !minecraft.debugEntries.isOverlayVisible() && !minecraft.options.hideGui;
-        KawasePass.INSTANCE.update();
-        Render2DCallback.EVENT.invoker().invoke(UIContext.create(stack, projection, minecraft.mouseHandler, () -> inLevel));
-        Renderer2D.INSTANCE.update();
+        var context = UIContext.create(stack, projection, handler, () -> inLevel);
+
+        Render2DCallback.EVENT.invoker().invoke(context);
+        context.update();
 
         Profiler.get().pop();
     }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
-    public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
-        Profiler.get().push("cicadasrenderer-render-3d");
+    public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
+        Profiler.get().push("cicadasrenderer-render-level");
 
         var stack = createStack(matrix4f);
         var projection = Projection.create(getProjectionMatrix(deltaTracker), RenderSystem.getModelViewMatrix());
-        var context = UIContext.create(stack, projection, minecraft.mouseHandler, () -> true);
+        var context = LevelContext.create(stack, projection);
 
         Render3DCallback.EVENT.invoker().invoke(context);
-        Renderer3D.INSTANCE.drawBoxes(context);
-        Renderer3D.INSTANCE.drawOutlines(context);
+        context.update();
 
         Profiler.get().pop();
-    }
-
-    @Inject(method = "renderLevel", at = @At("TAIL"))
-    public void renderLevel$tail(DeltaTracker deltaTracker, CallbackInfo ci) {
-        Renderer3D.INSTANCE.clearAll();
     }
 
     @Unique

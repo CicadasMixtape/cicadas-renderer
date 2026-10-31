@@ -7,7 +7,7 @@ import cicadas.mixtape.renderer.api.mc
 import cicadas.mixtape.renderer.api.screenSize
 import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.api.withCamera
-import cicadas.mixtape.renderer.context.UIContext
+import cicadas.mixtape.renderer.context.LevelContext
 import cicadas.mixtape.renderer.objects.DefaultBox
 import cicadas.mixtape.renderer.objects.DefaultOutline
 import cicadas.mixtape.renderer.objects.VoxelBox
@@ -203,21 +203,16 @@ object Renderer3D {
         }
     }
 
-    fun drawBoxes(context: UIContext) {
+    private fun drawBoxes(context: LevelContext) {
         if (defaultBoxes.isNotEmpty() || voxelBoxes.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
-            if (defaultBoxes.isNotEmpty()) {
-                defaultBoxes.forEach { drawDefaultBox(builder, context.matrix4f(), it) }
-            }
-
-            if (voxelBoxes.isNotEmpty()) {
-                voxelBoxes.forEach { drawVoxelBox(builder, context.matrix4f(), it) }
-            }
+            defaultBoxes.forEach { drawDefaultBox(builder, context.stack.last().pose(), it) }
+            voxelBoxes.forEach { drawVoxelBox(builder, context.stack.last().pose(), it) }
 
             val mesh = builder.buildOrThrow()
             val buffer = CustomBuffer.create(mesh)
-            val projectionUniform = context.projectionUniform()
+            val projectionUniform = context.projection.uniform()
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 { "cicadasrenderer-boxes-pass" },
@@ -235,21 +230,16 @@ object Renderer3D {
         }
     }
 
-    fun drawOutlines(context: UIContext) {
+    private fun drawOutlines(context: LevelContext) {
         if (defaultOutlines.isNotEmpty() || voxelOutlines.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
-            if (defaultOutlines.isNotEmpty()) {
-                defaultOutlines.forEach { drawDefaultOutline(builder, context.matrix4f(), it) }
-            }
-
-            if (voxelOutlines.isNotEmpty()) {
-                voxelOutlines.forEach { drawVoxelOutline(builder, context.matrix4f(), it) }
-            }
+            defaultOutlines.forEach { drawDefaultOutline(builder, context.stack.last().pose(), it) }
+            voxelOutlines.forEach { drawVoxelOutline(builder, context.stack.last().pose(), it) }
 
             val mesh = builder.buildOrThrow()
             val buffer = CustomBuffer.create(mesh)
-            val projectionUniform = context.projectionUniform()
+            val projectionUniform = context.projection.uniform()
             val screenUniform = ScreenUniform.update(mainTarget.screenSize)
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(
@@ -269,7 +259,10 @@ object Renderer3D {
         }
     }
 
-    fun clearAll() {
+    fun update(context: LevelContext) {
+        drawBoxes(context)
+        drawOutlines(context)
+
         defaultBoxes.clear()
         defaultOutlines.clear()
         voxelBoxes.clear()

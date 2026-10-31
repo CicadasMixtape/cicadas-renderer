@@ -14,22 +14,15 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import java.awt.Color
 
-// Отсылка на презервативы
-class UIContext private constructor(
-    val stack: PoseStack,
-    val projection: Projection,
-    val mouseX: Float,
-    val mouseY: Float,
-    val inLevel: () -> Boolean
+open class UIContext protected constructor(
+    open val stack: PoseStack,
+    open val projection: Projection,
+    private val handler: MouseHandler?,
+    private val inLevel: () -> Boolean
 ) {
     companion object {
         @JvmStatic
-        fun create(
-            stack: PoseStack,
-            projection: Projection,
-            handler: MouseHandler,
-            inLevel: () -> Boolean
-        ) = UIContext(stack, projection, handler.xpos().toFloat() / 2f, handler.ypos().toFloat() / 2f, inLevel)
+        fun create(stack: PoseStack, projection: Projection, handler: MouseHandler?, inLevel: () -> Boolean) = UIContext(stack, projection, handler, inLevel)
     }
 
     fun push() {
@@ -46,9 +39,11 @@ class UIContext private constructor(
         stack.translate(-x, -y, 0f)
     }
 
-    fun matrix4f() = stack.last().pose()
+    fun mouseX() = if (handler == null) 0f else handler.xpos().toFloat() / 2f
 
-    fun projectionUniform() = projection.uniform()
+    fun mouseY() = if (handler == null) 0f else handler.ypos().toFloat() / 2f
+
+    fun level() = inLevel()
 
     fun drawRect(
         x: Float,
@@ -99,7 +94,7 @@ class UIContext private constructor(
         y: Float,
         width: Float,
         height: Float,
-        radius: Radius,
+        radius: Radius = Radius.EMPTY,
         gradient: Gradient = Gradient.EMPTY
     ) {
         Renderer2D.drawRoundedTexture(this, texture, x, y, width, height, radius, gradient)
@@ -111,7 +106,7 @@ class UIContext private constructor(
         y: Float,
         width: Float,
         height: Float,
-        radius: Radius,
+        radius: Radius = Radius.EMPTY,
         gradient: Gradient = Gradient.EMPTY
     ) {
         Renderer2D.drawRoundedTexture(this, id, x, y, width, height, radius, gradient)
@@ -232,5 +227,9 @@ class UIContext private constructor(
 
     fun setColor(color: Color) {
         Renderer2D.setColor(color)
+    }
+
+    open fun update() {
+        Renderer2D.update()
     }
 }

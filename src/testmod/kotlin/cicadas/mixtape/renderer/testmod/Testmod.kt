@@ -1,8 +1,8 @@
 package cicadas.mixtape.renderer.testmod
 
 import cicadas.mixtape.renderer.CicadasRenderer
+import cicadas.mixtape.renderer.context.LevelContext
 import cicadas.mixtape.renderer.events.Render2DCallback
-import cicadas.mixtape.renderer.events.Render3DCallback
 import cicadas.mixtape.renderer.testmod.font.Fonts
 import cicadas.mixtape.renderer.objects.DefaultBox
 import cicadas.mixtape.renderer.objects.DefaultOutline
@@ -10,6 +10,7 @@ import cicadas.mixtape.renderer.objects.Gradient
 import cicadas.mixtape.renderer.objects.Radius
 import cicadas.mixtape.renderer.objects.Squirt
 import cicadas.mixtape.renderer.context.UIContext
+import cicadas.mixtape.renderer.events.Render3DCallback
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.svg.SVGManager
@@ -17,7 +18,6 @@ import cicadas.mixtape.renderer.testmod.api.init
 import cicadas.mixtape.renderer.testmod.api.level
 import cicadas.mixtape.renderer.testmod.api.mc
 import cicadas.mixtape.renderer.testmod.api.withAlpha
-import cicadas.mixtape.renderer.utility.render.Renderer3D
 import com.github.weisj.jsvg.view.FloatSize
 import net.fabricmc.api.ModInitializer
 import net.minecraft.ChatFormatting
@@ -49,7 +49,7 @@ object Testmod : ModInitializer {
     }
 
     private fun onRender2D(context: UIContext) {
-        if (!context.inLevel()) {
+        if (!context.level()) {
             return
         }
 
@@ -84,7 +84,7 @@ object Testmod : ModInitializer {
         context.drawText(font2, text, 150f, 275f)
     }
 
-    private fun onRender3D(context: UIContext) {
+    private fun onRender3D(context: LevelContext) {
         val result = mc.hitResult ?: return
 
         if (result.type == HitResult.Type.MISS) {
@@ -97,16 +97,16 @@ object Testmod : ModInitializer {
                 val state = level.getBlockState(pos)
                 val shape = state.getShape(level, pos)
 
-                Renderer3D.addVoxelBox(VoxelBox(pos, shape, COLOR.withAlpha(100)))
-                Renderer3D.addVoxelOutline(VoxelOutline(pos, shape, COLOR, 3f))
+                context.drawVoxelBox(VoxelBox(pos, shape, COLOR.withAlpha(100)))
+                context.drawVoxelOutline(VoxelOutline(pos, shape, COLOR, 3f))
             }
 
             is EntityHitResult -> {
                 val entity = result.entity
                 val aabb = entity.boundingBox
 
-                Renderer3D.addDefaultBox(DefaultBox(aabb, COLOR.withAlpha(100)))
-                Renderer3D.addDefaultOutline(DefaultOutline(aabb, COLOR, 3f))
+                context.drawDefaultBox(DefaultBox(aabb, COLOR.withAlpha(100)))
+                context.drawDefaultOutline(DefaultOutline(aabb, COLOR, 3f))
             }
         }
     }
