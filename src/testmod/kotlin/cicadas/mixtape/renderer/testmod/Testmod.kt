@@ -13,7 +13,6 @@ import cicadas.mixtape.renderer.context.UIContext
 import cicadas.mixtape.renderer.events.Render3DCallback
 import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
-import cicadas.mixtape.renderer.svg.SVGManager
 import cicadas.mixtape.renderer.testmod.api.init
 import cicadas.mixtape.renderer.testmod.api.level
 import cicadas.mixtape.renderer.testmod.api.mc
@@ -57,6 +56,10 @@ object Testmod : ModInitializer {
         context.drawRoundedRect(x, 25f, 100f, 100f, RADIUS, GRADIENT)
         context.drawRect(x, 150f, 100f, 100f, GRADIENT)
 
+        x += 155f
+        context.drawShadow(x, 40f, 70f, 70f, 30f, Radius.All(15f), Gradient.All(Color.BLACK.withAlpha(150)))
+        context.drawRoundedRect(x, 40f, 70f, 70f, Radius.All(15f), Gradient.EMPTY)
+
         x += 125f
         context.drawSquircle(x, 25f, 100f, 100f, SQUIRT, RADIUS, GRADIENT)
 
@@ -70,11 +73,8 @@ object Testmod : ModInitializer {
         context.drawLiquidGlass(x, 275f, 100f, 100f, 15f, false, RADIUS)
 
         x += 125f
-        val svg1 = SVGManager.getTexture(id("vector/cloud.svg"), FloatSize(100f, 100f))
-        val svg2 = SVGManager.getTexture(id("vector/cloud.svg"), FloatSize(50f, 50f))
-
-        context.drawVector(svg1, x, 25f)
-        context.drawVector(svg2, x, 150f)
+        context.drawVector(id("vector/cloud.svg"), FloatSize(100f, 100f), x, 25f)
+        context.drawVector(id("vector/cloud.svg"), FloatSize(50f, 50f), x, 150f)
 
         val text = getText()
         val font1 = Fonts.BOLD.getFont(25f)

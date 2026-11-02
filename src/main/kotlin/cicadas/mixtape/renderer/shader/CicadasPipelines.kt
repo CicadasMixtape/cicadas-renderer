@@ -42,6 +42,15 @@ object CicadasPipelines {
     )
 
     @JvmField
+    val SHADOW_PIPELINE = RenderPipelines.register(
+        RenderPipeline.builder(CicadasSnippets.SHADOW_SNIPPET)
+            .withLocation(CicadasRenderer.id("pipeline/shadow"))
+            .withFragmentShader(CicadasRenderer.id("core/shadow"))
+            .withVertexShader(CicadasRenderer.id("core/rect"))
+            .build()
+    )
+
+    @JvmField
     val TEXTURE_PIPELINE = RenderPipelines.register(
         RenderPipeline.builder(CicadasSnippets.TEXTURE_SNIPPET)
             .withLocation(CicadasRenderer.id("pipeline/texture"))

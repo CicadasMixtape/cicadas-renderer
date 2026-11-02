@@ -47,6 +47,13 @@ object CicadasSnippets {
         .buildSnippet()
 
     @JvmField
+    val SHADOW_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
+        .withVertexFormat(CicadasFormats.RECT, VertexFormat.Mode.QUADS)
+        .withBlend(BlendFunction.TRANSLUCENT)
+        .withUniform("Shadow", UniformType.UNIFORM_BUFFER)
+        .buildSnippet()
+
+    @JvmField
     val TEXTURE_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
         .withVertexFormat(CicadasFormats.RECT, VertexFormat.Mode.QUADS)
         .withBlend(BlendFunction.TRANSLUCENT)

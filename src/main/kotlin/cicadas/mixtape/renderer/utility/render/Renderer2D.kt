@@ -16,11 +16,11 @@ import cicadas.mixtape.renderer.pass.KawasePass
 import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.storage.api.UniformStorage
-import cicadas.mixtape.renderer.shader.uniform.LiquidUniform
-import cicadas.mixtape.renderer.shader.uniform.MsdfUniform
-import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
+import cicadas.mixtape.renderer.shader.uniform.*
+import cicadas.mixtape.renderer.svg.SVGManager
 import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.color.ShaderColor
+import com.github.weisj.jsvg.view.FloatSize
 import com.mojang.blaze3d.textures.FilterMode
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
@@ -67,6 +67,38 @@ object Renderer2D {
             Batched.builder()
                 .pipeline(CicadasPipelines.RECT_PIPELINE)
                 .slice(context.projection.uniform())
+                .vertex {
+                    it.addVertex(context.stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(context.stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(context.stack.last().pose(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
+                    it.addVertex(context.stack.last().pose(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
+                    1
+                }
+                .build()
+        )
+    }
+
+    fun drawShadow(
+        context: UIContext,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        power: Float,
+        radius: Radius,
+        gradient: Gradient
+    ) {
+        val x = x - power
+        val y = y - power
+        val width = width + (power * 2f)
+        val height = height + (power * 2f)
+        val radius = Radius(radius.leftBottomRadius + power, radius.leftTopRadius + power, radius.rightTopRadius + power, radius.rightBottomRadius + power)
+
+        batching.add(
+            Batched.builder()
+                .pipeline(CicadasPipelines.SHADOW_PIPELINE)
+                .slice(context.projection.uniform())
+                .slice(ShadowUniform.update(power))
                 .vertex {
                     it.addVertex(context.stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.stack.last().pose(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
@@ -319,6 +351,17 @@ object Renderer2D {
         gradient: Gradient = Gradient.EMPTY
     ) {
         drawTexture(context, texture, x, y, texture.width(), texture.height(), gradient)
+    }
+
+    fun drawVector(
+        context: UIContext,
+        id: Identifier,
+        size: FloatSize,
+        x: Float,
+        y: Float,
+        gradient: Gradient = Gradient.EMPTY
+    ) {
+        drawVector(context, SVGManager.getTexture(id, size), x, y, gradient)
     }
 
     fun backupColor() {

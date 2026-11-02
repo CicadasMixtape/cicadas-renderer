@@ -7,6 +7,7 @@ import cicadas.mixtape.renderer.objects.Squirt
 import cicadas.mixtape.renderer.shader.projection.Projection
 import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.render.Renderer2D
+import com.github.weisj.jsvg.view.FloatSize
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.MouseHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
@@ -64,6 +65,18 @@ open class UIContext protected constructor(
         gradient: Gradient
     ) {
         Renderer2D.drawRoundedRect(this, x, y, width, height, radius, gradient)
+    }
+
+    fun drawShadow(
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        power: Float,
+        radius: Radius,
+        gradient: Gradient
+    ) {
+        Renderer2D.drawShadow(this, x, y, width, height, power, radius, gradient)
     }
 
     fun drawTexture(
@@ -215,6 +228,16 @@ open class UIContext protected constructor(
         gradient: Gradient = Gradient.EMPTY
     ) {
         Renderer2D.drawVector(this, texture, x, y, gradient)
+    }
+
+    fun drawVector(
+        id: Identifier,
+        size: FloatSize,
+        x: Float,
+        y: Float,
+        gradient: Gradient = Gradient.EMPTY
+    ) {
+        Renderer2D.drawVector(this, id, size, x, y, gradient)
     }
 
     fun backupColor() {
