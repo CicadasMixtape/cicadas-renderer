@@ -14,8 +14,8 @@ class SVGTexture(
     private val size: FloatSize
 ) : AbstractTexture() {
     fun load(): SVGTexture {
-        val id = Identifier.fromNamespaceAndPath(id.namespace, id.path.removeSuffix("_${size.width}x${size.height}"))
-        val image = SVGManager.loadDocument(id).toBuffered(size).toNative()
+        val cleanId = Identifier.fromNamespaceAndPath(id.namespace, id.path.removeSuffix("_${size.width}x${size.height}"))
+        val image = SVGManager.loadDocument(cleanId).toBuffered(size).toNative()
 
         close()
 

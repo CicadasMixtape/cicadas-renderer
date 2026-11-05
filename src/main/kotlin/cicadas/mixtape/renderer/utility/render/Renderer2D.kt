@@ -20,6 +20,7 @@ import cicadas.mixtape.renderer.shader.uniform.*
 import cicadas.mixtape.renderer.svg.SVGManager
 import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.color.ShaderColor
+import cicadas.mixtape.renderer.utility.scissor.ScissorUtility
 import com.github.weisj.jsvg.view.FloatSize
 import com.mojang.blaze3d.textures.FilterMode
 import net.minecraft.client.renderer.texture.AbstractTexture
@@ -42,6 +43,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.POSITION_COLOR_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .slice(context.projection.uniform())
                 .vertex {
                     it.addVertex(context.stack.last().pose(), x,         y + height, 0f).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
@@ -66,6 +68,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.RECT_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .slice(context.projection.uniform())
                 .vertex {
                     it.addVertex(context.stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
@@ -97,6 +100,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.SHADOW_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .slice(context.projection.uniform())
                 .slice(ShadowUniform.update(power))
                 .vertex {
@@ -122,6 +126,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.POSITION_TEXTURE_COLOR_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .sampler(CustomSampler(0, texture.textureView, FilterMode.NEAREST))
                 .slice(context.projection.uniform())
                 .vertex {
@@ -160,6 +165,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.TEXTURE_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .sampler(CustomSampler(0, texture.textureView, FilterMode.NEAREST))
                 .slice(context.projection.uniform())
                 .vertex {
@@ -199,6 +205,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.SQUIRCLE_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .slice(context.projection.uniform())
                 .vertex {
                     it.addVertex(context.stack.last().pose(), x,         y + height, width, height, radius.leftBottomRadius,  squirt.leftBottomSquirt).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
@@ -223,6 +230,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.BLUR_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .sampler(CustomSampler(0, KawasePass.texture(), FilterMode.LINEAR))
                 .slice(context.projection.uniform())
                 .slice(ScreenUniform.update(mainTarget.screenSize))
@@ -251,6 +259,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.LIQUID_GLASS)
+                .scissorState(ScissorUtility.state())
                 .sampler(CustomSampler(0, if (clean) mainTarget.colorTextureView else KawasePass.texture(), FilterMode.LINEAR))
                 .slice(context.projection.uniform())
                 .slice(LiquidUniform.update(power))
@@ -280,6 +289,7 @@ object Renderer2D {
         batching.add(
             Batched.builder()
                 .pipeline(CicadasPipelines.MSDF_PIPELINE)
+                .scissorState(ScissorUtility.state())
                 .sampler(CustomSampler(0, msdf.texture.textureView, FilterMode.LINEAR))
                 .slice(context.projection.uniform())
                 .slice(MsdfUniform.update(msdf.atlas.distanceRange, msdf.thickness))
