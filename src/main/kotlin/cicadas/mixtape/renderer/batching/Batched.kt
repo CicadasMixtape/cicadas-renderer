@@ -22,7 +22,7 @@ class Batched private constructor(
         fun builder() = Builder()
     }
 
-    val state = BatchState(pipeline, samplers.toSet(), slices.toSet())
+    val state = BatchState(pipeline, scissorState, samplers.toSet(), slices.toSet())
 
     fun update(pass: RenderPass) {
         pass.setPipeline(pipeline)
