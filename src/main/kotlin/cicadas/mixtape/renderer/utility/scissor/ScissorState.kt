@@ -27,10 +27,10 @@ class ScissorState private constructor(
         this.height = 0
     }
 
-    fun x() = x * 2
-    fun y() = window.height - (y + height) * 2
-    fun width() = width * 2
-    fun height() = height * 2
+    fun x() = x * 2f
+    fun y() = window.height - (y + height) * 2f
+    fun width() = width * 2f
+    fun height() = height * 2f
     fun toggled() = toggled
     fun copy() = ScissorState(x, y, width, height, toggled)
 }

@@ -8,8 +8,8 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
 class SimpleAnimation(
-    private val duration: Duration,
-    private val easing: IEasing,
+    private var duration: Duration,
+    private var easing: IEasing,
     initialValue: Float = 0f
 ) : IAnimation {
     private var value = initialValue
@@ -24,7 +24,12 @@ class SimpleAnimation(
             timer.reset()
         }
 
-        val progress = (timer.elapsed().toFloat() / duration.toFloat(DurationUnit.MILLISECONDS)).coerceIn(0f..1f)
+        if (timer.passed(duration)) {
+            value = finishValue
+            return value
+        }
+
+        val progress = (timer.elapsed().toFloat() / duration.toFloat(DurationUnit.MILLISECONDS))
         val ease = easing.update(progress)
         value = fromValue + (finishValue - fromValue) * ease
         return value
@@ -38,5 +43,15 @@ class SimpleAnimation(
         value = newValue
         fromValue = newValue
         finishValue = newValue
+    }
+
+    fun duration(duration: Duration): SimpleAnimation {
+        this.duration = duration
+        return this
+    }
+
+    fun easing(easing: IEasing): SimpleAnimation {
+        this.easing = easing
+        return this
     }
 }

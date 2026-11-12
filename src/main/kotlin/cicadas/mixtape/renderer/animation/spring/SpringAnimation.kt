@@ -5,9 +5,9 @@ import cicadas.mixtape.renderer.utility.time.DeltaTimer
 import kotlin.Float
 
 class SpringAnimation(
-    private val stiffness: Float,
-    private val damping: Float,
-    private val mass: Float = 1f,
+    private var stiffness: Float,
+    private var damping: Float,
+    private var mass: Float = 1f,
     initialValue: Float = 0f
 ) : IAnimation {
     private var value = initialValue
@@ -34,5 +34,20 @@ class SpringAnimation(
 
     override fun reset(newValue: Float) {
         value = newValue
+    }
+
+    fun stiffness(stiffness: Float): SpringAnimation {
+        this.stiffness = stiffness
+        return this
+    }
+
+    fun damping(damping: Float): SpringAnimation {
+        this.damping = damping
+        return this
+    }
+
+    fun mass(mass: Float): SpringAnimation {
+        this.mass = mass
+        return this
     }
 }

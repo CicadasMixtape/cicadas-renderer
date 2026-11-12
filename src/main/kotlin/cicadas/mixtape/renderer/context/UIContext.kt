@@ -13,11 +13,12 @@ import net.minecraft.client.MouseHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import org.joml.Quaternionf
 import java.awt.Color
 
 open class UIContext protected constructor(
-    open val stack: PoseStack,
-    open val projection: Projection,
+    protected val stack: PoseStack,
+    protected val projection: Projection,
     private val handler: MouseHandler?,
     private val inLevel: () -> Boolean
 ) {
@@ -26,18 +27,26 @@ open class UIContext protected constructor(
         fun create(stack: PoseStack, projection: Projection, handler: MouseHandler?, inLevel: () -> Boolean) = UIContext(stack, projection, handler, inLevel)
     }
 
-    fun push() {
-        stack.pushPose()
+    fun push() = stack.pushPose()
+
+    fun pop() = stack.popPose()
+
+    fun move(x: Float, y: Float, z: Float = 0f) = stack.translate(x, y, z)
+
+    fun scale(x: Float, y: Float, z: Float = 1f) = stack.scale(x, y, z)
+
+    fun rotate(quaternion: Quaternionf) = stack.mulPose(quaternion)
+
+    fun centeredScale(scale: Float, x: Float, y: Float) {
+        move(x, y)
+        scale(scale, scale)
+        move(-x, -y)
     }
 
-    fun pop() {
-        stack.popPose()
-    }
-
-    fun scale(scale: Float, x: Float, y: Float) {
-        stack.translate(x, y, 0f)
-        stack.scale(scale, scale, 1f)
-        stack.translate(-x, -y, 0f)
+    fun centeredRotate(quaternion: Quaternionf, x: Float, y: Float) {
+        move(x, y)
+        rotate(quaternion)
+        move(-x, -y)
     }
 
     fun mouseX() = if (handler == null) 0f else handler.xpos().toFloat() / 2f
@@ -45,6 +54,18 @@ open class UIContext protected constructor(
     fun mouseY() = if (handler == null) 0f else handler.ypos().toFloat() / 2f
 
     fun level() = inLevel()
+
+    fun backupColor() = Renderer2D.backupColor()
+
+    fun resetColor() = Renderer2D.resetColor()
+
+    fun setColor(color: Color) = Renderer2D.setColor(color)
+
+    fun stack() = stack
+
+    fun matrix4f() = stack.last().pose()
+
+    fun projection() = projection.uniform()
 
     fun drawRect(
         x: Float,
@@ -238,18 +259,6 @@ open class UIContext protected constructor(
         gradient: Gradient = Gradient.EMPTY
     ) {
         Renderer2D.drawVector(this, id, size, x, y, gradient)
-    }
-
-    fun backupColor() {
-        Renderer2D.backupColor()
-    }
-
-    fun resetColor() {
-        Renderer2D.resetColor()
-    }
-
-    fun setColor(color: Color) {
-        Renderer2D.setColor(color)
     }
 
     open fun update() {

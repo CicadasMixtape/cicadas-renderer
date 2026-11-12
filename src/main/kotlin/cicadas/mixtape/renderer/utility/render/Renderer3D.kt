@@ -207,12 +207,12 @@ object Renderer3D {
         if (defaultBoxes.isNotEmpty() || voxelBoxes.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
-            defaultBoxes.forEach { drawDefaultBox(builder, context.stack.last().pose(), it) }
-            voxelBoxes.forEach { drawVoxelBox(builder, context.stack.last().pose(), it) }
+            defaultBoxes.forEach { drawDefaultBox(builder, context.matrix4f(), it) }
+            voxelBoxes.forEach { drawVoxelBox(builder, context.matrix4f(), it) }
 
             val mesh = builder.buildOrThrow()
             val buffer = CustomBuffer.create(mesh)
-            val projectionUniform = context.projection.uniform()
+            val projectionUniform = context.projection()
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 { "cicadasrenderer-boxes-pass" },
@@ -234,12 +234,12 @@ object Renderer3D {
         if (defaultOutlines.isNotEmpty() || voxelOutlines.isNotEmpty()) {
             val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
-            defaultOutlines.forEach { drawDefaultOutline(builder, context.stack.last().pose(), it) }
-            voxelOutlines.forEach { drawVoxelOutline(builder, context.stack.last().pose(), it) }
+            defaultOutlines.forEach { drawDefaultOutline(builder, context.matrix4f(), it) }
+            voxelOutlines.forEach { drawVoxelOutline(builder, context.matrix4f(), it) }
 
             val mesh = builder.buildOrThrow()
             val buffer = CustomBuffer.create(mesh)
-            val projectionUniform = context.projection.uniform()
+            val projectionUniform = context.projection()
             val screenUniform = ScreenUniform.update(mainTarget.screenSize)
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(

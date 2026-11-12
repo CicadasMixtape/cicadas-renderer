@@ -3,13 +3,9 @@ package cicadas.mixtape.renderer.utility.scissor
 object ScissorUtility {
     private val state = ScissorState()
 
-    fun push(x: Int, y: Int, width: Int, height: Int) {
-        state.push(x, y, width, height)
-    }
+    fun push(x: Int, y: Int, width: Int, height: Int) = state.push(x, y, width, height)
 
-    fun pop() {
-        state.pop()
-    }
+    fun pop() = state.pop()
 
-    fun state() = state.copy()
+    fun copyState() = state.copy()
 }

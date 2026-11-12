@@ -9,8 +9,8 @@ import cicadas.mixtape.renderer.utility.render.Renderer3D
 import com.mojang.blaze3d.vertex.PoseStack
 
 class LevelContext private constructor(
-    override val stack: PoseStack,
-    override val projection: Projection,
+    stack: PoseStack,
+    projection: Projection,
 ) : UIContext(stack, projection, null, { true }) {
     companion object {
         @JvmStatic
@@ -34,7 +34,7 @@ class LevelContext private constructor(
     }
 
     override fun update() {
-        Renderer3D.update(this)
         super.update()
+        Renderer3D.update(this)
     }
 }

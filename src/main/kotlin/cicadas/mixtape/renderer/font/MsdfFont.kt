@@ -10,12 +10,12 @@ import org.joml.Matrix4f
 import java.awt.Color
 
 class MsdfFont private constructor(
-    val texture: AbstractTexture,
-    val atlas: MsdfData.AtlasData,
-    val metrics: MsdfData.MetricsData,
-    val glyphs: Map<Int, MsdfGlyph>
+    private val texture: AbstractTexture,
+    private val atlas: MsdfData.AtlasData,
+    private val metrics: MsdfData.MetricsData,
+    private val glyphs: Map<Int, MsdfGlyph>
 ) {
-    val thickness = 0.05f
+    private val thickness = 0.05f
 
     companion object {
         @JvmStatic
@@ -92,6 +92,12 @@ class MsdfFont private constructor(
     fun getWidth(text: String, size: Float) = getWidth(Component.literal(text), size)
 
     fun getHeight(size: Float) = (metrics.lineHeight + metrics.descender - 0.2f) * size
+
+    fun textureView() = texture.textureView
+
+    fun distanceRange() = atlas.distanceRange
+
+    fun thickness() = thickness
 
     private fun getThickness(size: Float) = thickness * 0.5f * size
 }
