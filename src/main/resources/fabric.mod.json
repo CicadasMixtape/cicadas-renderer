@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "cicadas-renderer",
+  "version": "${version}",
+  "name": "cicadas-renderer",
+  "description": "A render library for minecraft",
+  "authors": ["cicadasmixtape"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/cicadasrenderer/icon.png",
+  "environment": "*",
+  "mixins": [
+    "cicadas-renderer.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": ">=${fabric_api_version}",
+    "fabric-language-kotlin": ">=${kotlin_language_version}"
+  }
+}

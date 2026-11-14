@@ -1,0 +1,16 @@
+#version 330
+
+#moj_import <cicadasrenderer:projection_uniform.glsl>
+
+in vec3 Position;
+in vec2 UV0;
+in vec4 Color;
+
+out vec2 vertexCoord;
+out vec4 vertexColor;
+
+void main() {
+    gl_Position = proj * modelView * vec4(Position, 1.0);
+    vertexCoord = UV0;
+    vertexColor = Color;
+}
