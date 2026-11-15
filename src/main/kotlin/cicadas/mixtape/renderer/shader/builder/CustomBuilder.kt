@@ -9,5 +9,5 @@ class CustomBuilder(val format: CustomFormat) {
     var buffer: CustomBuffer? = null
     var count = 0
 
-    fun get() = builder ?: BufferBuilder(bytes, format.topology, format.format).also { builder = it }
+    fun builder() = builder ?: BufferBuilder(bytes, format.topology, format.format).also { builder = it }
 }

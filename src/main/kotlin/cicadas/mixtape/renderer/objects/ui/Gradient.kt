@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.objects
+package cicadas.mixtape.renderer.objects.ui
 
 import java.awt.Color
 

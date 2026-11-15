@@ -37,7 +37,7 @@ object CicadasSnippets {
     @JvmField
     val LINES_SNIPPET = RenderPipeline.builder(WITHOUT_DEPTH_SNIPPET, PROJECTION_SNIPPET)
         .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
-        .withPrimitiveTopology(PrimitiveTopology.QUADS)
+        .withPrimitiveTopology(PrimitiveTopology.LINES)
         .withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
         .withBindGroupLayout(CicadasLayouts.SCREEN_LAYOUT)
         .buildSnippet()

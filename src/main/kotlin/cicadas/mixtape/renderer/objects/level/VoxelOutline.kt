@@ -1,11 +1,12 @@
-package cicadas.mixtape.renderer.objects
+package cicadas.mixtape.renderer.objects.level
 
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.awt.Color
 
-data class VoxelBox(
+data class VoxelOutline(
     val pos: BlockPos,
     val shape: VoxelShape,
-    val color: Color
+    val color: Color,
+    val lineWidth: Float
 )

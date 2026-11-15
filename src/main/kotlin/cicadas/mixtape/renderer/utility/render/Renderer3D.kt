@@ -5,51 +5,130 @@ import cicadas.mixtape.renderer.api.frustum
 import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.api.mc
 import cicadas.mixtape.renderer.api.screenSize
-import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.api.withCamera
+import cicadas.mixtape.renderer.batching.BatchRenderer
+import cicadas.mixtape.renderer.batching.Batched
 import cicadas.mixtape.renderer.context.LevelContext
-import cicadas.mixtape.renderer.objects.DefaultBox
-import cicadas.mixtape.renderer.objects.DefaultOutline
-import cicadas.mixtape.renderer.objects.VoxelBox
-import cicadas.mixtape.renderer.objects.VoxelOutline
+import cicadas.mixtape.renderer.objects.level.DefaultBox
+import cicadas.mixtape.renderer.objects.level.DefaultOutline
+import cicadas.mixtape.renderer.objects.level.VoxelBox
+import cicadas.mixtape.renderer.objects.level.VoxelOutline
 import cicadas.mixtape.renderer.shader.CicadasPipelines
-import cicadas.mixtape.renderer.shader.builder.CustomBuffer
 import cicadas.mixtape.renderer.shader.data.ScreenData
 import cicadas.mixtape.renderer.shader.uniform.impl.ScreenUniform
-import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.BufferBuilder
-import com.mojang.blaze3d.vertex.ByteBufferBuilder
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.renderpearl.api.pipeline.PrimitiveTopology
 import net.minecraft.world.phys.AABB
-import org.joml.Matrix4f
-import java.util.Optional
-import java.util.OptionalDouble
 
-object Renderer3D {
-    private val defaultBoxes = arrayListOf<DefaultBox>()
-    private val defaultOutlines = arrayListOf<DefaultOutline>()
-    private val voxelBoxes = arrayListOf<VoxelBox>()
-    private val voxelOutlines = arrayListOf<VoxelOutline>()
-    private val byteBuffer = ByteBufferBuilder(1 shl 16)
-
-    fun addDefaultBox(box: DefaultBox) {
+object Renderer3D : BatchRenderer() {
+    fun drawDefaultBox(
+        context: LevelContext,
+        box: DefaultBox
+    ) {
         if (frustum?.isVisible(box.aabb) == false) {
             return
         }
 
-        defaultBoxes.add(box)
+        batching.add(
+            Batched.builder()
+                .pipeline(CicadasPipelines.POSITION_COLOR_PIPELINE)
+                .slice(context.projection())
+                .vertex {
+                    val aabb = box.aabb.withCamera
+                    val color = box.color
+                    val x1 = aabb.minX.toFloat()
+                    val y1 = aabb.minY.toFloat()
+                    val z1 = aabb.minZ.toFloat()
+                    val x2 = aabb.maxX.toFloat()
+                    val y2 = aabb.maxY.toFloat()
+                    val z2 = aabb.maxZ.toFloat()
+
+                    it.addVertex(context.matrix4f(), x1, y1, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y1, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y2, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y2, z1).setColor(color.rgb)
+
+                    it.addVertex(context.matrix4f(), x2, y1, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y1, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y2, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y2, z1).setColor(color.rgb)
+
+                    it.addVertex(context.matrix4f(), x1, y1, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y1, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y2, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y2, z1).setColor(color.rgb)
+
+                    it.addVertex(context.matrix4f(), x1, y1, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y1, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y2, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y2, z2).setColor(color.rgb)
+
+                    it.addVertex(context.matrix4f(), x1, y1, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y1, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y1, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y1, z2).setColor(color.rgb)
+
+                    it.addVertex(context.matrix4f(), x1, y2, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y2, z1).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x2, y2, z2).setColor(color.rgb)
+                    it.addVertex(context.matrix4f(), x1, y2, z2).setColor(color.rgb)
+
+                    24
+                }
+                .build()
+        )
     }
 
-    fun addDefaultOutline(outline: DefaultOutline) {
+    fun drawDefaultOutline(
+        context: LevelContext,
+        outline: DefaultOutline
+    ) {
         if (frustum?.isVisible(outline.aabb) == false) {
             return
         }
 
-        defaultOutlines.add(outline)
+        batching.add(
+            Batched.builder()
+                .pipeline(CicadasPipelines.LINES_PIPELINE)
+                .slice(context.projection())
+                .slice(ScreenUniform.update(ScreenData(mainTarget.screenSize)))
+                .vertex {
+                    val aabb = outline.aabb.withCamera
+                    val color = outline.color
+                    val lineWidth = outline.lineWidth
+                    val x1 = aabb.minX.toFloat()
+                    val y1 = aabb.minY.toFloat()
+                    val z1 = aabb.minZ.toFloat()
+                    val x2 = aabb.maxX.toFloat()
+                    val y2 = aabb.maxY.toFloat()
+                    val z2 = aabb.maxZ.toFloat()
+
+                    it.addLine(context.matrix4f(), x1, y1, z1, x1, y2, z1, color.rgb, lineWidth)
+                    it.addLine(context.matrix4f(), x2, y1, z1, x2, y2, z1, color.rgb, lineWidth)
+
+                    it.addLine(context.matrix4f(), x2, y1, z2, x2, y2, z2, color.rgb, lineWidth)
+                    it.addLine(context.matrix4f(), x1, y1, z2, x1, y2, z2, color.rgb, lineWidth)
+
+                    it.addLine(context.matrix4f(), x1, y1, z1, x2, y1, z1, color.rgb, lineWidth)
+                    it.addLine(context.matrix4f(), x2, y1, z1, x2, y1, z2, color.rgb, lineWidth)
+
+                    it.addLine(context.matrix4f(), x2, y1, z2, x1, y1, z2, color.rgb, lineWidth)
+                    it.addLine(context.matrix4f(), x1, y1, z2, x1, y1, z1, color.rgb, lineWidth)
+
+                    it.addLine(context.matrix4f(), x1, y2, z1, x2, y2, z1, color.rgb, lineWidth)
+                    it.addLine(context.matrix4f(), x2, y2, z1, x2, y2, z2, color.rgb, lineWidth)
+
+                    it.addLine(context.matrix4f(), x2, y2, z2, x1, y2, z2, color.rgb, lineWidth)
+                    it.addLine(context.matrix4f(), x1, y2, z2, x1, y2, z1, color.rgb, lineWidth)
+
+                    24
+                }
+                .build()
+        )
     }
 
-    fun addVoxelBox(box: VoxelBox) {
+    fun drawVoxelBox(
+        context: LevelContext,
+        box: VoxelBox
+    ) {
         if (frustum?.isVisible(AABB(box.pos)) == false) {
             return
         }
@@ -58,10 +137,68 @@ object Renderer3D {
             return
         }
 
-        voxelBoxes.add(box)
+        batching.add(
+            Batched.builder()
+                .pipeline(CicadasPipelines.POSITION_COLOR_PIPELINE)
+                .slice(context.projection())
+                .vertex {
+                    val shape = box.shape
+                    val pos = box.pos
+                    val color = box.color
+                    val camera = mc.gameRenderer.mainCamera().position()
+                    var count = 0
+
+                    shape.forAllBoxes { x1, y1, z1, x2, y2, z2 ->
+                        val x1 = (x1 + (pos.x - camera.x())).toFloat()
+                        val y1 = (y1 + (pos.y - camera.y())).toFloat()
+                        val z1 = (z1 + (pos.z - camera.z())).toFloat()
+                        val x2 = (x2 + (pos.x - camera.x())).toFloat()
+                        val y2 = (y2 + (pos.y - camera.y())).toFloat()
+                        val z2 = (z2 + (pos.z - camera.z())).toFloat()
+
+                        it.addVertex(context.matrix4f(), x1, y1, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y1, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y2, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y2, z1).setColor(color.rgb)
+
+                        it.addVertex(context.matrix4f(), x2, y1, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y1, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y2, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y2, z1).setColor(color.rgb)
+
+                        it.addVertex(context.matrix4f(), x1, y1, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y1, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y2, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y2, z1).setColor(color.rgb)
+
+                        it.addVertex(context.matrix4f(), x1, y1, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y1, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y2, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y2, z2).setColor(color.rgb)
+
+                        it.addVertex(context.matrix4f(), x1, y1, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y1, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y1, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y1, z2).setColor(color.rgb)
+
+                        it.addVertex(context.matrix4f(), x1, y2, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y2, z1).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x2, y2, z2).setColor(color.rgb)
+                        it.addVertex(context.matrix4f(), x1, y2, z2).setColor(color.rgb)
+
+                        count += 24
+                    }
+
+                    count
+                }
+                .build()
+        )
     }
 
-    fun addVoxelOutline(outline: VoxelOutline) {
+    fun drawVoxelOutline(
+        context: LevelContext,
+        outline: VoxelOutline
+    ) {
         if (frustum?.isVisible(AABB(outline.pos)) == false) {
             return
         }
@@ -70,204 +207,33 @@ object Renderer3D {
             return
         }
 
-        voxelOutlines.add(outline)
-    }
+        batching.add(
+            Batched.builder()
+                .pipeline(CicadasPipelines.LINES_PIPELINE)
+                .slice(context.projection())
+                .slice(ScreenUniform.update(ScreenData(mainTarget.screenSize)))
+                .vertex {
+                    val shape = outline.shape
+                    val pos = outline.pos
+                    val color = outline.color
+                    val lineWidth = outline.lineWidth
+                    val camera = mc.gameRenderer.mainCamera().position()
+                    var count = 0
 
-    private fun drawDefaultBox(builder: BufferBuilder, matrix4f: Matrix4f, box: DefaultBox) {
-        val aabb = box.aabb.withCamera
-        val color = box.color
-        val x1 = aabb.minX.toFloat()
-        val y1 = aabb.minY.toFloat()
-        val z1 = aabb.minZ.toFloat()
-        val x2 = aabb.maxX.toFloat()
-        val y2 = aabb.maxY.toFloat()
-        val z2 = aabb.maxZ.toFloat()
+                    shape.forAllEdges { x1, y1, z1, x2, y2, z2 ->
+                        val x1 = (x1 + (pos.x - camera.x())).toFloat()
+                        val y1 = (y1 + (pos.y - camera.y())).toFloat()
+                        val z1 = (z1 + (pos.z - camera.z())).toFloat()
+                        val x2 = (x2 + (pos.x - camera.x())).toFloat()
+                        val y2 = (y2 + (pos.y - camera.y())).toFloat()
+                        val z2 = (z2 + (pos.z - camera.z())).toFloat()
+                        it.addLine(context.matrix4f(), x1, y1, z1, x2, y2, z2, color.rgb, lineWidth)
+                        count += 2
+                    }
 
-        builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-
-        builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-
-        builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-
-        builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-
-        builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-
-        builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-        builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-        builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-    }
-
-    private fun drawDefaultOutline(builder: BufferBuilder, matrix4f: Matrix4f, outline: DefaultOutline) {
-        val aabb = outline.aabb.withCamera
-        val color = outline.color
-        val lineWidth = outline.lineWidth
-        val x1 = aabb.minX.toFloat()
-        val y1 = aabb.minY.toFloat()
-        val z1 = aabb.minZ.toFloat()
-        val x2 = aabb.maxX.toFloat()
-        val y2 = aabb.maxY.toFloat()
-        val z2 = aabb.maxZ.toFloat()
-
-        builder.addLine(matrix4f, x1, y1, z1, x1, y2, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z1, x2, y2, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z2, x2, y2, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x1, y1, z2, x1, y2, z2, color.rgb, lineWidth)
-
-        builder.addLine(matrix4f, x1, y1, z1, x2, y1, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z1, x2, y1, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y1, z2, x1, y1, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x1, y1, z2, x1, y1, z1, color.rgb, lineWidth)
-
-        builder.addLine(matrix4f, x1, y2, z1, x2, y2, z1, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y2, z1, x2, y2, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x2, y2, z2, x1, y2, z2, color.rgb, lineWidth)
-        builder.addLine(matrix4f, x1, y2, z2, x1, y2, z1, color.rgb, lineWidth)
-    }
-
-    private fun drawVoxelBox(builder: BufferBuilder, matrix4f: Matrix4f, box: VoxelBox) {
-        val shape = box.shape
-        val pos = box.pos
-        val color = box.color
-        val camera = mc.gameRenderer.mainCamera().position()
-
-        shape.forAllBoxes { x1, y1, z1, x2, y2, z2 ->
-            val x1 = (x1 + (pos.x - camera.x())).toFloat()
-            val y1 = (y1 + (pos.y - camera.y())).toFloat()
-            val z1 = (z1 + (pos.z - camera.z())).toFloat()
-            val x2 = (x2 + (pos.x - camera.x())).toFloat()
-            val y2 = (y2 + (pos.y - camera.y())).toFloat()
-            val z2 = (z2 + (pos.z - camera.z())).toFloat()
-
-            builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-
-            builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-
-            builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-
-            builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-
-            builder.addVertex(matrix4f, x1, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y1, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y1, z2).setColor(color.rgb)
-
-            builder.addVertex(matrix4f, x1, y2, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z1).setColor(color.rgb)
-            builder.addVertex(matrix4f, x2, y2, z2).setColor(color.rgb)
-            builder.addVertex(matrix4f, x1, y2, z2).setColor(color.rgb)
-        }
-    }
-
-    private fun drawVoxelOutline(builder: BufferBuilder, matrix4f: Matrix4f, outline: VoxelOutline) {
-        val shape = outline.shape
-        val pos = outline.pos
-        val color = outline.color
-        val lineWidth = outline.lineWidth
-        val camera = mc.gameRenderer.mainCamera().position()
-
-        shape.forAllEdges { x1, y1, z1, x2, y2, z2 ->
-            val x1 = (x1 + (pos.x - camera.x())).toFloat()
-            val y1 = (y1 + (pos.y - camera.y())).toFloat()
-            val z1 = (z1 + (pos.z - camera.z())).toFloat()
-            val x2 = (x2 + (pos.x - camera.x())).toFloat()
-            val y2 = (y2 + (pos.y - camera.y())).toFloat()
-            val z2 = (z2 + (pos.z - camera.z())).toFloat()
-            builder.addLine(matrix4f, x1, y1, z1, x2, y2, z2, color.rgb, lineWidth)
-        }
-    }
-
-    private fun drawBoxes(context: LevelContext) {
-        if (defaultBoxes.isNotEmpty() || voxelBoxes.isNotEmpty()) {
-            val builder = BufferBuilder(byteBuffer, PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR)
-
-            defaultBoxes.forEach { drawDefaultBox(builder, context.matrix4f(), it) }
-            voxelBoxes.forEach { drawVoxelBox(builder, context.matrix4f(), it) }
-
-            val mesh = builder.buildOrThrow()
-            val buffer = CustomBuffer.create(mesh)
-            val projectionUniform = context.projection()
-
-            RenderSystem.getDevice().createCommandEncoder().createRenderPass(
-                { "cicadasrenderer-boxes-pass" },
-                mainTarget.colorTextureView!!, Optional.empty(),
-                mainTarget.depthTextureView, OptionalDouble.empty()
-            ).use {
-                it.setPipeline(RenderSystem.getCompiledPipeline(CicadasPipelines.POSITION_COLOR_PIPELINE))
-                it.setUniform(projectionUniform)
-
-                buffer.setBuffer(it)
-                buffer.drawIndexed(it)
-            }
-
-            mesh.close()
-        }
-    }
-
-    private fun drawOutlines(context: LevelContext) {
-        if (defaultOutlines.isNotEmpty() || voxelOutlines.isNotEmpty()) {
-            val builder = BufferBuilder(byteBuffer, PrimitiveTopology.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
-
-            defaultOutlines.forEach { drawDefaultOutline(builder, context.matrix4f(), it) }
-            voxelOutlines.forEach { drawVoxelOutline(builder, context.matrix4f(), it) }
-
-            val mesh = builder.buildOrThrow()
-            val buffer = CustomBuffer.create(mesh)
-            val projectionUniform = context.projection()
-            val screenUniform = ScreenUniform.update(ScreenData(mainTarget.screenSize))
-
-            RenderSystem.getDevice().createCommandEncoder().createRenderPass(
-                { "cicadasrenderer-lines-pass" },
-                mainTarget.colorTextureView!!, Optional.empty(),
-                mainTarget.depthTextureView, OptionalDouble.empty()
-            ).use {
-                it.setPipeline(RenderSystem.getCompiledPipeline(CicadasPipelines.LINES_PIPELINE))
-                it.setUniform(projectionUniform)
-                it.setUniform(screenUniform)
-
-                buffer.setBuffer(it)
-                buffer.drawIndexed(it)
-            }
-
-            mesh.close()
-        }
-    }
-
-    fun update(context: LevelContext) {
-        drawBoxes(context)
-        drawOutlines(context)
-
-        defaultBoxes.clear()
-        defaultOutlines.clear()
-        voxelBoxes.clear()
-        voxelOutlines.clear()
+                    count
+                }
+                .build()
+        )
     }
 }

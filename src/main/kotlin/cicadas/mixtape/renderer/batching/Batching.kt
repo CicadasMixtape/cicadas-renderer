@@ -16,18 +16,20 @@ class Batching {
 
     fun add(batched: Batched) {
         val last = batches.lastOrNull()
-        val format = CustomFormat(batched.pipeline.primitiveTopology, batched.pipeline.getVertexFormatBinding(0)!!)
-        val customBuilder = builders.getOrPut(format) { CustomBuilder(format) }
+        val topology = batched.pipeline.primitiveTopology
+        val format = batched.pipeline.getVertexFormatBinding(0)!!
+        val customFormat = CustomFormat(topology, format)
+        val customBuilder = builders.getOrPut(customFormat) { CustomBuilder(customFormat) }
         var count = 0
 
         batched.vertices.forEach {
-            count += it(customBuilder.get())
+            count += customFormat.indexCount(it(customBuilder.builder()))
         }
 
         if (last != null && last.match(batched, customBuilder)) {
-            last.count += count * 6
+            last.count += count
         } else {
-            batches.add(Batch(batched, customBuilder, customBuilder.count * 6, count * 6))
+            batches.add(Batch(batched, customBuilder, customBuilder.count, count))
         }
 
         customBuilder.count += count

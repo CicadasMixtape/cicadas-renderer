@@ -1,9 +1,9 @@
 package cicadas.mixtape.renderer.context
 
-import cicadas.mixtape.renderer.objects.DefaultBox
-import cicadas.mixtape.renderer.objects.DefaultOutline
-import cicadas.mixtape.renderer.objects.VoxelBox
-import cicadas.mixtape.renderer.objects.VoxelOutline
+import cicadas.mixtape.renderer.objects.level.DefaultBox
+import cicadas.mixtape.renderer.objects.level.DefaultOutline
+import cicadas.mixtape.renderer.objects.level.VoxelBox
+import cicadas.mixtape.renderer.objects.level.VoxelOutline
 import cicadas.mixtape.renderer.shader.projection.Projection
 import cicadas.mixtape.renderer.utility.render.Renderer3D
 import com.mojang.blaze3d.vertex.PoseStack
@@ -17,24 +17,16 @@ class LevelContext private constructor(
         fun create(stack: PoseStack, projection: Projection) = LevelContext(stack, projection)
     }
 
-    fun drawDefaultBox(box: DefaultBox) {
-        Renderer3D.addDefaultBox(box)
-    }
+    fun drawDefaultBox(box: DefaultBox) = Renderer3D.drawDefaultBox(this, box)
 
-    fun drawDefaultOutline(outline: DefaultOutline) {
-        Renderer3D.addDefaultOutline(outline)
-    }
+    fun drawDefaultOutline(outline: DefaultOutline) = Renderer3D.drawDefaultOutline(this, outline)
 
-    fun drawVoxelBox(box: VoxelBox) {
-        Renderer3D.addVoxelBox(box)
-    }
+    fun drawVoxelBox(box: VoxelBox) = Renderer3D.drawVoxelBox(this, box)
 
-    fun drawVoxelOutline(outline: VoxelOutline) {
-        Renderer3D.addVoxelOutline(outline)
-    }
+    fun drawVoxelOutline(outline: VoxelOutline) = Renderer3D.drawVoxelOutline(this, outline)
 
     override fun update() {
         super.update()
-        Renderer3D.update(this)
+        Renderer3D.update()
     }
 }
