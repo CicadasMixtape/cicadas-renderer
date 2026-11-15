@@ -4,10 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.4.20"
-    kotlin("plugin.serialization") version "2.4.20"
-
-    id("fabric-loom") version "1.16-SNAPSHOT"
+    kotlin("jvm") version "2.4.21"
+    kotlin("plugin.serialization") version "2.4.21"
+    id("net.fabricmc.fabric-loom-remap") version "1.17-SNAPSHOT"
 }
 
 version = project.property("mod_version").toString()
@@ -40,8 +39,8 @@ loom {
     runs {
         create("testmodClient") {
             client()
-            name("Testmod Client")
-            source(sourceSets.getByName("testmod"))
+            displayName.set("Testmod Client")
+            sourceSet.set("testmod")
         }
     }
 }
