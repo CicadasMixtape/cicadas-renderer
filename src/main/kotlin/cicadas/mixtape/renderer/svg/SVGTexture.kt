@@ -4,8 +4,8 @@ import cicadas.mixtape.renderer.api.toBuffered
 import cicadas.mixtape.renderer.api.toNative
 import com.github.weisj.jsvg.view.FloatSize
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.GpuTexture
-import com.mojang.blaze3d.textures.TextureFormat
+import com.mojang.renderpearl.api.GpuFormat
+import com.mojang.renderpearl.api.textures.GpuTexture
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.resources.Identifier
 
@@ -19,7 +19,7 @@ class SVGTexture(
 
         close()
 
-        texture = RenderSystem.getDevice().createTexture(id.toString(), GpuTexture.USAGE_COPY_DST or GpuTexture.USAGE_TEXTURE_BINDING, TextureFormat.RGBA8, image.width, image.height, 1, 1)
+        texture = RenderSystem.getDevice().createTexture(id.toString(), GpuTexture.USAGE_COPY_DST or GpuTexture.USAGE_TEXTURE_BINDING, GpuFormat.RGBA8_UNORM, image.width, image.height, 1, 1)
         textureView = RenderSystem.getDevice().createTextureView(texture!!)
         RenderSystem.getDevice().createCommandEncoder().writeToTexture(texture!!, image)
 

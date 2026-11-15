@@ -22,7 +22,7 @@ import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.color.ShaderColor
 import cicadas.mixtape.renderer.utility.scissor.ScissorUtility
 import com.github.weisj.jsvg.view.FloatSize
-import com.mojang.blaze3d.textures.FilterMode
+import com.mojang.renderpearl.api.textures.FilterMode
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier

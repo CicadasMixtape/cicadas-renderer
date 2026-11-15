@@ -1,4 +1,5 @@
-#version 330
+#ifndef CICADASRENDERER_VERTICES_GLSL
+#define CICADASRENDERER_VERTICES_GLSL
 
 const vec2[4] RECT_VERTICES_COORDS = vec2[] (
     vec2(0.0, 1.0),
@@ -10,3 +11,5 @@ const vec2[4] RECT_VERTICES_COORDS = vec2[] (
 vec2 rvertexcoord(int id) {
     return RECT_VERTICES_COORDS[id % 4];
 }
+
+#endif

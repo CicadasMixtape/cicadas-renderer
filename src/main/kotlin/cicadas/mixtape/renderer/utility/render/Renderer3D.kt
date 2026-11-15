@@ -17,22 +17,23 @@ import cicadas.mixtape.renderer.shader.builder.CustomBuffer
 import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.Tesselator
-import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology
 import net.minecraft.world.phys.AABB
 import org.joml.Matrix4f
+import java.util.Optional
 import java.util.OptionalDouble
-import java.util.OptionalInt
 
 object Renderer3D {
     private val defaultBoxes = arrayListOf<DefaultBox>()
     private val defaultOutlines = arrayListOf<DefaultOutline>()
     private val voxelBoxes = arrayListOf<VoxelBox>()
     private val voxelOutlines = arrayListOf<VoxelOutline>()
+    private val byteBuffer = ByteBufferBuilder(1 shl 16)
 
     fun addDefaultBox(box: DefaultBox) {
-        if (!frustum.isVisible(box.aabb)) {
+        if (frustum?.isVisible(box.aabb) == false) {
             return
         }
 
@@ -40,7 +41,7 @@ object Renderer3D {
     }
 
     fun addDefaultOutline(outline: DefaultOutline) {
-        if (!frustum.isVisible(outline.aabb)) {
+        if (frustum?.isVisible(outline.aabb) == false) {
             return
         }
 
@@ -48,7 +49,7 @@ object Renderer3D {
     }
 
     fun addVoxelBox(box: VoxelBox) {
-        if (!frustum.isVisible(AABB(box.pos))) {
+        if (frustum?.isVisible(AABB(box.pos)) == false) {
             return
         }
 
@@ -60,7 +61,7 @@ object Renderer3D {
     }
 
     fun addVoxelOutline(outline: VoxelOutline) {
-        if (!frustum.isVisible(AABB(outline.pos))) {
+        if (frustum?.isVisible(AABB(outline.pos)) == false) {
             return
         }
 
@@ -143,7 +144,7 @@ object Renderer3D {
         val shape = box.shape
         val pos = box.pos
         val color = box.color
-        val camera = mc.gameRenderer.mainCamera.position()
+        val camera = mc.gameRenderer.mainCamera().position()
 
         shape.forAllBoxes { x1, y1, z1, x2, y2, z2 ->
             val x1 = (x1 + (pos.x - camera.x())).toFloat()
@@ -190,7 +191,7 @@ object Renderer3D {
         val pos = outline.pos
         val color = outline.color
         val lineWidth = outline.lineWidth
-        val camera = mc.gameRenderer.mainCamera.position()
+        val camera = mc.gameRenderer.mainCamera().position()
 
         shape.forAllEdges { x1, y1, z1, x2, y2, z2 ->
             val x1 = (x1 + (pos.x - camera.x())).toFloat()
@@ -205,7 +206,7 @@ object Renderer3D {
 
     private fun drawBoxes(context: LevelContext) {
         if (defaultBoxes.isNotEmpty() || voxelBoxes.isNotEmpty()) {
-            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
+            val builder = BufferBuilder(byteBuffer, PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
             defaultBoxes.forEach { drawDefaultBox(builder, context.matrix4f(), it) }
             voxelBoxes.forEach { drawVoxelBox(builder, context.matrix4f(), it) }
@@ -216,10 +217,10 @@ object Renderer3D {
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 { "cicadasrenderer-boxes-pass" },
-                mainTarget.colorTextureView!!, OptionalInt.empty(),
+                mainTarget.colorTextureView!!, Optional.empty(),
                 mainTarget.depthTextureView, OptionalDouble.empty()
             ).use {
-                it.setPipeline(CicadasPipelines.POSITION_COLOR_PIPELINE)
+                it.setPipeline(RenderSystem.getCompiledPipeline(CicadasPipelines.POSITION_COLOR_PIPELINE))
                 it.setUniform(projectionUniform)
 
                 buffer.setBuffer(it)
@@ -232,7 +233,7 @@ object Renderer3D {
 
     private fun drawOutlines(context: LevelContext) {
         if (defaultOutlines.isNotEmpty() || voxelOutlines.isNotEmpty()) {
-            val builder = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
+            val builder = BufferBuilder(byteBuffer, PrimitiveTopology.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH)
 
             defaultOutlines.forEach { drawDefaultOutline(builder, context.matrix4f(), it) }
             voxelOutlines.forEach { drawVoxelOutline(builder, context.matrix4f(), it) }
@@ -244,10 +245,10 @@ object Renderer3D {
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 { "cicadasrenderer-lines-pass" },
-                mainTarget.colorTextureView!!, OptionalInt.empty(),
+                mainTarget.colorTextureView!!, Optional.empty(),
                 mainTarget.depthTextureView, OptionalDouble.empty()
             ).use {
-                it.setPipeline(CicadasPipelines.LINES_PIPELINE)
+                it.setPipeline(RenderSystem.getCompiledPipeline(CicadasPipelines.LINES_PIPELINE))
                 it.setUniform(projectionUniform)
                 it.setUniform(screenUniform)
 

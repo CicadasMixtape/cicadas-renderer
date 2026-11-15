@@ -1,4 +1,5 @@
-#version 330
+#ifndef CICADASRENDERER_SQUIRCLE_GLSL
+#define CICADASRENDERER_SQUIRCLE_GLSL
 
 float squircle(vec2 position, vec2 size, float radius, float squirt) {
     radius = radius * squirt / 2.0;
@@ -7,3 +8,5 @@ float squircle(vec2 position, vec2 size, float radius, float squirt) {
     float len = pow(pow(q_max.x, squirt) + pow(q_max.y, squirt), 1.0 / squirt);
     return  min(max(q.x, q.y), 0.0) + len - radius;
 }
+
+#endif

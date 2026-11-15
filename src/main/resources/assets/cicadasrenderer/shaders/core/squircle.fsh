@@ -1,14 +1,15 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <cicadasrenderer:squircle.glsl>
+#include <cicadasrenderer:squircle.glsl>
 
-in vec2 vertexSize;
-in vec2 vertexCoord;
-in float vertexRadius;
-in float vertexSquirt;
-in vec4 vertexColor;
+layout(location = 0) in vec2 vertexSize;
+layout(location = 1) in vec2 vertexCoord;
+layout(location = 2) in float vertexRadius;
+layout(location = 3) in float vertexSquirt;
+layout(location = 4) in vec4 vertexColor;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 void main() {
     vec2 center = vertexSize / 2.0;

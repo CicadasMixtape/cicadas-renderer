@@ -1,5 +1,6 @@
 package cicadas.mixtape.renderer.batching
 
+import cicadas.mixtape.renderer.api.setSampler
 import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.slice.CustomSlice

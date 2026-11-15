@@ -17,11 +17,11 @@ class CustomBuffer private constructor(
         @JvmStatic
         fun create(mesh: MeshData): CustomBuffer {
             val state = mesh.drawState()
-            val format = state.format
+            val vertex = RenderSystem.getDevice().createBuffer({ "vertex-buffer-$this" }, GpuBuffer.USAGE_VERTEX, mesh.vertexBuffer())
             val auto = RenderSystem.getSequentialBuffer(state.primitiveTopology)
 
             return CustomBuffer(
-                auto.asdhyasuijdghasd(), // TODO пиздец
+                vertex.slice(0, vertex.size()),
                 auto.getBuffer(state.indexCount),
                 auto.type(),
                 state.indexCount

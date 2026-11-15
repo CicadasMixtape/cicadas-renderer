@@ -6,7 +6,6 @@ import cicadas.mixtape.renderer.shader.builder.CustomBuilder
 import cicadas.mixtape.renderer.shader.builder.CustomFormat
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData
-import org.joml.Vector4fc
 import java.util.Optional
 import java.util.OptionalDouble
 
@@ -47,7 +46,7 @@ class Batching {
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
             { "batching-pass" },
-            mainTarget.colorTextureView!!, Optional.empty<Vector4fc>(),
+            mainTarget.colorTextureView!!, Optional.empty(),
             mainTarget.depthTextureView, OptionalDouble.empty()
         ).use { pass ->
             batches.forEach {

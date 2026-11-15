@@ -1,6 +1,5 @@
 package cicadas.mixtape.renderer.api
 
-import cicadas.mixtape.renderer.shader.CicadasFormats
 import cicadas.mixtape.renderer.mixins.accessors.BufferBuilderAccessor
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
@@ -11,9 +10,7 @@ import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.renderpearl.api.buffers.GpuBuffer
 import com.mojang.renderpearl.api.commands.RenderPass
-import com.mojang.renderpearl.api.device.GpuDevice
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.joml.Matrix4f
@@ -39,7 +36,7 @@ internal fun Color.mul(other: Color): Color {
 }
 
 fun VertexConsumer.setSize(width: Float, height: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.SIZE)
+    val ptr = (this as BufferBuilderAccessor)._beginElement(8)
 
     if (ptr != -1L) {
         MemoryUtil.memPutFloat(ptr, width)
@@ -50,7 +47,7 @@ fun VertexConsumer.setSize(width: Float, height: Float): VertexConsumer {
 }
 
 fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.RADIUS)
+    val ptr = (this as BufferBuilderAccessor)._beginElement(9)
 
     if (ptr != -1L) {
         MemoryUtil.memPutFloat(ptr, radius)
@@ -60,7 +57,7 @@ fun VertexConsumer.setRadius(radius: Float): VertexConsumer {
 }
 
 fun VertexConsumer.setSquirt(squirt: Float): VertexConsumer {
-    val ptr = (this as BufferBuilderAccessor)._beginElement(CicadasFormats.SQUIRT)
+    val ptr = (this as BufferBuilderAccessor)._beginElement(10)
 
     if (ptr != -1L) {
         MemoryUtil.memPutFloat(ptr, squirt)
@@ -106,10 +103,6 @@ fun VertexConsumer.addLine(
 }
 
 val RenderTarget.screenSize get() = Vector2f(width.toFloat(), height.toFloat())
-
-fun RenderTarget.clearColorAndDepth() = RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(colorTexture!!, 0, depthTexture!!, 1.0)
-
-fun GpuDevice.createBuffer(name: String, size: Int) = createBuffer({ "${name}Buffer" }, GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST, size.toLong())
 
 fun RenderPass.setSampler(sampler: CustomSampler) = setUniform(sampler.name, sampler.texture, RenderSystem.getSamplerCache().getClampToEdge(sampler.filter))
 

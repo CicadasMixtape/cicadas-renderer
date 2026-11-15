@@ -1,14 +1,15 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <cicadasrenderer:projection_uniform.glsl>
-#moj_import <cicadasrenderer:screen_uniform.glsl>
+#include <cicadasrenderer:projection_uniform.glsl>
+#include <cicadasrenderer:screen_uniform.glsl>
 
-in vec3 Position;
-in vec4 Color;
-in vec3 Normal;
-in float LineWidth;
+layout(location = 0) in vec3 Position;
+layout(location = 1) in vec4 Color;
+layout(location = 2) in vec3 Normal;
+layout(location = 3) in float LineWidth;
 
-out vec4 vertexColor;
+layout(location = 0) out vec4 vertexColor;
 
 const float VIEW_SHRINK = 1.0 - (1.0 / 256.0);
 const mat4 VIEW_SCALE = mat4(
@@ -32,7 +33,7 @@ void main() {
         offset *= -1.0;
     }
 
-    if (gl_VertexID % 2 == 0) {
+    if (gl_VertexIndex % 2 == 0) {
         gl_Position = vec4((ndc1 + vec3(offset, 0.0)) * start.w, start.w);
     } else {
         gl_Position = vec4((ndc1 - vec3(offset, 0.0)) * start.w, start.w);

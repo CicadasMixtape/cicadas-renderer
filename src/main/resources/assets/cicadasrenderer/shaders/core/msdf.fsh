@@ -1,13 +1,14 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <cicadasrenderer:msdf_uniform.glsl>
+#include <cicadasrenderer:msdf_uniform.glsl>
 
-in vec2 vertexCoord;
-in vec4 vertexColor;
+layout(location = 0) in vec2 vertexCoord;
+layout(location = 1) in vec4 vertexColor;
 
 uniform sampler2D Sampler0;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 float median(vec3 color) {
     return max(min(color.r, color.g), min(max(color.r, color.g), color.b));

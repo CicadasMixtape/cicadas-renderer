@@ -1,12 +1,13 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <cicadasrenderer:kawase_uniform.glsl>
+#include <cicadasrenderer:kawase_uniform.glsl>
 
-in vec2 vertexCoord;
+layout(location = 0) in vec2 vertexCoord;
 
 uniform sampler2D Sampler0;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 void main() {
     vec4 sum = texture(Sampler0, vertexCoord + vec2(-halfPixel.x * 2.0, 0.0) * offset);

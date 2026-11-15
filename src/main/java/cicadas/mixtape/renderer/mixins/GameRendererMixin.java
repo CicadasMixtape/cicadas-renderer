@@ -9,11 +9,9 @@ import cicadas.mixtape.renderer.shader.projection.Projection;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.GameRenderState;
 import net.minecraft.client.renderer.state.OptionsRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
@@ -31,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
     @Shadow @Final private Minecraft minecraft;
-    @Shadow @Final private Camera mainCamera;
     @Shadow protected abstract void bobView(CameraRenderState cameraState, PoseStack poseStack);
     @Shadow protected abstract void bobHurt(CameraRenderState cameraState, PoseStack poseStack);
     @Shadow @Final private GameRenderState gameRenderState;
@@ -50,7 +47,6 @@ public abstract class GameRendererMixin {
         }
 
         Profiler.get().push("cicadasrenderer-render-ui");
-
 
         var stack = new PoseStack();
         var projection = Projection.create(new Matrix4f().setOrtho(0f, minecraft.getWindow().getWidth() / 2f, minecraft.getWindow().getHeight() / 2f, 0f, -1000f, 1000f), RenderSystem.getModelViewStack());
@@ -81,8 +77,11 @@ public abstract class GameRendererMixin {
     @Unique
     private PoseStack createStack(CameraRenderState cameraState) {
         var stack = new PoseStack();
+
         bobHurt(cameraState, stack);
         if (minecraft.options.bobView().get()) bobView(cameraState, stack);
+
+        stack.mulPose(cameraState.viewRotationMatrix);
         return stack;
     }
 }

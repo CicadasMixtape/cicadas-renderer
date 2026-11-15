@@ -11,7 +11,6 @@ import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.renderpearl.api.pipeline.RenderPipeline
 import com.mojang.renderpearl.api.textures.FilterMode
-import com.mojang.renderpearl.api.textures.GpuSampler
 import org.joml.Vector2f
 import java.util.Optional
 
@@ -30,26 +29,23 @@ object KawasePass {
             }
         }
 
-        val sampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR)
-
         for (i in targets.indices) {
             val src = if (i == 0) mainTarget else targets[i - 1]
             val dst = targets[i]
-            createPass(CicadasPipelines.KAWASE_DOWN_PIPELINE, src, dst, sampler)
+            createPass(CicadasPipelines.KAWASE_DOWN_PIPELINE, src, dst)
         }
 
         for (i in targets.lastIndex downTo 1) {
             val src = targets[i]
             val dst = targets[i - 1]
-            createPass(CicadasPipelines.KAWASE_UP_PIPELINE, src, dst, sampler)
+            createPass(CicadasPipelines.KAWASE_UP_PIPELINE, src, dst)
         }
     }
 
     private fun createPass(
         pipeline: RenderPipeline,
         src: RenderTarget,
-        dst: RenderTarget,
-        sampler: GpuSampler
+        dst: RenderTarget
     ) {
         val kawaseUniform = KawaseUniform.update(5f, Vector2f(0.5f / src.width, 0.5f / src.height))
 
@@ -58,9 +54,9 @@ object KawasePass {
             dst.colorTextureView!!, Optional.empty()
         ).use {
             it.setPipeline(RenderSystem.getCompiledPipeline(pipeline))
-            it.setSampler(CustomSampler(0, src.colorTextureView!!, sampler))
+            it.setSampler(CustomSampler(0, src.colorTextureView!!, FilterMode.LINEAR))
             it.setUniform(kawaseUniform)
-            it.draw(0, 3, 0, 0)
+            it.draw(3, 1, 0, 0)
         }
     }
 }

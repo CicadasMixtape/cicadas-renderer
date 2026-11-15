@@ -40,6 +40,16 @@ loom {
             client()
             displayName.set("Testmod Client")
             sourceSet.set("testmod")
+
+            jvmArguments.addAll(provider {
+                val mixin = configurations.compileClasspath.get().files.firstOrNull { it.name.startsWith("sponge-mixin-") }
+
+                if (mixin != null) {
+                    listOf("-javaagent:${mixin.absolutePath}")
+                } else {
+                    emptyList()
+                }
+            })
         }
     }
 }

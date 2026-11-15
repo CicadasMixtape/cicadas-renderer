@@ -1,18 +1,9 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-in vec4 vertexColor;
-in float across;
-
-flat in float halfWidth;
-
-out vec4 fragColor;
+layout(location = 0) in vec4 vertexColor;
+layout(location = 0) out vec4 fragColor;
 
 void main() {
-    float alpha = 1.0 - smoothstep(halfWidth - 0.5, halfWidth + 0.5, abs(across));
-
-    if (alpha <= 0.0) {
-        discard;
-    }
-
-    fragColor = vec4(vertexColor.rgb, vertexColor.a * alpha);
+    fragColor = vertexColor;
 }

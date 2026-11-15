@@ -35,7 +35,7 @@ open class UIContext protected constructor(
 
     fun scale(x: Float, y: Float, z: Float = 1f) = stack.scale(x, y, z)
 
-    fun rotate(quaternion: Quaternionf) = stack.mulPose(quaternion)
+    fun rotate(quaternion: Quaternionf) = stack.rotate(quaternion)
 
     fun centeredScale(scale: Float, x: Float, y: Float) {
         move(x, y)

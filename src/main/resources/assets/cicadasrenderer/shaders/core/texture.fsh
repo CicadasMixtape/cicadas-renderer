@@ -1,15 +1,16 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <cicadasrenderer:rect.glsl>
+#include <cicadasrenderer:rect.glsl>
 
-in vec2 vertexSize;
-in vec2 vertexCoord;
-in float vertexRadius;
-in vec4 vertexColor;
+layout(location = 0) in vec2 vertexSize;
+layout(location = 1) in vec2 vertexCoord;
+layout(location = 2) in float vertexRadius;
+layout(location = 3) in vec4 vertexColor;
 
 uniform sampler2D Sampler0;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 void main() {
     vec4 color = texture(Sampler0, vertexCoord) * vertexColor;
