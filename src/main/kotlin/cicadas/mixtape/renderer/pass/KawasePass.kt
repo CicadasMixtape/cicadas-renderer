@@ -4,9 +4,10 @@ import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.api.setSampler
 import cicadas.mixtape.renderer.api.setUniform
 import cicadas.mixtape.renderer.shader.CicadasPipelines
+import cicadas.mixtape.renderer.shader.data.KawaseData
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
 import cicadas.mixtape.renderer.shader.target.CustomTarget
-import cicadas.mixtape.renderer.shader.uniform.KawaseUniform
+import cicadas.mixtape.renderer.shader.uniform.impl.KawaseUniform
 import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.renderpearl.api.pipeline.RenderPipeline
@@ -47,7 +48,7 @@ object KawasePass {
         src: RenderTarget,
         dst: RenderTarget
     ) {
-        val kawaseUniform = KawaseUniform.update(5f, Vector2f(0.5f / src.width, 0.5f / src.height))
+        val kawaseUniform = KawaseUniform.update(KawaseData(5f, Vector2f(0.5f / src.width, 0.5f / src.height)))
 
         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
             { "kawase-pass" },

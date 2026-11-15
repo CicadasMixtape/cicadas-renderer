@@ -6,6 +6,7 @@ import cicadas.mixtape.renderer.events.Render3DCallback;
 import cicadas.mixtape.renderer.context.UIContext;
 import cicadas.mixtape.renderer.pass.KawasePass;
 import cicadas.mixtape.renderer.shader.projection.Projection;
+import cicadas.mixtape.renderer.shader.uniform.api.CustomUniform;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -33,13 +34,6 @@ public abstract class GameRendererMixin {
     @Shadow protected abstract void bobHurt(CameraRenderState cameraState, PoseStack poseStack);
     @Shadow @Final private GameRenderState gameRenderState;
 
-    @Inject(method = "render3dHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;Lcom/mojang/renderpearl/api/textures/GpuTextureView;)V", shift = At.Shift.AFTER))
-    public void render3dHud(CameraRenderState cameraState, PlayerRenderState playerState, OptionsRenderState optionsState, boolean consistentDepthRequired, CallbackInfo ci) {
-        Profiler.get().push("cicadasrenderer-update-kawase");
-        KawasePass.INSTANCE.update();
-        Profiler.get().pop();
-    }
-
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V", shift = At.Shift.AFTER))
     public void render(CallbackInfo ci) {
         if (!minecraft.isGameLoadFinished()) {
@@ -59,6 +53,19 @@ public abstract class GameRendererMixin {
 
         Profiler.get().pop();
     }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    public void render$tail(CallbackInfo ci) {
+        CustomUniform.endAll();
+    }
+
+    @Inject(method = "render3dHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;Lcom/mojang/renderpearl/api/textures/GpuTextureView;)V", shift = At.Shift.AFTER))
+    public void render3dHud(CameraRenderState cameraState, PlayerRenderState playerState, OptionsRenderState optionsState, boolean consistentDepthRequired, CallbackInfo ci) {
+        Profiler.get().push("cicadasrenderer-update-kawase");
+        KawasePass.INSTANCE.update();
+        Profiler.get().pop();
+    }
+
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;render(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;ZLnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/renderpearl/api/buffers/GpuBufferSlice;Lorg/joml/Vector4f;ZZ)V", shift = At.Shift.AFTER))
     public void renderLevel2(CallbackInfo ci, @Local(name = "cameraState") CameraRenderState cameraState) {
