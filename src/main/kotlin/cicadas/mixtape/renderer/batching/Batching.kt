@@ -1,16 +1,15 @@
 package cicadas.mixtape.renderer.batching
 
 import cicadas.mixtape.renderer.api.mainTarget
-import cicadas.mixtape.renderer.shader.builder.CustomBuffer
-import cicadas.mixtape.renderer.shader.builder.CustomBuilder
-import cicadas.mixtape.renderer.shader.builder.CustomFormat
+import cicadas.mixtape.renderer.shader.buffer.CustomBuffer
+import cicadas.mixtape.renderer.shader.buffer.CustomFormat
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData
 import java.util.Optional
 import java.util.OptionalDouble
 
 class Batching {
-    val builders = hashMapOf<CustomFormat, CustomBuilder>()
+    val builders = hashMapOf<CustomFormat, BatchBuilder>()
     val batches = arrayListOf<Batch>()
     val meshes = arrayListOf<MeshData>()
 
@@ -19,7 +18,7 @@ class Batching {
         val topology = batched.pipeline.primitiveTopology
         val format = batched.pipeline.getVertexFormatBinding(0)!!
         val customFormat = CustomFormat(topology, format)
-        val customBuilder = builders.getOrPut(customFormat) { CustomBuilder(customFormat) }
+        val customBuilder = builders.getOrPut(customFormat) { BatchBuilder(customFormat) }
         var count = 0
 
         batched.vertices.forEach {

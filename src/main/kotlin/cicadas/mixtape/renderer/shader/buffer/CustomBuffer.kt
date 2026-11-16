@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.shader.builder
+package cicadas.mixtape.renderer.shader.buffer
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData

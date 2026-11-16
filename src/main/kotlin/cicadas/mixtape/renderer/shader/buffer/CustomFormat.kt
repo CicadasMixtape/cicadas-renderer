@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.shader.builder
+package cicadas.mixtape.renderer.shader.buffer
 
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology
 import com.mojang.renderpearl.api.vertex.VertexFormat

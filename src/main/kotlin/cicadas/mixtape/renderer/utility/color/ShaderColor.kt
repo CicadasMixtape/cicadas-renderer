@@ -7,9 +7,7 @@ class ShaderColor {
     private var current = Color.WHITE!!
     private val stack = ArrayDeque<Color>()
 
-    fun backup() {
-        stack.addLast(current)
-    }
+    fun backup() = stack.addLast(current)
 
     fun reset() {
         current = stack.removeLast()
