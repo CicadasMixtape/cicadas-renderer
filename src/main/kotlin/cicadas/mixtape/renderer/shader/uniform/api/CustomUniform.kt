@@ -1,11 +1,9 @@
 package cicadas.mixtape.renderer.shader.uniform.api
 
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
-import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.renderpearl.api.buffers.GpuBuffer
 import net.minecraft.client.renderer.DynamicGpuDataStorage
 import net.minecraft.client.renderer.DynamicGpuDataStorageMapped
-import net.minecraft.util.Mth
 
 abstract class CustomUniform<T : DynamicGpuDataStorage.DynamicGpuData>(
     private val name: String,
@@ -21,7 +19,7 @@ abstract class CustomUniform<T : DynamicGpuDataStorage.DynamicGpuData>(
 
     private val storage = DynamicGpuDataStorageMapped<T>(
         name,
-        Mth.roundToward(size, RenderSystem.getDevice().deviceInfo.limits().minUniformOffsetAlignment()),
+        size,
         GpuBuffer.USAGE_UNIFORM,
         16
     )
