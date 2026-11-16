@@ -18,20 +18,20 @@ class Batching {
         val topology = batched.pipeline.primitiveTopology
         val format = batched.pipeline.getVertexFormatBinding(0)!!
         val customFormat = CustomFormat(topology, format)
-        val customBuilder = builders.getOrPut(customFormat) { BatchBuilder(customFormat) }
+        val batchBuilder = builders.getOrPut(customFormat) { BatchBuilder(customFormat) }
         var count = 0
 
         batched.vertices.forEach {
-            count += customFormat.indexCount(it(customBuilder.builder()))
+            count += customFormat.indexCount(it(batchBuilder.builder()))
         }
 
-        if (last != null && last.match(batched, customBuilder)) {
+        if (last != null && last.match(batched, batchBuilder)) {
             last.count += count
         } else {
-            batches.add(Batch(batched, customBuilder, customBuilder.count, count))
+            batches.add(Batch(batched, batchBuilder, batchBuilder.count, count))
         }
 
-        customBuilder.count += count
+        batchBuilder.count += count
     }
 
     fun update() {
