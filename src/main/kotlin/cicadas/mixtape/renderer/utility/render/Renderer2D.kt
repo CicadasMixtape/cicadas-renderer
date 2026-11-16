@@ -9,9 +9,9 @@ import cicadas.mixtape.renderer.batching.BatchRenderer
 import cicadas.mixtape.renderer.batching.Batched
 import cicadas.mixtape.renderer.context.UIContext
 import cicadas.mixtape.renderer.font.Font
-import cicadas.mixtape.renderer.objects.Gradient
-import cicadas.mixtape.renderer.objects.Radius
-import cicadas.mixtape.renderer.objects.Squirt
+import cicadas.mixtape.renderer.objects.ui.Gradient
+import cicadas.mixtape.renderer.objects.ui.Radius
+import cicadas.mixtape.renderer.objects.ui.Squirt
 import cicadas.mixtape.renderer.pass.KawasePass
 import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.shader.data.LiquidData

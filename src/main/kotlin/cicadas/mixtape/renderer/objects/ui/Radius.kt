@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.objects
+package cicadas.mixtape.renderer.objects.ui
 
 open class Radius(
     val leftBottomRadius: Float,

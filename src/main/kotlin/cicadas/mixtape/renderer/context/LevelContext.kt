@@ -1,9 +1,9 @@
 package cicadas.mixtape.renderer.context
 
-import cicadas.mixtape.renderer.objects.DefaultBox
-import cicadas.mixtape.renderer.objects.DefaultOutline
-import cicadas.mixtape.renderer.objects.VoxelBox
-import cicadas.mixtape.renderer.objects.VoxelOutline
+import cicadas.mixtape.renderer.objects.level.DefaultBox
+import cicadas.mixtape.renderer.objects.level.DefaultOutline
+import cicadas.mixtape.renderer.objects.level.VoxelBox
+import cicadas.mixtape.renderer.objects.level.VoxelOutline
 import cicadas.mixtape.renderer.shader.projection.Projection
 import cicadas.mixtape.renderer.utility.render.Renderer3D
 import com.mojang.blaze3d.vertex.PoseStack

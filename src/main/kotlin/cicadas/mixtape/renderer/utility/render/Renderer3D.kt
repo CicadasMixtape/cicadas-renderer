@@ -9,10 +9,10 @@ import cicadas.mixtape.renderer.api.withCamera
 import cicadas.mixtape.renderer.batching.BatchRenderer
 import cicadas.mixtape.renderer.batching.Batched
 import cicadas.mixtape.renderer.context.LevelContext
-import cicadas.mixtape.renderer.objects.DefaultBox
-import cicadas.mixtape.renderer.objects.DefaultOutline
-import cicadas.mixtape.renderer.objects.VoxelBox
-import cicadas.mixtape.renderer.objects.VoxelOutline
+import cicadas.mixtape.renderer.objects.level.DefaultBox
+import cicadas.mixtape.renderer.objects.level.DefaultOutline
+import cicadas.mixtape.renderer.objects.level.VoxelBox
+import cicadas.mixtape.renderer.objects.level.VoxelOutline
 import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.shader.data.ScreenData
 import cicadas.mixtape.renderer.shader.uniform.impl.ScreenUniform

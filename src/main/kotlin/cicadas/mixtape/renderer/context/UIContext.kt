@@ -1,9 +1,9 @@
 package cicadas.mixtape.renderer.context
 
 import cicadas.mixtape.renderer.font.Font
-import cicadas.mixtape.renderer.objects.Gradient
-import cicadas.mixtape.renderer.objects.Radius
-import cicadas.mixtape.renderer.objects.Squirt
+import cicadas.mixtape.renderer.objects.ui.Gradient
+import cicadas.mixtape.renderer.objects.ui.Radius
+import cicadas.mixtape.renderer.objects.ui.Squirt
 import cicadas.mixtape.renderer.shader.projection.Projection
 import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.render.Renderer2D

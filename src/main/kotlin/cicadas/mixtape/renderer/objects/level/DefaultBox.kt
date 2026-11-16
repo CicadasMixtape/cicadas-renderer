@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.objects
+package cicadas.mixtape.renderer.objects.level
 
 import net.minecraft.world.phys.AABB
 import java.awt.Color
