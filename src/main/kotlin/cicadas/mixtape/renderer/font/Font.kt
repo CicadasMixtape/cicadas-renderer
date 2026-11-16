@@ -1,6 +1,7 @@
 package cicadas.mixtape.renderer.font
 
-import cicadas.mixtape.renderer.shader.uniform.MsdfUniform
+import cicadas.mixtape.renderer.shader.data.MsdfData
+import cicadas.mixtape.renderer.shader.uniform.impl.MsdfUniform
 import com.mojang.blaze3d.vertex.BufferBuilder
 import net.minecraft.network.chat.Component
 import org.joml.Matrix4f
@@ -15,6 +16,6 @@ data class Font(
     fun getHeight() = msdf.getHeight(size)
 
     fun textureView() = msdf.textureView()
-    fun uniform() = MsdfUniform.update(msdf.distanceRange(), msdf.thickness())
+    fun uniform() = MsdfUniform.update(MsdfData(msdf.distanceRange(), msdf.thickness()))
     fun glyphs(builder: BufferBuilder, matrix4f: Matrix4f, text: Component, x: Float, y: Float, color: Color) = msdf.applyGlyphs(builder, matrix4f, text, size, x, y, color)
 }

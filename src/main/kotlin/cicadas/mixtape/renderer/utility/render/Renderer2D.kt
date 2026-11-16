@@ -14,9 +14,13 @@ import cicadas.mixtape.renderer.objects.Radius
 import cicadas.mixtape.renderer.objects.Squirt
 import cicadas.mixtape.renderer.pass.KawasePass
 import cicadas.mixtape.renderer.shader.CicadasPipelines
+import cicadas.mixtape.renderer.shader.data.LiquidData
+import cicadas.mixtape.renderer.shader.data.ScreenData
+import cicadas.mixtape.renderer.shader.data.ShadowData
 import cicadas.mixtape.renderer.shader.sampler.CustomSampler
-import cicadas.mixtape.renderer.shader.storage.api.UniformStorage
-import cicadas.mixtape.renderer.shader.uniform.*
+import cicadas.mixtape.renderer.shader.uniform.impl.LiquidUniform
+import cicadas.mixtape.renderer.shader.uniform.impl.ScreenUniform
+import cicadas.mixtape.renderer.shader.uniform.impl.ShadowUniform
 import cicadas.mixtape.renderer.svg.SVGManager
 import cicadas.mixtape.renderer.svg.SVGTexture
 import cicadas.mixtape.renderer.utility.color.ShaderColor
@@ -105,7 +109,7 @@ object Renderer2D {
                 .pipeline(CicadasPipelines.SHADOW_PIPELINE)
                 .scissorState(ScissorUtility.copyState())
                 .slice(context.projection())
-                .slice(ShadowUniform.update(power))
+                .slice(ShadowUniform.update(ShadowData(power)))
                 .vertex {
                     it.addVertex(context.matrix4f(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
@@ -240,7 +244,7 @@ object Renderer2D {
                 .scissorState(ScissorUtility.copyState())
                 .sampler(CustomSampler(0, KawasePass.texture(), FilterMode.LINEAR))
                 .slice(context.projection())
-                .slice(ScreenUniform.update(mainTarget.screenSize))
+                .slice(ScreenUniform.update(ScreenData(mainTarget.screenSize)))
                 .vertex {
                     it.addVertex(context.matrix4f(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
@@ -270,8 +274,8 @@ object Renderer2D {
                 .scissorState(ScissorUtility.copyState())
                 .sampler(CustomSampler(0, if (clean) mainTarget.colorTextureView else KawasePass.texture(), FilterMode.LINEAR))
                 .slice(context.projection())
-                .slice(LiquidUniform.update(power))
-                .slice(ScreenUniform.update(mainTarget.screenSize))
+                .slice(LiquidUniform.update(LiquidData(power)))
+                .slice(ScreenUniform.update(ScreenData(mainTarget.screenSize)))
                 .vertex {
                     it.addVertex(context.matrix4f(), x,         y + height, width, height, radius.leftBottomRadius).setColor(gradient.leftBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
@@ -386,8 +390,5 @@ object Renderer2D {
 
     fun setColor(color: Color) = shaderColor.set(color)
 
-    fun update() {
-        batching.update()
-        UniformStorage.endFrame()
-    }
+    fun update() = batching.update()
 }

@@ -6,6 +6,7 @@ import cicadas.mixtape.renderer.events.Render3DCallback;
 import cicadas.mixtape.renderer.context.UIContext;
 import cicadas.mixtape.renderer.pass.KawasePass;
 import cicadas.mixtape.renderer.shader.projection.Projection;
+import cicadas.mixtape.renderer.shader.uniform.api.CustomUniform;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -33,15 +34,8 @@ public abstract class GameRendererMixin {
     @Shadow protected abstract float getFov(Camera camera, float f, boolean bl);
     @Shadow public abstract Matrix4f getProjectionMatrix(float f);
 
-    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(FZLorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
-    public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
-        Profiler.get().push("cicadasrenderer-update-kawase");
-        KawasePass.INSTANCE.update();
-        Profiler.get().pop();
-    }
-
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
-    public void render(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+    public void render$invoke(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
         if (!minecraft.isGameLoadFinished()) {
             return;
         }
@@ -60,9 +54,20 @@ public abstract class GameRendererMixin {
         Profiler.get().pop();
     }
 
+    @Inject(method = "render", at = @At("TAIL"))
+    public void render$tail(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+        Profiler.get().push("cicadasrenderer-uniforms-end");
+        CustomUniform.endAll();
+        Profiler.get().pop();
+    }
+
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V", shift = At.Shift.AFTER))
-    public void renderLevel2(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
-        Profiler.get().push("cicadasrenderer-render-level");
+    public void renderLevel$invoke(DeltaTracker deltaTracker, CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f) {
+        Profiler.get().push("cicadasrenderer-update-kawase");
+
+        KawasePass.INSTANCE.update();
+
+        Profiler.get().popPush("cicadasrenderer-render-level");
 
         var stack = createStack(matrix4f);
         var projection = Projection.create(getProjectionMatrix(deltaTracker), RenderSystem.getModelViewMatrix());
@@ -84,8 +89,10 @@ public abstract class GameRendererMixin {
     @Unique
     private PoseStack createStack(Matrix4f matrix4f) {
         var stack = new PoseStack();
+
         bobHurt(stack, mainCamera.getPartialTickTime());
         if (minecraft.options.bobView().get()) bobView(stack, mainCamera.getPartialTickTime());
+
         stack.mulPose(matrix4f);
         return stack;
     }

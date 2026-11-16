@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.shader.storage.impl
+package cicadas.mixtape.renderer.shader.data
 
 import com.mojang.blaze3d.buffers.Std140Builder
 import net.minecraft.client.renderer.DynamicUniformStorage

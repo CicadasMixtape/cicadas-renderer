@@ -14,7 +14,8 @@ import cicadas.mixtape.renderer.objects.VoxelBox
 import cicadas.mixtape.renderer.objects.VoxelOutline
 import cicadas.mixtape.renderer.shader.CicadasPipelines
 import cicadas.mixtape.renderer.shader.buffer.CustomBuffer
-import cicadas.mixtape.renderer.shader.uniform.ScreenUniform
+import cicadas.mixtape.renderer.shader.data.ScreenData
+import cicadas.mixtape.renderer.shader.uniform.impl.ScreenUniform
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -240,7 +241,7 @@ object Renderer3D {
             val mesh = builder.buildOrThrow()
             val buffer = CustomBuffer.create(mesh)
             val projectionUniform = context.projection()
-            val screenUniform = ScreenUniform.update(mainTarget.screenSize)
+            val screenUniform = ScreenUniform.update(ScreenData(mainTarget.screenSize))
 
             RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 { "cicadasrenderer-lines-pass" },
