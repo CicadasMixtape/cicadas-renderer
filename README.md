@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.4.8")
+    modImplementation("com.github.CicadasMixtape:cicadas-renderer:1.21.11-1.5")
 }
 ```
 
