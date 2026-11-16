@@ -1,7 +1,6 @@
 package cicadas.mixtape.renderer.shader.uniform.api
 
 import cicadas.mixtape.renderer.shader.slice.CustomSlice
-import com.mojang.blaze3d.buffers.GpuBuffer
 import net.minecraft.client.renderer.DynamicUniformStorage
 
 abstract class CustomUniform<T : DynamicUniformStorage.DynamicUniform>(
@@ -19,7 +18,7 @@ abstract class CustomUniform<T : DynamicUniformStorage.DynamicUniform>(
     private val storage = DynamicUniformStorage<T>(
         name,
         size,
-        GpuBuffer.USAGE_UNIFORM
+        16
     )
 
     init {
