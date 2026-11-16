@@ -35,7 +35,7 @@ object CicadasSnippets {
 
     @JvmField
     val LINES_SNIPPET = RenderPipeline.builder(DEPTH_TEST_SNIPPET, PROJECTION_SNIPPET)
-        .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.Mode.QUADS)
+        .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.Mode.LINES)
         .withBlend(BlendFunction.TRANSLUCENT)
         .withUniform("Screen", UniformType.UNIFORM_BUFFER)
         .buildSnippet()

@@ -39,9 +39,9 @@ class MsdfFont private constructor(
         y: Float,
         color: Color
     ): Int {
-        var count = 0
         var offsetX = x
         var offsetY = y + getHeight(size)
+        var count = 0
 
         text.visualOrderText.accept { _, style, code ->
             if (code == '\n'.code) {
@@ -60,7 +60,7 @@ class MsdfFont private constructor(
             if (glyph == null) return@accept true
 
             offsetX += glyph.apply(builder, matrix4f, size, offsetX, offsetY, current) + getThickness(size)
-            count += 1
+            count += 4
 
             true
         }

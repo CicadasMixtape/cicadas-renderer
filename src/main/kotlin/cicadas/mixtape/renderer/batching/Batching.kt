@@ -1,36 +1,37 @@
 package cicadas.mixtape.renderer.batching
 
 import cicadas.mixtape.renderer.api.mainTarget
-import cicadas.mixtape.renderer.shader.builder.CustomBuffer
-import cicadas.mixtape.renderer.shader.builder.CustomBuilder
-import cicadas.mixtape.renderer.shader.builder.CustomFormat
+import cicadas.mixtape.renderer.shader.buffer.CustomBuffer
+import cicadas.mixtape.renderer.shader.buffer.CustomFormat
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.MeshData
 import java.util.OptionalDouble
 import java.util.OptionalInt
 
 class Batching {
-    val builders = hashMapOf<CustomFormat, CustomBuilder>()
+    val builders = hashMapOf<CustomFormat, BatchBuilder>()
     val batches = arrayListOf<Batch>()
     val meshes = arrayListOf<MeshData>()
 
     fun add(batched: Batched) {
         val last = batches.lastOrNull()
-        val format = CustomFormat(batched.pipeline.vertexFormatMode, batched.pipeline.vertexFormat)
-        val customBuilder = builders.getOrPut(format) { CustomBuilder(format) }
+        val mode = batched.pipeline.vertexFormatMode
+        val format = batched.pipeline.vertexFormat
+        val customFormat = CustomFormat(mode, format)
+        val batchBuilder = builders.getOrPut(customFormat) { BatchBuilder(customFormat) }
         var count = 0
 
         batched.vertices.forEach {
-            count += it(customBuilder.get())
+            count += customFormat.indexCount(it(batchBuilder.builder()))
         }
 
-        if (last != null && last.match(batched, customBuilder)) {
-            last.count += count * 6
+        if (last != null && last.match(batched, batchBuilder)) {
+            last.count += count
         } else {
-            batches.add(Batch(batched, customBuilder, customBuilder.count * 6, count * 6))
+            batches.add(Batch(batched, batchBuilder, batchBuilder.count, count))
         }
 
-        customBuilder.count += count
+        batchBuilder.count += count
     }
 
     fun update() {

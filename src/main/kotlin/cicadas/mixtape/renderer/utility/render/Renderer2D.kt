@@ -51,7 +51,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, 0f).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          0f).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          0f).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -77,7 +77,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -111,7 +111,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -138,7 +138,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, 0f).setUv(1f, 1f).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          0f).setUv(1f, 0f).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          0f).setUv(0f, 0f).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -178,7 +178,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -218,7 +218,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius, squirt.rightBottomSquirt).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          width, height, radius.rightTopRadius,    squirt.rightTopSquirt).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          width, height, radius.leftTopRadius,     squirt.leftTopSquirt).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -246,7 +246,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -277,7 +277,7 @@ object Renderer2D {
                     it.addVertex(context.matrix4f(), x + width, y + height, width, height, radius.rightBottomRadius).setColor(gradient.rightBottomColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x + width, y,          width, height, radius.rightTopRadius).setColor(gradient.rightTopColor.mul(shaderColor.current()).rgb)
                     it.addVertex(context.matrix4f(), x,         y,          width, height, radius.leftTopRadius).setColor(gradient.leftTopColor.mul(shaderColor.current()).rgb)
-                    1
+                    4
                 }
                 .build()
         )
@@ -380,17 +380,11 @@ object Renderer2D {
         drawVector(context, SVGManager.getTexture(id, size), x, y, gradient)
     }
 
-    fun backupColor() {
-        shaderColor.backup()
-    }
+    fun backupColor() = shaderColor.backup()
 
-    fun resetColor() {
-        shaderColor.reset()
-    }
+    fun resetColor() = shaderColor.reset()
 
-    fun setColor(color: Color) {
-        shaderColor.set(color)
-    }
+    fun setColor(color: Color) = shaderColor.set(color)
 
     fun update() {
         batching.update()

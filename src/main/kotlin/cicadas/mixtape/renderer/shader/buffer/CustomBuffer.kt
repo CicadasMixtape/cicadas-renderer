@@ -1,4 +1,4 @@
-package cicadas.mixtape.renderer.shader.builder
+package cicadas.mixtape.renderer.shader.buffer
 
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.systems.RenderPass
