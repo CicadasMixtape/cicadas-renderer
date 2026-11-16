@@ -5,8 +5,8 @@ import cicadas.mixtape.renderer.api.mainTarget
 import cicadas.mixtape.renderer.api.mc
 import cicadas.mixtape.renderer.api.mul
 import cicadas.mixtape.renderer.api.screenSize
+import cicadas.mixtape.renderer.batching.BatchRenderer
 import cicadas.mixtape.renderer.batching.Batched
-import cicadas.mixtape.renderer.batching.Batching
 import cicadas.mixtape.renderer.context.UIContext
 import cicadas.mixtape.renderer.font.Font
 import cicadas.mixtape.renderer.objects.Gradient
@@ -32,9 +32,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import java.awt.Color
 
-object Renderer2D {
-    private val batching = Batching()
+object Renderer2D : BatchRenderer() {
     private val shaderColor = ShaderColor()
+
+    fun backupColor() = shaderColor.backup()
+
+    fun resetColor() = shaderColor.reset()
+
+    fun setColor(color: Color) = shaderColor.set(color)
 
     fun drawRect(
         context: UIContext,
@@ -383,12 +388,4 @@ object Renderer2D {
     ) {
         drawVector(context, SVGManager.getTexture(id, size), x, y, gradient)
     }
-
-    fun backupColor() = shaderColor.backup()
-
-    fun resetColor() = shaderColor.reset()
-
-    fun setColor(color: Color) = shaderColor.set(color)
-
-    fun update() = batching.update()
 }

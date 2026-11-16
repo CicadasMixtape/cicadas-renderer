@@ -73,9 +73,7 @@ open class UIContext protected constructor(
         width: Float,
         height: Float,
         gradient: Gradient
-    ) {
-        Renderer2D.drawRect(this, x, y, width, height, gradient)
-    }
+    ) = Renderer2D.drawRect(this, x, y, width, height, gradient)
 
     fun drawRoundedRect(
         x: Float,
@@ -84,9 +82,7 @@ open class UIContext protected constructor(
         height: Float,
         radius: Radius,
         gradient: Gradient
-    ) {
-        Renderer2D.drawRoundedRect(this, x, y, width, height, radius, gradient)
-    }
+    ) = Renderer2D.drawRoundedRect(this, x, y, width, height, radius, gradient)
 
     fun drawShadow(
         x: Float,
@@ -96,9 +92,7 @@ open class UIContext protected constructor(
         power: Float,
         radius: Radius,
         gradient: Gradient
-    ) {
-        Renderer2D.drawShadow(this, x, y, width, height, power, radius, gradient)
-    }
+    ) = Renderer2D.drawShadow(this, x, y, width, height, power, radius, gradient)
 
     fun drawTexture(
         texture: AbstractTexture,
@@ -107,9 +101,7 @@ open class UIContext protected constructor(
         width: Float,
         height: Float,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawTexture(this, texture, x, y, width, height, gradient)
-    }
+    ) = Renderer2D.drawTexture(this, texture, x, y, width, height, gradient)
 
     fun drawTexture(
         id: Identifier,
@@ -118,9 +110,7 @@ open class UIContext protected constructor(
         width: Float,
         height: Float,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawTexture(this, id, x, y, width, height, gradient)
-    }
+    ) = Renderer2D.drawTexture(this, id, x, y, width, height, gradient)
 
     fun drawRoundedTexture(
         texture: AbstractTexture,
@@ -130,9 +120,7 @@ open class UIContext protected constructor(
         height: Float,
         radius: Radius = Radius.EMPTY,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawRoundedTexture(this, texture, x, y, width, height, radius, gradient)
-    }
+    ) = Renderer2D.drawRoundedTexture(this, texture, x, y, width, height, radius, gradient)
 
     fun drawRoundedTexture(
         id: Identifier,
@@ -142,9 +130,7 @@ open class UIContext protected constructor(
         height: Float,
         radius: Radius = Radius.EMPTY,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawRoundedTexture(this, id, x, y, width, height, radius, gradient)
-    }
+    ) = Renderer2D.drawRoundedTexture(this, id, x, y, width, height, radius, gradient)
 
     fun drawSquircle(
         x: Float,
@@ -154,9 +140,7 @@ open class UIContext protected constructor(
         squirt: Squirt,
         radius: Radius,
         gradient: Gradient
-    ) {
-        Renderer2D.drawSquircle(this, x, y, width, height, squirt, radius, gradient)
-    }
+    ) = Renderer2D.drawSquircle(this, x, y, width, height, squirt, radius, gradient)
 
     fun drawRoundedBlur(
         x: Float,
@@ -165,9 +149,7 @@ open class UIContext protected constructor(
         height: Float,
         radius: Radius,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawRoundedBlur(this, x, y, width, height, radius, gradient)
-    }
+    ) = Renderer2D.drawRoundedBlur(this, x, y, width, height, radius, gradient)
 
     fun drawLiquidGlass(
         x: Float,
@@ -178,9 +160,7 @@ open class UIContext protected constructor(
         clean: Boolean,
         radius: Radius,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawLiquidGlass(this, x, y, width, height, power, clean, radius, gradient)
-    }
+    ) = Renderer2D.drawLiquidGlass(this, x, y, width, height, power, clean, radius, gradient)
 
     fun drawText(
         font: Font,
@@ -188,9 +168,7 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         color: Color = Color.WHITE
-    ) {
-        Renderer2D.drawText(this, font, text, x, y, color)
-    }
+    ) = Renderer2D.drawText(this, font, text, x, y, color)
 
     fun drawText(
         font: Font,
@@ -198,9 +176,7 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         color: Color = Color.WHITE
-    ) {
-        Renderer2D.drawText(this, font, text, x, y, color)
-    }
+    ) = Renderer2D.drawText(this, font, text, x, y, color)
 
     fun drawCenteredText(
         font: Font,
@@ -208,9 +184,7 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         color: Color = Color.WHITE
-    ) {
-        Renderer2D.drawCenteredText(this, font, text, x, y, color)
-    }
+    ) = Renderer2D.drawCenteredText(this, font, text, x, y, color)
 
     fun drawCenteredText(
         font: Font,
@@ -218,9 +192,7 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         color: Color = Color.WHITE
-    ) {
-        Renderer2D.drawCenteredText(this, font, text, x, y, color)
-    }
+    ) = Renderer2D.drawCenteredText(this, font, text, x, y, color)
 
     fun drawRightText(
         font: Font,
@@ -228,9 +200,7 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         color: Color = Color.WHITE
-    ) {
-        Renderer2D.drawRightText(this, font, text, x, y, color)
-    }
+    ) = Renderer2D.drawRightText(this, font, text, x, y, color)
 
     fun drawRightText(
         font: Font,
@@ -238,18 +208,14 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         color: Color = Color.WHITE
-    ) {
-        Renderer2D.drawRightText(this, font, text, x, y, color)
-    }
+    ) = Renderer2D.drawRightText(this, font, text, x, y, color)
 
     fun drawVector(
         texture: SVGTexture,
         x: Float,
         y: Float,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawVector(this, texture, x, y, gradient)
-    }
+    ) = Renderer2D.drawVector(this, texture, x, y, gradient)
 
     fun drawVector(
         id: Identifier,
@@ -257,11 +223,7 @@ open class UIContext protected constructor(
         x: Float,
         y: Float,
         gradient: Gradient = Gradient.EMPTY
-    ) {
-        Renderer2D.drawVector(this, id, size, x, y, gradient)
-    }
+    ) = Renderer2D.drawVector(this, id, size, x, y, gradient)
 
-    open fun update() {
-        Renderer2D.update()
-    }
+    open fun update() = Renderer2D.update()
 }
