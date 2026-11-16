@@ -35,6 +35,12 @@ import java.awt.Color
 object Renderer2D : BatchRenderer() {
     private val shaderColor = ShaderColor()
 
+    fun backupColor() = shaderColor.backup()
+
+    fun resetColor() = shaderColor.reset()
+
+    fun setColor(color: Color) = shaderColor.set(color)
+
     fun drawRect(
         context: UIContext,
         x: Float,
@@ -381,17 +387,5 @@ object Renderer2D : BatchRenderer() {
         gradient: Gradient = Gradient.EMPTY
     ) {
         drawVector(context, SVGManager.getTexture(id, size), x, y, gradient)
-    }
-
-    fun backupColor() {
-        shaderColor.backup()
-    }
-
-    fun resetColor() {
-        shaderColor.reset()
-    }
-
-    fun setColor(color: Color) {
-        shaderColor.set(color)
     }
 }
